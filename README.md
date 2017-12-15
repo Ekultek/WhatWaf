@@ -24,7 +24,9 @@ Have Python 2.7, Python 3.x compatibility is being implemented soon:
 sudo -s << EOF
 git clone https://github.com/ekultek/whatwaf.git
 cd whatwaf
+chmod +x whatwaf.py
 pip2 install -r requirements.txt
+./whatwaf.py --help
 ```
 
 # Proof of concept
