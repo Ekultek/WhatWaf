@@ -37,6 +37,9 @@ First we'll run the website through WhatWaf and figure out which firewall protec
 Next we'll go to that website and see what the page looks like:
 ![item2](http://i64.tinypic.com/262mjhl.png)
 
+Hmm.. that doesn't really look like Cloudflare does it? Let's check what the HTTP headers server and cookies say:
+![item4](http://i66.tinypic.com/5txx5x.png)
+
 And finally, lets try one of the bypasses that it tells us to try:
 ![item3](http://i66.tinypic.com/sdi3x0.png)
 
