@@ -25,6 +25,7 @@ def main():
         time.sleep(2)
         cmd = "python whatwaf.py --help"
         subprocess.call(shlex.split(cmd))
+        exit(0)
 
     if not opt.hideBanner:
         print(BANNER)
