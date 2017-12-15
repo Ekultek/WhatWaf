@@ -29,7 +29,7 @@ BANNER = """\033[1m
 |         | |         |    |___|   
 |   ,'.   | |   ,'.   |    .---.   
 '--'   '--' '--'   '--'    '---'  
-><script>alert("WhatWaf?-v{}{};</script>
+><script>alert("WhatWaf?-v{}{}");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
 # plugins (waf scripts)
