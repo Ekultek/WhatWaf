@@ -140,7 +140,7 @@ def get_random_agent(path="{}/content/files/user_agents.txt"):
         return random.choice(items)
 
 
-def configure(**kwargs):
+def configure_request_headers(**kwargs):
     """
     configure the HTTP request headers with a user defined
     proxy, Tor, or a random User-Agent from the user-agent
