@@ -10,12 +10,12 @@ def tamper(payload, **kwargs):
         'd': 'D0', 'A': 'AA', 'E': 'F0', 'O': 'BA'
     }
     retval = ""
+    # if there's not characters in it, we'll just skip this one
+    if not any(c in payload for c in unicode_changes.keys()):
+        return payload
     for char in payload:
         if char in unicode_changes.keys():
             retval += "%u00{}".format(unicode_changes[char])
         else:
             retval += char
     return retval
-
-
-print tamper(__example_payload__)

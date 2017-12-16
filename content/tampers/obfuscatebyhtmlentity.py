@@ -10,6 +10,8 @@ def tamper(payload, **kwargs):
         " ": "&nbsp;", "<": "&lt;", ">": "&gt;",
         "&": "&amp;", '"': "&quot;", "'": "&apos;",
     }
+    if not any(c in payload for c in encoding_schema.keys()):
+        return payload
     for char in payload:
         if char in encoding_schema.keys():
             retval += encoding_schema[char]

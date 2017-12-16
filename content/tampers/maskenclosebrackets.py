@@ -8,6 +8,8 @@ __type__ = "enclose brackets and mask an apostrophe around the character in the 
 def tamper(payload, **kwargs):
     payload = str(payload)
     to_enclose = string.digits
+    if not any(i in payload for i in to_enclose):
+        return payload
     retval = ""
     for char in payload:
         if char in to_enclose:
