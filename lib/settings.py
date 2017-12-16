@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(stable)"

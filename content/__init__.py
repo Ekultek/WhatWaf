@@ -113,6 +113,8 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                 if status != 404:
                     if status == 200:
                         working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__)))
+            if len(working_tampers) == max_successful_payloads:
+                break
         if len(working_tampers) == max_successful_payloads:
             break
     return working_tampers
