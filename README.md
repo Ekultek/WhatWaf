@@ -43,6 +43,10 @@ Hmm.. that doesn't really look like Cloudflare does it? Let's check what the HTT
 And finally, lets try one of the bypasses that it tells us to try:
 ![item3](http://i66.tinypic.com/sdi3x0.png)
 
+# Demo video
+
+[![to_video](http://i67.tinypic.com/2daawow.png)](https://vimeo.com/247623511)
+
 # Get involved!
 
 If you want to make some tamper scripts, want to add some functionality or just want to make something look better. Getting involved is easy:
