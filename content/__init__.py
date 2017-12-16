@@ -72,9 +72,14 @@ class DetectionQueue(object):
         return response_retval
 
 
+def encode(payload, script):
+    script = importlib.import_module(script)
+    return script.tamper(payload)
+
+
 def find_failures(html, regs):
     for reg in regs:
-        if reg.search(html) is not None:
+        if reg.search(html) is not None or html == "" or html is None:
             return True
     return False
 
@@ -101,6 +106,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     normal_status, _, _ = norm_response
     lib.formatter.info("running tampering search")
     for tamper in tampers:
+        load = tamper
         for vector in payloads:
             vector = tamper.tamper(vector)
             if verbose:
@@ -112,7 +118,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                     lib.formatter.debug("response code: {}".format(status))
                 if status != 404:
                     if status == 200:
-                        working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__)))
+                        working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
             if len(working_tampers) == max_successful_payloads:
                 break
         if len(working_tampers) == max_successful_payloads:

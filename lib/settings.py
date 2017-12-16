@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(stable)"
@@ -175,8 +175,13 @@ def produce_results(found_tampers):
     if len(found_tampers) > 0:
         print(spacer)
         for i, tamper in enumerate(found_tampers, start=1):
-            description, example = tamper
-            print("#{} tamper payload by {} (example: {})".format(i, description, example))
+            description, example, load = tamper
+            load = str(load).split(" ")[1].split("'")[1]
+            print("#{} description: tamper payload by {}\nexample: '{}'\nload path: {}".format(
+                i, description, example, load
+            ))
+            if i != len(found_tampers):
+                print("\n")
         print(spacer)
     else:
         lib.formatter.warn("no valid bypasses discovered with provided payloads")

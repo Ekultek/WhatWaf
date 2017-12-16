@@ -4,7 +4,10 @@ import time
 import subprocess
 
 from lib.cmd import WhatWafParser
-from content import detection_main
+from content import (
+    detection_main,
+    encode
+)
 from lib.settings import (
     configure_request_headers,
     WAF_REQUEST_DETECTION_PAYLOADS,
@@ -25,6 +28,17 @@ def main():
         time.sleep(2)
         cmd = "python whatwaf.py --help"
         subprocess.call(shlex.split(cmd))
+        exit(0)
+
+    if opt.encodePayload:
+        spacer = "-" * 30
+        info("encoding '{}' using '{}'".format(opt.encodePayload[0], opt.encodePayload[1]))
+        encoded = encode(opt.encodePayload[0], opt.encodePayload[1])
+        print(
+            "{}\n{}\n{}".format(
+                spacer, encoded, spacer
+            )
+        )
         exit(0)
 
     if opt.updateWhatWaf:
