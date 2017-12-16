@@ -27,6 +27,12 @@ def main():
         subprocess.call(shlex.split(cmd))
         exit(0)
 
+    if opt.updateWhatWaf:
+        info("update in progress")
+        cmd = shlex.split("git pull origin master")
+        subprocess.call(cmd)
+        exit(0)
+
     if not opt.hideBanner:
         print(BANNER)
 

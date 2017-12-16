@@ -43,6 +43,8 @@ class WhatWafParser(ArgumentParser):
                           help="Run in verbose mode (more output)")
         misc.add_argument("--hide", dest="hideBanner", action="store_true",
                           help="Hide the banner during the run")
+        misc.add_argument("--update", dest="updateWhatWaf", action="store_true",
+                          help="Update WhatWaf to the newest development version")
 
         opts = parser.parse_args()
 
