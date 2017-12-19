@@ -10,6 +10,7 @@ from content import (
 )
 from lib.settings import (
     configure_request_headers,
+    auto_assign,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER,
     PROTOCOL_DETECTION
@@ -71,9 +72,7 @@ def main():
 
     try:
         if opt.runSingleWebsite:
-            url_to_use = opt.runSingleWebsite
-            if PROTOCOL_DETECTION.search(url_to_use) is None:
-                url_to_use = "http://{}".format(url_to_use)
+            url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             info("running single web application '{}'".format(url_to_use))
             detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
@@ -84,9 +83,7 @@ def main():
             info("reading from '{}'".format(opt.runMultipleWebsites))
             with open(opt.runMultipleWebsites) as urls:
                 for i, url in enumerate(urls, start=1):
-                    if PROTOCOL_DETECTION.search(url) is None:
-                        url = "http://{}".format(url)
-                    url = url.strip()
+                    url = auto_assign(url, ssl=opt.forceSSL)
                     info("currently running on site #{} ('{}')".format(i, url))
                     detection_main(
                         url, payload_list, agent=agent, proxy=proxy,

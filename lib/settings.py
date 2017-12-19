@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number
-VERSION = "0.1.7"
+VERSION = "0.1.8"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -198,3 +198,18 @@ def random_string(acceptable=string.ascii_letters, length=5):
     """
     random_chars = [random.choice(acceptable) for _ in range(length)]
     return ''.join(random_chars)
+
+
+def auto_assign(url, ssl=False):
+    """
+    check if a protocol is given in the URL if it isn't we'll auto assign it
+    """
+    if PROTOCOL_DETECTION.search(url) is None:
+        if ssl:
+            lib.formatter.warn("no protocol discovered, assigning HTTPS (SSL)")
+            return "https://{}".format(url.strip())
+        else:
+            lib.formatter.warn("no protocol found assigning HTTP")
+            return "http://{}".format(url.strip())
+    else:
+        return url.strip()

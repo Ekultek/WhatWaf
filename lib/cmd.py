@@ -36,6 +36,8 @@ class WhatWafParser(ArgumentParser):
                               help="Provide your own payloads separated by a comma IE AND 1=1,AND 2=2")
         req_args.add_argument("--pl", dest="payloadList", metavar="PAYLOAD-LIST-PATH",
                               help="Provide a file containing a list of payloads 1 per line")
+        req_args.add_argument("--force-ssl", dest="forceSSL", action="store_true",
+                              help="Force the assignment of HTTPS instead of HTTP while processing")
 
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
