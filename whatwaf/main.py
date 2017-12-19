@@ -11,7 +11,8 @@ from content import (
 from lib.settings import (
     configure_request_headers,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER
+    BANNER,
+    PROTOCOL_DETECTION
 )
 from lib.formatter import (
     error,
@@ -33,12 +34,15 @@ def main():
     if opt.encodePayload:
         spacer = "-" * 30
         info("encoding '{}' using '{}'".format(opt.encodePayload[0], opt.encodePayload[1]))
-        encoded = encode(opt.encodePayload[0], opt.encodePayload[1])
-        print(
-            "{}\n{}\n{}".format(
-                spacer, encoded, spacer
+        try:
+            encoded = encode(opt.encodePayload[0], opt.encodePayload[1])
+            print(
+                "{}\n{}\n{}".format(
+                    spacer, encoded, spacer
+                )
             )
-        )
+        except AttributeError:
+            error("invalid load path given, check the load path and try again")
         exit(0)
 
     if opt.updateWhatWaf:
@@ -67,6 +71,8 @@ def main():
 
     try:
         if opt.runSingleWebsite:
+            if PROTOCOL_DETECTION.search(opt.runSingleWebsite) is None:
+                opt.runSingleWebsite = "http://{}".format(opt.runSingleWebsite)
             info("running single web application '{}'".format(opt.runSingleWebsite))
             detection_main(
                 opt.runSingleWebsite, payload_list, agent=agent, proxy=proxy,
@@ -77,6 +83,8 @@ def main():
             info("reading from '{}'".format(opt.runMultipleWebsites))
             with open(opt.runMultipleWebsites) as urls:
                 for i, url in enumerate(urls, start=1):
+                    if PROTOCOL_DETECTION.search(url) is None:
+                        url = "http://{}".format(url)
                     url = url.strip()
                     info("currently running on site #{} ('{}')".format(i, url))
                     detection_main(

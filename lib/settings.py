@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import random
 import string
@@ -10,26 +11,26 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number
-VERSION = "0.1.5"
+VERSION = "0.1.6"
 
 # version string
-VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(stable)"
+VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
 
 # github clone string
 CLONE = "https://github.com/ekultek/whatwaf"
 
 # cool looking banner
 BANNER = """\033[1m
-  (`\ .-') /` (`\ .-') /`,------.  
-   `.( OO ),'  `.( OO ),'  .--.  ' 
-,--./  .--. ,--./  .--. |  |  |  | 
-|      |  | |      |  | '--'  |  | 
-|  |   |  |,|  |   |  |,    __.  | 
-|  |.'.|  |_|  |.'.|  |_)  |   .'  
-|         | |         |    |___|   
-|   ,'.   | |   ,'.   |    .---.   
-'--'   '--' '--'   '--'    '---'  
-><script>alert("WhatWaf?-v{}{}");</script>
+                          ,------.  
+                         '  .--.  ' 
+,--.   .--.   ,--.   .--.|  |  |  | 
+|  |   |  |   |  |   |  |'--'  |  | 
+|  |   |  |   |  |   |  |    __.  | 
+|  |.'.|  |   |  |.'.|  |   |   .'  
+|         |   |         |   |___|   
+|   ,'.   |hat|   ,'.   |af .---.   
+'--'   '--'   '--'   '--'   '---'  
+><script>alert("WhatWaf?<|>v{}{}");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
 # plugins (waf scripts)
@@ -43,6 +44,9 @@ PLUGINS_IMPORT_TEMPALTE = "content.plugins.{}"
 
 # directory to do the importing for the tamper scripts
 TAMPERS_IMPORT_TEMPLATE = "content.tampers.{}"
+
+# regex to detect the URL protocol (http or https)
+PROTOCOL_DETECTION = re.compile("http(s)?")
 
 # fingerpritn path for unknown firewalls
 UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/.whatwaf".format(os.path.expanduser("~"))
