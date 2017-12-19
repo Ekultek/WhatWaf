@@ -7,12 +7,13 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
  - Ability to run through a list of URL's with the `-l/--list` flag
  - Ability to detect over 40 different firewalls
  - Ability to try over 20 different tampering techniques
- - Ability to pass your own payloads either from a file or from the terminal
- - Payloads that are guaranteed to produce at least one WAF triggering
+ - Ability to pass your own payloads either from a file, from the terminal, or use the default payloads
+ - Default payloads that are guaranteed to produce at least one WAF triggering
  - Ability to bypass firewalls using both SQLi techniques and cross site scripting techniques
- - Ability to run behind Tor
- - Ability to run behind multiple proxy types (`socks4`, `socks5`, `http`, `https`)
+ - Ability to run behind multiple proxy types (`socks4`, `socks5`, `http`, `https` and `Tor`)
  - Ability to use a random user agent, personal user agent, or custom default user agent
+ - Auto assign protocol to HTTP or ability to force protocol to HTTPS
+ - A built in encoder so you can encode your payloads into the discovered bypasses
  - More to come...
 
 # Installation
@@ -37,7 +38,7 @@ First we'll run the website through WhatWaf and figure out which firewall protec
 Next we'll go to that website and see what the page looks like:
 ![item2](http://i64.tinypic.com/262mjhl.png)
 
-Hmm.. that doesn't really look like Cloudflare does it? Let's check what the HTTP headers server and cookies say:
+Hmm.. that doesn't really look like Cloudflare does it? Lets see what the headers say:
 ![item4](http://i66.tinypic.com/5txx5x.png)
 
 And finally, lets try one of the bypasses that it tells us to try:
