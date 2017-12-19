@@ -45,7 +45,7 @@ class WhatWafParser(ArgumentParser):
                           help="Hide the banner during the run")
         misc.add_argument("--update", dest="updateWhatWaf", action="store_true",
                           help="Update WhatWaf to the newest development version")
-        misc.add_argument("--encode", dest="encodePayload", nargs=2, metavar="PAYLOAD TAMPER-SCRIPT",
+        misc.add_argument("--encode", dest="encodePayload", nargs=2, metavar=("PAYLOAD", "TAMPER-SCRIPT-LOAD-PATH"),
                           help="Encode a provided payload using a provided tamper script")
 
         opts = parser.parse_args()

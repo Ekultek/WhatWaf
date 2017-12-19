@@ -71,11 +71,12 @@ def main():
 
     try:
         if opt.runSingleWebsite:
-            if PROTOCOL_DETECTION.search(opt.runSingleWebsite) is None:
-                opt.runSingleWebsite = "http://{}".format(opt.runSingleWebsite)
-            info("running single web application '{}'".format(opt.runSingleWebsite))
+            url_to_use = opt.runSingleWebsite
+            if PROTOCOL_DETECTION.search(url_to_use) is None:
+                url_to_use = "http://{}".format(url_to_use)
+            info("running single web application '{}'".format(url_to_use))
             detection_main(
-                opt.runSingleWebsite, payload_list, agent=agent, proxy=proxy,
+                url_to_use, payload_list, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose
             )
 
