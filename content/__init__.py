@@ -23,7 +23,7 @@ class ScriptQueue(object):
     def load_scripts(self):
         retval = []
         file_list = [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
-        for script in file_list:
+        for script in sorted(file_list):
             script = script[:-3]
             if self.verbose:
                 lib.formatter.debug("loading {} script '{}'".format(self.script_type, script))

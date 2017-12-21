@@ -11,16 +11,13 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number
-VERSION = "0.1.8"
+VERSION = "0.1.9"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
 
-# github clone string
-CLONE = "https://github.com/ekultek/whatwaf"
-
 # cool looking banner
-BANNER = """\033[1m
+BANNER = """\b\033[1m
                           ,------.  
                          '  .--.  ' 
 ,--.   .--.   ,--.   .--.|  |  |  | 
@@ -56,7 +53,7 @@ DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
     VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
 )
 
-# payload for detecting the WAF, at least one of
+# payloads for detecting the WAF, at least one of
 # these payloads should trigger the WAF and provide
 # us with the information we need to identify what
 # the WAF is, along with the information we will need
@@ -71,8 +68,9 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
         "xp_cmdshell('cat ../../../etc/passwd')#"
     ),
     '<img src="javascript:alert(\'XSS\');">',
-    "'))) AND 1=1 OR 24=12 ((( '"
-
+    "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
+    "' )) AND 1=1 (( ' -- rgzd",
+    ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '"
 )
 
 
@@ -212,4 +210,11 @@ def auto_assign(url, ssl=False):
             lib.formatter.warn("no protocol found assigning HTTP")
             return "http://{}".format(url.strip())
     else:
-        return url.strip()
+        if ssl:
+            lib.formatter.info("forcing HTTPS (SSL) connection")
+            items = PROTOCOL_DETECTION.split(url)
+            item = items[-1].split("://")
+            item[0] = "https://"
+            return ''.join(item)
+        else:
+            return url.strip()
