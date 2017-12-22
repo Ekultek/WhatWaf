@@ -13,12 +13,12 @@ from lib.settings import (
     auto_assign,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER,
-    PROTOCOL_DETECTION
 )
 from lib.formatter import (
     error,
     info,
-    fatal
+    fatal,
+    success
 )
 
 
@@ -34,16 +34,46 @@ def main():
 
     if opt.encodePayload:
         spacer = "-" * 30
-        info("encoding '{}' using '{}'".format(opt.encodePayload[0], opt.encodePayload[1]))
+        payload, load_path = opt.encodePayload
+        info("encoding '{}' using '{}'".format(payload, load_path))
         try:
-            encoded = encode(opt.encodePayload[0], opt.encodePayload[1])
+            encoded = encode(payload, load_path)
+            success("encoded successfully:")
             print(
                 "{}\n{}\n{}".format(
                     spacer, encoded, spacer
                 )
             )
-        except AttributeError:
-            error("invalid load path given, check the load path and try again")
+        except (AttributeError, ImportError):
+            fatal("invalid load path given, check the load path and try again")
+        exit(0)
+
+    if opt.encodePayloadList:
+        spacer = "-" * 30
+        try:
+            file_path, load_path = opt.encodePayloadList
+            info("encoding payloads from given file '{}' using given tamper '{}'".format(
+                file_path, load_path
+            ))
+            with open(file_path) as payloads:
+                encoded = [encode(p.strip(), load_path) for p in payloads.readlines()]
+                if opt.saveEncodedPayloads is not None:
+                    with open(opt.saveEncodedPayloads, "a+") as save:
+                        for item in encoded:
+                            save.write(item + "\n")
+                    success("saved encoded payloads to file '{}' successfully".format(opt.saveEncodedPayloads))
+                else:
+                    success("payloads encoded successfully:")
+                    print(spacer)
+                    for i, item in enumerate(encoded, start=1):
+                        print(
+                            "#{} {}".format(i, item)
+                        )
+                    print(spacer)
+        except IOError:
+            fatal("provided file '{}' appears to not exist, check the path and try again".format(file_path))
+        except (AttributeError, ImportError):
+            fatal("invalid load path given, check the load path and try again")
         exit(0)
 
     if opt.updateWhatWaf:
