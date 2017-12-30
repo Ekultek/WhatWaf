@@ -10,8 +10,8 @@ from bs4 import BeautifulSoup
 
 import lib.formatter
 
-# version number
-VERSION = "0.1.10"
+# version number <major>.<minor>.<commit>
+VERSION = "0.1.11"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -30,10 +30,10 @@ BANNER = """\b\033[1m
 ><script>alert("WhatWaf?<|>v{}{}");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
-# plugins (waf scripts)
+# plugins (waf scripts) path
 PLUGINS_DIRECTORY = "{}/content/plugins".format(os.getcwd())
 
-# tampers (tamper scripts)
+# tampers (tamper scripts) path
 TAMPERS_DIRECTORY = "{}/content/tampers".format(os.getcwd())
 
 # directory to do the importing for the WAF scripts
@@ -127,9 +127,14 @@ def get_page(url, **kwargs):
     agent = kwargs.get("agent", DEFAULT_USER_AGENT)
     headers = {"Connection": "close", "User-Agent": agent}
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
-    req = requests.get(url, params=headers, proxies=proxies, timeout=15)
-    soup = BeautifulSoup(req.content, "html.parser")
-    return req.status_code, soup, req.headers
+    error_retval = (0, "", {})
+
+    try:
+        req = requests.get(url, params=headers, proxies=proxies, timeout=15)
+        soup = BeautifulSoup(req.content, "html.parser")
+        return req.status_code, soup, req.headers
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+        return error_retval
 
 
 def get_random_agent(path="{}/content/files/user_agents.txt"):
@@ -153,11 +158,14 @@ def configure_request_headers(**kwargs):
     tor = kwargs.get("tor", False)
     use_random_agent = kwargs.get("random_agent", False)
 
+    invalid_msg = "invalid switches detected, switch {} cannot be used in conjunction with switch {}"
+    proxy_msg = "running behind proxy '{}'"
+
     if proxy is not None and tor:
-        lib.formatter.error("you cannot use Tor and a proxy at the same time")
+        lib.formatter.error(invalid_msg.format("--tor", "--proxy"))
         exit(1)
     if agent is not None and use_random_agent:
-        lib.formatter.error("you cannot use a random agent and a personal agent at the same time")
+        lib.formatter.error(invalid_msg.format("--ra", "--pa"))
         exit(1)
     if tor:
         proxy = "socks5://127.0.0.1:9050"
@@ -165,6 +173,8 @@ def configure_request_headers(**kwargs):
         agent = DEFAULT_USER_AGENT
     if use_random_agent:
         agent = get_random_agent()
+    if proxy is not None:
+        lib.formatter.info(proxy_msg.format(proxy))
     return proxy, agent
 
 
@@ -172,14 +182,14 @@ def produce_results(found_tampers):
     """
     produce the results of the tamper scripts, if any this
     """
-    lib.formatter.success("apparent working tampers for target:")
     spacer = "-" * 30
     if len(found_tampers) > 0:
+        lib.formatter.success("apparent working tampers for target:")
         print(spacer)
         for i, tamper in enumerate(found_tampers, start=1):
             description, example, load = tamper
             load = str(load).split(" ")[1].split("'")[1]
-            print("#{} description: tamper payload by {}\nexample: '{}'\nload path: {}".format(
+            print("(#{}) description: tamper payload by {}\nexample: '{}'\nload path: {}".format(
                 i, description, example, load
             ))
             if i != len(found_tampers):
