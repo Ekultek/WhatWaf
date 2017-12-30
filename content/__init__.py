@@ -96,7 +96,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
         re.compile("ip address logged", re.I), re.compile("not acceptable", re.I),
         re.compile("access denied", re.I)
     )
-    lib.formatter.info("loading tampering scripts")
+    lib.formatter.info("loading payload tampering scripts")
     tampers = ScriptQueue(
         lib.settings.TAMPERS_DIRECTORY, lib.settings.TAMPERS_IMPORT_TEMPLATE, verbose=verbose
     ).load_scripts()
@@ -104,21 +104,29 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     working_tampers = set()
     max_successful_payloads = 5
     normal_status, _, _ = norm_response
-    lib.formatter.info("running tampering search")
+    lib.formatter.info("running tampering bypass checks")
     for tamper in tampers:
         load = tamper
+        if verbose:
+            lib.formatter.debug("currently tampering with script '{}".format(str(load).split(" ")[1].split(".")[-1]))
         for vector in payloads:
             vector = tamper.tamper(vector)
             if verbose:
                 lib.formatter.payload(vector.strip())
             payloaded_url = "{}{}".format(url, vector)
-            status, html, _ = lib.settings.get_page(payloaded_url, agent=agent, proxy=proxy)
+            status, html, _ = lib.settings.get_page(payloaded_url, agent=agent, proxy=proxy, verbose=verbose)
             if not find_failures(str(html), failed_schema):
                 if verbose:
-                    lib.formatter.debug("response code: {}".format(status))
+                    if status != 0:
+                        lib.formatter.debug("response code: {}".format(status))
+                    else:
+                        lib.formatter.debug("unknown response detected")
                 if status != 404:
                     if status == 200:
                         working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
+            else:
+                if verbose:
+                    lib.formatter.warn("failure found in response content")
             if len(working_tampers) == max_successful_payloads:
                 break
         if len(working_tampers) == max_successful_payloads:
@@ -148,7 +156,7 @@ def detection_main(url, payloads, **kwargs):
     amount_of_products = 0
     detected_protections = set()
 
-    lib.formatter.info("running detection check")
+    lib.formatter.info("running firewall detection checks")
     for item in responses:
         if item is not None:
             status, html, headers = item
@@ -156,6 +164,10 @@ def detection_main(url, payloads, **kwargs):
                 if detection.detect(str(html), status=status, headers=headers) is True:
                     if detection.__product__ != unknown_firewall_name:
                         detected_protections.add(detection.__product__)
+                    elif detection.__product__ == unknown_firewall_name:
+                        # TODO:/ fingerprint firewall and send it
+                        lib.formatter.warn("unknown firewall detected")
+                        return
         else:
             lib.formatter.warn("no response was provided, skipping")
     if len(detected_protections) > 0:
