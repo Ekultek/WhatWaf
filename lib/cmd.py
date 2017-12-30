@@ -37,6 +37,14 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("--force-ssl", dest="forceSSL", action="store_true",
                               help="Force the assignment of HTTPS instead of HTTP while processing")
 
+        encoding_opts = parser.add_argument_group("encoding options",
+                                                  "arguments that control the encoding of payloads")
+        encoding_opts.add_argument("-e", "--encode", dest="encodePayload", nargs=2, metavar=("PAYLOAD", "TAMPER-SCRIPT-LOAD-PATH"),
+                                   help="Encode a provided payload using a provided tamper script")
+        encoding_opts.add_argument("-el", "--encode-list", dest="encodePayloadList", nargs=2, metavar=("PATH", "TAMPER-SCRIPT-LOAD-PATH"),
+                                   help="Encode a file containing payloads (one per line) "
+                                        "by passing the path and load path")
+
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
         misc.add_argument("--verbose", dest="runInVerbose", action="store_true",
@@ -45,10 +53,6 @@ class WhatWafParser(ArgumentParser):
                           help="Hide the banner during the run")
         misc.add_argument("--update", dest="updateWhatWaf", action="store_true",
                           help="Update WhatWaf to the newest development version")
-        misc.add_argument("-e", "--encode", dest="encodePayload", nargs=2, metavar=("PAYLOAD", "TAMPER-SCRIPT-LOAD-PATH"),
-                          help="Encode a provided payload using a provided tamper script")
-        misc.add_argument("-el", "--encode-list", dest="encodePayloadList", nargs=2, metavar=("PATH", "TAMPER-SCRIPT-LOAD-PATH"),
-                          help="Encode a file containing payloads (one per line) by passing the path and load path")
         misc.add_argument("--save", dest="saveEncodedPayloads", metavar="FILENAME",
                           help="Save the encoded payloads into a file")
 
