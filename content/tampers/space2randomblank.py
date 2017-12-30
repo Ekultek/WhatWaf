@@ -2,7 +2,7 @@ import random
 
 
 __example_payload__ = "' AND 1=1 OR 24=25 '"
-__type__ = "chaning the payload spaces to random ASCII blank characters"
+__type__ = "changing the payload spaces to random ASCII blank characters"
 
 
 def tamper(payload, **kwargs):

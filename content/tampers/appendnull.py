@@ -1,5 +1,5 @@
 __example_payload__ = "AND 1=1"
-__type__ = "append a NULL byte to the end of the payload"
+__type__ = "appending a NULL byte to the end of the payload"
 
 
 def tamper(payload, **kwargs):

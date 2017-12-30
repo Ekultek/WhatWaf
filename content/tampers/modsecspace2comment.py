@@ -1,5 +1,5 @@
 __example_payload__ = "SELECT * FROM information_schema.tables"
-__type__ = "obfuscating payload by passing them between comments with obfuscation and changing spaces to comments"
+__type__ = "obfuscating payload by passing it between comments with obfuscation and changing spaces to comments"
 
 
 def tamper(payload, **kwargs):

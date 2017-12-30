@@ -2,7 +2,7 @@ import string
 
 
 __example_payload__ = 'AND 1=1,<script>alert("1,2,3,4,5);</script>'
-__type__ = "enclose brackets and mask an apostrophe around the character in the brackets"
+__type__ = "enclosing brackets and masking an apostrophe around the character in the brackets"
 
 
 def tamper(payload, **kwargs):

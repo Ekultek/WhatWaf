@@ -1,5 +1,5 @@
 __example_payload__ = "'))) AND '1'='1' ((('"
-__type__ = "hide an apostrophe by its UTF equivalent"
+__type__ = "hiding an apostrophe by its UTF equivalent"
 
 
 def tamper(payload, **kwargs):

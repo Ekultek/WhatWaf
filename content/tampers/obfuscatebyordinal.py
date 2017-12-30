@@ -1,5 +1,5 @@
 __example_payload__ = "&;lt'"
-__type__ = "changing the payload into it's ordinal equivalent"
+__type__ = "changing certain characters in the payload into their ordinal equivalent"
 
 
 def tamper(payload, **kwargs):

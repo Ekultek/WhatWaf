@@ -8,7 +8,7 @@ __type__ = "enclosing numbers into brackets"
 def tamper(payload, **kwargs):
     payload = str(payload)
     to_enclose = string.digits
-    if not any(i in payload for i in to_enclose):
+    if not any(i in list(payload) for i in to_enclose):
         return payload
     retval = ""
     for char in payload:
