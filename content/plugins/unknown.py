@@ -13,11 +13,10 @@ def detect(content, **kwargs):
     if status == 200 or "not found" in content.lower():
         return False
     detection_schema = (
-        re.compile("blocked", re.I), re.compile("forbidden", re.I),
-        re.compile("illegal", re.I), re.compile("reported", re.I),
-        re.compile("ip.logged", re.I), re.compile("access.denied", re.I),
+        re.compile("blocked", re.I), re.compile("illegal", re.I),
+        re.compile("reported", re.I), re.compile("ip.logged", re.I),
         re.compile("ip.address.logged", re.I), re.compile(r"not.acceptable"),
-        re.compile("not.authorized", re.I)
+        re.compile("not.authorized", re.I), re.compile(r"unauthorized", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
