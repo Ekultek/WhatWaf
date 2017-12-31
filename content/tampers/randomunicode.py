@@ -11,7 +11,7 @@ def tamper(payload, **kwargs):
     for char in payload:
         modifier = random.choice(identifiers)
         if modifier == 3:
-            retval += "%u%04x" % random.randrange(0x10000)
+            retval += "%u00" + "%04x".upper() % random.randrange(0x10000)
             retval += char
         else:
             retval += char
