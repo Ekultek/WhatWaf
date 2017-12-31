@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.1.11"
+VERSION = "0.1.12"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -41,6 +41,9 @@ PLUGINS_IMPORT_TEMPALTE = "content.plugins.{}"
 
 # directory to do the importing for the tamper scripts
 TAMPERS_IMPORT_TEMPLATE = "content.tampers.{}"
+
+# link to the create a new issue page
+ISSUES_LINK = "https://github.com/Ekultek/WhatWaf/issues/new"
 
 # regex to detect the URL protocol (http or https)
 PROTOCOL_DETECTION = re.compile("http(s)?")
@@ -175,6 +178,8 @@ def configure_request_headers(**kwargs):
         agent = get_random_agent()
     if proxy is not None:
         lib.formatter.info(proxy_msg.format(proxy))
+    if agent is not None:
+        lib.formatter.info("using User-Agent '{}'".format(agent))
     return proxy, agent
 
 
@@ -228,3 +233,24 @@ def auto_assign(url, ssl=False):
             return ''.join(item)
         else:
             return url.strip()
+
+
+def create_fingerprint(url, content, status, headers):
+    if not os.path.exists(UNKNOWN_PROTECTION_FINGERPRINT_PATH):
+        os.mkdir(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
+
+    __replace_http = lambda x: x.split("/")
+    fingerprint = "<!---\nHTTP 1.1\nStatus code: {}\nHTTP headers: {}\n--->\n{}".format(
+        status, headers, content
+    )
+
+    filename = __replace_http(url)[2]
+    if "www" not in filename:
+        filename = "www.{}".format(filename)
+    full_file_path = "{}/{}".format(UNKNOWN_PROTECTION_FINGERPRINT_PATH, filename)
+    with open(full_file_path, "a+") as log:
+        log.write(fingerprint)
+    return full_file_path
+
+
+

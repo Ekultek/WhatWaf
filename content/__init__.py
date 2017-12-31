@@ -91,10 +91,10 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
 
     failed_schema = (
         re.compile("404", re.I), re.compile("captcha", re.I),
-        re.compile("illegal", re.I), re.compile("forbidden", re.I),
-        re.compile("blocked", re.I), re.compile("ip logged", re.I),
-        re.compile("ip address logged", re.I), re.compile("not acceptable", re.I),
-        re.compile("access denied", re.I)
+        re.compile("illegal", re.I), re.compile("blocked", re.I),
+        re.compile("ip.logged", re.I), re.compile("ip.address.logged", re.I),
+        re.compile("not.acceptable", re.I), re.compile("access.denied", re.I),
+        re.compile("forbidden", re.I), re.compile("400", re.I)
     )
     lib.formatter.info("loading payload tampering scripts")
     tampers = ScriptQueue(
@@ -162,16 +162,25 @@ def detection_main(url, payloads, **kwargs):
             status, html, headers = item
             for detection in loaded_plugins:
                 if detection.detect(str(html), status=status, headers=headers) is True:
-                    if detection.__product__ != unknown_firewall_name:
+                    if detection.__product__ == unknown_firewall_name:
+                        lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
+                        path = lib.settings.create_fingerprint(url, html, status, headers)
+                        # TODO:/ auto issue creation?
+                        lib.formatter.info(
+                            "whatwaf has saved a fingerprint of the firewall to '{}' "
+                            "if you know the firewall create an issue on the issue "
+                            "tracker ({})".format(
+                                path, lib.settings.ISSUES_LINK
+                            )
+                        )
+                        return path
+                    else:
                         detected_protections.add(detection.__product__)
-                    elif detection.__product__ == unknown_firewall_name:
-                        # TODO:/ fingerprint firewall and send it
-                        lib.formatter.warn("unknown firewall detected")
-                        return
         else:
             lib.formatter.warn("no response was provided, skipping")
     if len(detected_protections) > 0:
-        amount_of_products += 1
+        if unknown_firewall_name not in detected_protections:
+            amount_of_products += 1
         if len(detected_protections) > 1:
             for i, _ in enumerate(list(detected_protections)):
                 amount_of_products += 1
