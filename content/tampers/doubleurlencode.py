@@ -1,5 +1,8 @@
 import string
-from urllib import quote_plus
+try:
+    from urllib import quote_plus
+except ImportError:
+    from urllib.parse import quote_plus
 
 
 __example_payload__ = "<img src=x onerror=\"input\">"

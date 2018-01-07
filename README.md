@@ -18,15 +18,14 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
 
 # Installation
 
-Installing whatwaf is super easy, all you have to do is the following:
+Installing whatwaf is super easy, whatwaf is compatible with Python2 and Python3, all you have to do is the following:
 
-Have Python 2.7, Python 3.x compatibility is being implemented soon:
 ```
 sudo -s << EOF
 git clone https://github.com/ekultek/whatwaf.git
 cd whatwaf
 chmod +x whatwaf.py
-pip2 install -r requirements.txt
+pip install -r requirements.txt
 ./whatwaf.py --help
 EOF
 ```
