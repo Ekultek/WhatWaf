@@ -28,6 +28,7 @@ cd whatwaf
 chmod +x whatwaf.py
 pip2 install -r requirements.txt
 ./whatwaf.py --help
+EOF
 ```
 
 # Proof of concept
