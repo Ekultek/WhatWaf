@@ -10,8 +10,9 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", None)
     status = kwargs.get("status", None)
     detection_schema = (
+        re.compile(r"\bwebknight\b*", re.I),
         re.compile(r"webknight", re.I),
-        re.compile(r"WebKnight", re.I)
+        re.compile(r"*webknight*", re.I)
     )
     if status is not None:
         if status == 999:
