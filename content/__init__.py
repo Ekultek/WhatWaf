@@ -52,7 +52,7 @@ class DetectionQueue(object):
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
         for i, waf_vector in enumerate(self.payloads):
             primary_url = self.url + "{}".format(waf_vector)
-            secondary_url = strip_url(primary_url)
+            secondary_url = strip_url(self.url)
             secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
             secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
             if self.verbose:
@@ -167,17 +167,18 @@ def detection_main(url, payloads, **kwargs):
     lib.formatter.set_color("gathering normal response to compare against")
     normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
 
-    unknown_firewall_name = "Unknown Firewall"
     amount_of_products = 0
     detected_protections = set()
 
     lib.formatter.info("running firewall detection checks")
+    temp = []
     for item in responses:
         if item is not None:
             status, html, headers = item
             for detection in loaded_plugins:
                 if detection.detect(str(html), status=status, headers=headers) is True:
-                    if detection.__product__ == unknown_firewall_name:
+                    temp.append(detection.__product__)
+                    if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1:
                         lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
                         path = lib.settings.create_fingerprint(url, html, status, headers)
                         # TODO:/ auto issue creation?
@@ -194,7 +195,7 @@ def detection_main(url, payloads, **kwargs):
         else:
             lib.formatter.warn("no response was provided, skipping")
     if len(detected_protections) > 0:
-        if unknown_firewall_name not in detected_protections:
+        if lib.settings.UNKNOWN_FIREWALL_NAME not in detected_protections:
             amount_of_products += 1
         if len(detected_protections) > 1:
             for i, _ in enumerate(list(detected_protections)):
@@ -219,7 +220,8 @@ def detection_main(url, payloads, **kwargs):
         lib.formatter.success("multiple protections identified on target:")
         detected_protections = [item for item in list(detected_protections)]
         for i, protection in enumerate(detected_protections, start=1):
-            lib.formatter.success("#{} '{}'".format(i, protection))
+            if not protection == lib.settings.UNKNOWN_FIREWALL_NAME:
+                lib.formatter.success("#{} '{}'".format(i, protection))
 
         if not skip_bypass_check:
             lib.formatter.info("searching for bypasses")
