@@ -8,9 +8,9 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
  - Ability to detect over 40 different firewalls
  - Ability to try over 20 different tampering techniques
  - Ability to pass your own payloads either from a file, from the terminal, or use the default payloads
- - Default payloads that are guaranteed to produce at least one WAF triggering
+ - Default payloads that _should_ produce at least one WAF triggering
  - Ability to bypass firewalls using both SQLi techniques and cross site scripting techniques
- - Ability to run behind multiple proxy types (`socks4`, `socks5`, `http`, `https` and `Tor`)
+ - Ability to run behind any proxy type that matches this regex:`(socks\d+)?(http(s)?)?://`
  - Ability to use a random user agent, personal user agent, or custom default user agent
  - Auto assign protocol to HTTP or ability to force protocol to HTTPS
  - A built in encoder so you can encode your payloads into the discovered bypasses
@@ -25,6 +25,19 @@ sudo -s << EOF
 git clone https://github.com/ekultek/whatwaf.git
 cd whatwaf
 chmod +x whatwaf.py
+pip install -r requirements.txt
+./whatwaf.py --help
+EOF
+```
+
+You can also run whatwaf in a virtual environment by doing the following:
+```bash
+sudo -s << EOF
+pip install virtualenv
+git clone https://github.com/ekultek/whatwaf.git
+cd whatwaf
+chmod +x whatwaf.py
+virtualenv venv && source venv/bin/activate
 pip install -r requirements.txt
 ./whatwaf.py --help
 EOF
