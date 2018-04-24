@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.1.16"
+VERSION = "0.1.17"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -48,6 +48,9 @@ ISSUES_LINK = "https://github.com/Ekultek/WhatWaf/issues/new"
 # regex to detect the URL protocol (http or https)
 PROTOCOL_DETECTION = re.compile("http(s)?")
 
+# name provided to unknow nfirewalls
+UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
+
 # fingerpritn path for unknown firewalls
 UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/.whatwaf".format(os.path.expanduser("~"))
 
@@ -78,9 +81,13 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
 
 # random home pages to try and get cookies
 RAND_HOMEPAGES = (
-    "index.php", "index.exe", "index.html", "index.py", "index.pl", "index.exe", "phpadmin.php",
-    "home.php", "home.html", "home.py", "home.pl", "home.exe", "phpcmd.exe",
-    "index.phpcmd.exe"
+    "index.php", "index.exe", "index.html", "index.py", "index.pl", "index.exe",
+    "phpadmin.php", "home.php", "home.html", "home.py", "home.pl", "home.exe",
+    "phpcmd.exe","index.phpcmd.exe", "index.html", "index.htm", "index.shtml",
+    "index.php", "index.php5", "index.php5.exe", "index.php4.exe", "index.php4",
+    "index.php3", "index.cgi", "default.html", "default.htm", "home.html", "home.htm",
+    "Index.html", "Index.htm", "Index.shtml", "Index.php", "Index.cgi", "Default.html",
+    "Default.htm", "Home.html", "Home.htm", "placeholder.html"
 )
 
 
