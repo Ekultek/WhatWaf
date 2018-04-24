@@ -1,6 +1,7 @@
 import os
 import re
 import importlib
+import random
 
 import lib.settings
 import lib.formatter
@@ -48,19 +49,32 @@ class DetectionQueue(object):
 
     def get_response(self):
         response_retval = []
+        strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
         for i, waf_vector in enumerate(self.payloads):
-            url = self.url + "{}".format(waf_vector)
+            primary_url = self.url + "{}".format(waf_vector)
+            secondary_url = strip_url(primary_url)
+            secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
+            secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
             if self.verbose:
                 lib.formatter.payload(waf_vector.strip())
             try:
-                response_retval.append((lib.settings.get_page(url, agent=self.agent, proxy=self.proxy)))
                 if self.verbose:
                     lib.formatter.debug(
-                        "response code: {}".format(response_retval[i][0])
+                        "trying: '{}'".format(primary_url)
                     )
+                response_retval.append((lib.settings.get_page(primary_url, agent=self.agent, proxy=self.proxy)))
+                if self.verbose:
+                    lib.formatter.debug(
+                        "trying: {}".format(secondary_url)
+                    )
+                response_retval.append((lib.settings.get_page(secondary_url, agent=self.agent, proxy=self.proxy
+                )))
+
             except Exception as e:
                 if "ECONNRESET" in str(e):
-                    lib.formatter.warn("possible network level firewall detected, received an aborted connection")
+                    lib.formatter.warn(
+                        "possible network level firewall detected (hardware), received an aborted connection"
+                    )
                     response_retval.append(None)
                 else:
                     lib.formatter.error(
@@ -141,6 +155,7 @@ def detection_main(url, payloads, **kwargs):
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", lib.settings.DEFAULT_USER_AGENT)
     verbose = kwargs.get("verbose", False)
+    skip_bypass_check = kwargs.get("skip_bypass_check", False)
 
     lib.formatter.info("loading firewall detection scripts")
     loaded_plugins = ScriptQueue(
@@ -189,10 +204,13 @@ def detection_main(url, payloads, **kwargs):
         lib.formatter.success(
             "detected website protection identified as '{}', searching for bypasses".format(detected_protections)
         )
-        found_working_tampers = get_working_tampers(
-            url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
-        )
-        lib.settings.produce_results(found_working_tampers)
+        if not skip_bypass_check:
+            found_working_tampers = get_working_tampers(
+                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
+            )
+            lib.settings.produce_results(found_working_tampers)
+        else:
+            lib.formatter.warn("skipping bypass checks")
 
     elif amount_of_products == 0:
         lib.formatter.success("no protection identified on target")
@@ -203,8 +221,11 @@ def detection_main(url, payloads, **kwargs):
         for i, protection in enumerate(detected_protections, start=1):
             lib.formatter.success("#{} '{}'".format(i, protection))
 
-        lib.formatter.info("searching for bypasses")
-        found_working_tampers = get_working_tampers(
-            url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
-        )
-        lib.settings.produce_results(found_working_tampers)
+        if not skip_bypass_check:
+            lib.formatter.info("searching for bypasses")
+            found_working_tampers = get_working_tampers(
+                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
+            )
+            lib.settings.produce_results(found_working_tampers)
+        else:
+            lib.formatter.warn("skipping bypass tests")
