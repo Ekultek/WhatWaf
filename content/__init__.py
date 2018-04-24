@@ -5,6 +5,7 @@ import random
 
 import lib.settings
 import lib.formatter
+import lib.firewall_found
 
 
 class ScriptQueue(object):
@@ -157,22 +158,23 @@ def detection_main(url, payloads, **kwargs):
     verbose = kwargs.get("verbose", False)
     skip_bypass_check = kwargs.get("skip_bypass_check", False)
 
-    lib.formatter.info("loading firewall detection scripts")
-    loaded_plugins = ScriptQueue(
-        lib.settings.PLUGINS_DIRECTORY, lib.settings.PLUGINS_IMPORT_TEMPALTE, verbose=verbose
-    ).load_scripts()
-
-    lib.formatter.set_color("gathering HTTP responses")
+    lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
-    lib.formatter.set_color("gathering normal response to compare against")
+    lib.formatter.info("gathering normal response to compare against")
     normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
 
     amount_of_products = 0
     detected_protections = set()
 
+    lib.formatter.info("loading firewall detection scripts")
+    loaded_plugins = ScriptQueue(
+        lib.settings.PLUGINS_DIRECTORY, lib.settings.PLUGINS_IMPORT_TEMPALTE, verbose=verbose
+    ).load_scripts()
+
     lib.formatter.info("running firewall detection checks")
     temp = []
     for item in responses:
+        item = item if item is not None else normal_response
         if item is not None:
             status, html, headers = item
             for detection in loaded_plugins:
@@ -181,15 +183,7 @@ def detection_main(url, payloads, **kwargs):
                     if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1:
                         lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
                         path = lib.settings.create_fingerprint(url, html, status, headers)
-                        # TODO:/ auto issue creation?
-                        lib.formatter.info(
-                            "whatwaf has saved a fingerprint of the firewall to '{}' "
-                            "if you know the firewall create an issue on the issue "
-                            "tracker ({})".format(
-                                path, lib.settings.ISSUES_LINK
-                            )
-                        )
-                        return path
+                        lib.firewall_found.request_firewall_issue_creation(path)
                     else:
                         detected_protections.add(detection.__product__)
         else:
