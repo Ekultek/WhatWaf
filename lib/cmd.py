@@ -55,6 +55,8 @@ class WhatWafParser(ArgumentParser):
                           help="Update WhatWaf to the newest development version")
         misc.add_argument("--save", dest="saveEncodedPayloads", metavar="FILENAME",
                           help="Save the encoded payloads into a file")
+        misc.add_argument("--skip", dest="skipBypassChecks", action="store_true",
+                          help="Skip checking for bypasses and just identify the firewall")
 
         opts = parser.parse_args()
 
