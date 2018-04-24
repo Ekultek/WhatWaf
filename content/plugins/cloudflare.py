@@ -23,5 +23,7 @@ def detect(content, **kwargs):
             return True
         if detection.search(headers.get(HTTP_HEADER.COOKIE, "")) is not None:
             return True
+        if detection.search(headers.get(HTTP_HEADER.SET_COOKIE, "")) is not None:
+            return True
         if detection.search(str(headers)) is not None:
             return True
