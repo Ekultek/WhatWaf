@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.1.15"
+VERSION = "0.1.16"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -57,7 +57,7 @@ DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
 )
 
 # payloads for detecting the WAF, at least one of
-# these payloads should trigger the WAF and provide
+# these payloads `should` trigger the WAF and provide
 # us with the information we need to identify what
 # the WAF is, along with the information we will need
 # to identify what tampering method we should use
@@ -68,12 +68,19 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
     (
         " AND 1=1 UNION ALL SELECT 1,NULL,'<script>alert(\"XSS\")</script>',"
         "table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC "
-        "xp_cmdshell('cat ../../../etc/passwd')#"
+        "xp_cmdshell('cat ../../../etc/passwd')#"  # thank you sqlmap
     ),
     '<img src="javascript:alert(\'XSS\');">',
     "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
     "' )) AND 1=1 (( ' -- rgzd",
     ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '"
+)
+
+# random home pages to try and get cookies
+RAND_HOMEPAGES = (
+    "index.php", "index.exe", "index.html", "index.py", "index.pl", "index.exe", "phpadmin.php",
+    "home.php", "home.html", "home.py", "home.pl", "home.exe", "phpcmd.exe",
+    "index.phpcmd.exe"
 )
 
 
