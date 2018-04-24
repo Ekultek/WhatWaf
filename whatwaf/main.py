@@ -85,6 +85,16 @@ def main():
     if not opt.hideBanner:
         print(BANNER)
 
+    # there is an extra dependency that you need in order
+    # for requests to run behind socks proxies, we'll just
+    # do a little check to make sure you have it installed
+    if opt.runBehindTor:
+        try:
+            import socks
+        except ImportError:
+            error("install pysocks `pip install pysocks` to run behind Tor")
+            sys.exit(1)
+
     proxy, agent = configure_request_headers(
         random_agent=opt.useRandomAgent, agent=opt.usePersonalAgent,
         proxy=opt.runBehindProxy, tor=opt.runBehindTor
@@ -106,7 +116,7 @@ def main():
             info("running single web application '{}'".format(url_to_use))
             detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
-                verbose=opt.runInVerbose
+                verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks
             )
 
         elif opt.runMultipleWebsites:
