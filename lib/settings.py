@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -79,7 +79,8 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
     '<img src="javascript:alert(\'XSS\');">',
     "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
     "' )) AND 1=1 (( ' -- rgzd",
-    ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '"
+    ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '",
+    "' OR '1'=1 '", "OR 1=1"
 )
 
 # random home pages to try and get cookies
