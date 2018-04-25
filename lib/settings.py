@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2.9"
+VERSION = "0.2.10"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -196,6 +196,8 @@ def configure_request_headers(**kwargs):
         agent = get_random_agent()
     if proxy is not None:
         lib.formatter.info(proxy_msg.format(proxy))
+    else:
+        lib.formatter.warn("it is highly advised to use a proxy when using WhatWaf")
     if agent is not None:
         lib.formatter.info("using User-Agent '{}'".format(agent))
     return proxy, agent
