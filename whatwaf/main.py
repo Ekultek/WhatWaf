@@ -88,11 +88,15 @@ def main():
     # there is an extra dependency that you need in order
     # for requests to run behind socks proxies, we'll just
     # do a little check to make sure you have it installed
-    if opt.runBehindTor:
+    if opt.runBehindTor or "socks" in opt.runBehindProxy:
         try:
             import socks
         except ImportError:
-            error("install pysocks `pip install pysocks` to run behind Tor")
+            # if you don't we will go ahead and exit the system with an error message
+            error(
+                "to run behind socks proxies (like Tor) you need to install pysocks `pip install pysocks`, "
+                "otherwise use a different proxy protocol"
+            )
             sys.exit(1)
 
     proxy, agent = configure_request_headers(
