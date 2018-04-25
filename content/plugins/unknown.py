@@ -19,7 +19,6 @@ def detect(content, **kwargs):
         re.compile("not.authorized", re.I), re.compile(r"unauthorized", re.I),
     )
     for detection in detection_schema:
-        print "hello"
         if detection.search(content) is not None:
             return True
         if detection.search(str(headers)) is not None:

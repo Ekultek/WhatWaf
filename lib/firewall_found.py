@@ -24,6 +24,9 @@ def create_identifier(data):
 
 
 def get_token(path):
+    """
+    we know what this is for
+    """
     with open(path) as _token:
         data = _token.read()
         token, n = data.split(":")
@@ -33,6 +36,9 @@ def get_token(path):
 
 
 def ensure_no_issue(param, url="https://github.com/Ekultek/WhatWaf/issues"):
+    """
+    ensure that there is not already an issue that has been created for yours
+    """
     req = requests.get(url)
     param = re.compile(param)
     if param.search(req.content) is not None:
@@ -63,6 +69,9 @@ def find_url(params, search="https://github.com/ekultek/whatwaf/issues"):
 
 
 def request_firewall_issue_creation(path):
+    """
+    request the creation and create the issue
+    """
     question = raw_input(
         "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
     )
@@ -83,7 +92,7 @@ def request_firewall_issue_creation(path):
             "title": issue_title,
             "body": "WhatWaf version: `{}`\n"
                     "Running context: `{}`\n"
-                    "Fingerprint:\n```\n{}\n```".format(
+                    "Fingerprint:\n```\n<!---\n{}\n```".format(
                 lib.settings.VERSION, __hide_url(), full_fingerprint
             )
         }

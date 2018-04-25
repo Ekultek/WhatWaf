@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2"
+VERSION = "0.2.1"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -265,8 +265,11 @@ def create_fingerprint(url, content, status, headers):
     if "www" not in filename:
         filename = "www.{}".format(filename)
     full_file_path = "{}/{}".format(UNKNOWN_PROTECTION_FINGERPRINT_PATH, filename)
-    with open(full_file_path, "a+") as log:
-        log.write(fingerprint)
+    if not os.path.exists(full_file_path):
+        with open(full_file_path, "a+") as log:
+            log.write(fingerprint)
+    else:
+        lib.formatter.warn("fingerprint has already been created")
     return full_file_path
 
 
