@@ -17,6 +17,7 @@ def detect(content, **kwargs):
         re.compile("reported", re.I), re.compile("ip.logged", re.I),
         re.compile("ip.address.logged", re.I), re.compile(r"not.acceptable"),
         re.compile("not.authorized", re.I), re.compile(r"unauthorized", re.I),
+        re.compile(r"access.forbidden", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:

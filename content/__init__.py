@@ -211,7 +211,9 @@ def detection_main(url, payloads, **kwargs):
         lib.formatter.success("no protection identified on target")
 
     else:
-        lib.formatter.success("multiple protections identified on target:")
+        lib.formatter.success("multiple protections identified on target{}:".format(
+            " (unknown firewall will not be displayed)" if lib.settings.UNKNOWN_FIREWALL_NAME in detected_protections else ""
+        ))
         detected_protections = [item for item in list(detected_protections)]
         for i, protection in enumerate(detected_protections, start=1):
             if not protection == lib.settings.UNKNOWN_FIREWALL_NAME:
