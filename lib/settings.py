@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2.5"
+VERSION = "0.2.6"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -254,6 +254,9 @@ def auto_assign(url, ssl=False):
 
 
 def create_fingerprint(url, content, status, headers):
+    """
+    create the unknown firewall fingerprint file
+    """
     if not os.path.exists(UNKNOWN_PROTECTION_FINGERPRINT_PATH):
         os.mkdir(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
 
