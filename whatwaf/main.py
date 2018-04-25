@@ -88,7 +88,7 @@ def main():
     # there is an extra dependency that you need in order
     # for requests to run behind socks proxies, we'll just
     # do a little check to make sure you have it installed
-    if opt.runBehindTor or "socks" in opt.runBehindProxy:
+    if opt.runBehindTor or opt.runBehindProxy is not None and "socks" in opt.runBehindProxy:
         try:
             import socks
         except ImportError:
