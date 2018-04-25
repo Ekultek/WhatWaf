@@ -14,6 +14,7 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
  - Ability to use a random user agent, personal user agent, or custom default user agent
  - Auto assign protocol to HTTP or ability to force protocol to HTTPS
  - A built in encoder so you can encode your payloads into the discovered bypasses
+ - Automatic issue creation if an unknown firewall is discovered
  - More to come...
 
 # Installation
