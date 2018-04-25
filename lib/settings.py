@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2.4"
+VERSION = "0.2.5"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -37,7 +37,7 @@ PLUGINS_DIRECTORY = "{}/content/plugins".format(os.getcwd())
 TAMPERS_DIRECTORY = "{}/content/tampers".format(os.getcwd())
 
 # directory to do the importing for the WAF scripts
-PLUGINS_IMPORT_TEMPALTE = "content.plugins.{}"
+PLUGINS_IMPORT_TEMPLATE = "content.plugins.{}"
 
 # directory to do the importing for the tamper scripts
 TAMPERS_IMPORT_TEMPLATE = "content.tampers.{}"

@@ -168,7 +168,7 @@ def detection_main(url, payloads, **kwargs):
 
     lib.formatter.info("loading firewall detection scripts")
     loaded_plugins = ScriptQueue(
-        lib.settings.PLUGINS_DIRECTORY, lib.settings.PLUGINS_IMPORT_TEMPALTE, verbose=verbose
+        lib.settings.PLUGINS_DIRECTORY, lib.settings.PLUGINS_IMPORT_TEMPLATE, verbose=verbose
     ).load_scripts()
 
     lib.formatter.info("running firewall detection checks")
