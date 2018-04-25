@@ -76,8 +76,10 @@ def request_firewall_issue_creation(path):
         "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
     )
     if question.lower().startswith("y"):
+        # gonna read a chunk of it instead of one line
+        chunk = 4096
         with open(path) as firewall_data:
-            identifier = create_identifier(firewall_data.readline())
+            identifier = create_identifier(firewall_data.read(chunk))
             full_fingerprint = firewall_data.read()
             issue_title = "Unknown Firewall ({})".format(identifier)
 
