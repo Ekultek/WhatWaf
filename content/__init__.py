@@ -88,11 +88,17 @@ class DetectionQueue(object):
 
 
 def encode(payload, script):
+    """
+    encode the payload with the provided tamper
+    """
     script = importlib.import_module(script)
     return script.tamper(payload)
 
 
 def find_failures(html, regs):
+    """
+    find failures in the response content
+    """
     for reg in regs:
         if reg.search(html) is not None or html == "" or html is None:
             return True
@@ -100,6 +106,9 @@ def find_failures(html, regs):
 
 
 def get_working_tampers(url, norm_response, payloads, **kwargs):
+    """
+    gather working tamper scripts
+    """
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", None)
     verbose = kwargs.get("verbose", False)
