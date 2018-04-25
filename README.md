@@ -21,6 +21,11 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
 
 Installing whatwaf is super easy, whatwaf is compatible with Python2 and Python3, all you have to do is the following:
 
+```bash
+./install.sh
+```
+
+You can also install it manually by running the following:
 ```
 sudo -s << EOF
 git clone https://github.com/ekultek/whatwaf.git
@@ -31,7 +36,7 @@ pip install -r requirements.txt
 EOF
 ```
 
-You can also run whatwaf in a virtual environment by doing the following:
+Or you can run whatwaf in a virtual environment by doing the following (requires `virtualenv` to be installed):
 ```bash
 sudo -s << EOF
 pip install virtualenv
