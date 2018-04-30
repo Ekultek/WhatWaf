@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__product__ = "Apache website protection"
+__product__ = "Apache generic website protection"
 
 
 def detect(content, **kwargs):
