@@ -12,7 +12,7 @@ from lib.settings import (
     configure_request_headers,
     auto_assign,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER,
+    BANNER, ISSUES_LINK
 )
 from lib.formatter import (
     error,
@@ -127,13 +127,20 @@ def main():
             info("reading from '{}'".format(opt.runMultipleWebsites))
             with open(opt.runMultipleWebsites) as urls:
                 for i, url in enumerate(urls, start=1):
-                    url = auto_assign(url, ssl=opt.forceSSL)
+                    url = auto_assign(url.strip(), ssl=opt.forceSSL)
                     info("currently running on site #{} ('{}')".format(i, url))
                     detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
-                        verbose=opt.runInVerbose
+                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks
                     )
                     print("\n\b")
                     time.sleep(0.5)
     except KeyboardInterrupt:
         fatal("user aborted scanning")
+    except Exception as e:
+        fatal(
+            "WhatWaf has caught an unhandled exception with the error message: '{}'. "
+            "You can create an issue here: '{}'".format(
+                str(e), ISSUES_LINK
+            )
+        )

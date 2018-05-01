@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.2.11"
+VERSION = "0.2.12"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -101,41 +101,41 @@ class HTTP_HEADER:
     it's just easier to grab them then to retype them over
     and over again
     """
-    ACCEPT = "Accept"
-    ACCEPT_CHARSET = "Accept-Charset"
-    ACCEPT_ENCODING = "Accept-Encoding"
-    ACCEPT_LANGUAGE = "Accept-Language"
-    AUTHORIZATION = "Authorization"
-    CACHE_CONTROL = "Cache-Control"
-    CONNECTION = "Connection"
-    CONTENT_ENCODING = "Content-Encoding"
-    CONTENT_LENGTH = "Content-Length"
-    CONTENT_RANGE = "Content-Range"
-    CONTENT_TYPE = "Content-Type"
-    COOKIE = "Cookie"
-    EXPIRES = "Expires"
-    HOST = "Host"
-    IF_MODIFIED_SINCE = "If-Modified-Since"
-    LAST_MODIFIED = "Last-Modified"
-    LOCATION = "Location"
-    PRAGMA = "Pragma"
+    ACCEPT              = "Accept"
+    ACCEPT_CHARSET      = "Accept-Charset"
+    ACCEPT_ENCODING     = "Accept-Encoding"
+    ACCEPT_LANGUAGE     = "Accept-Language"
+    AUTHORIZATION       = "Authorization"
+    CACHE_CONTROL       = "Cache-Control"
+    CONNECTION          = "Connection"
+    CONTENT_ENCODING    = "Content-Encoding"
+    CONTENT_LENGTH      = "Content-Length"
+    CONTENT_RANGE       = "Content-Range"
+    CONTENT_TYPE        = "Content-Type"
+    COOKIE              = "Cookie"
+    EXPIRES             = "Expires"
+    HOST                = "Host"
+    IF_MODIFIED_SINCE   = "If-Modified-Since"
+    LAST_MODIFIED       = "Last-Modified"
+    LOCATION            = "Location"
+    PRAGMA              = "Pragma"
     PROXY_AUTHORIZATION = "Proxy-Authorization"
-    PROXY_CONNECTION = "Proxy-Connection"
-    RANGE = "Range"
-    REFERER = "Referer"
-    REFRESH = "Refresh"
-    SERVER = "Server"
-    SET_COOKIE = "Set-Cookie"
-    TRANSFER_ENCODING = "Transfer-Encoding"
-    URI = "URI"
-    USER_AGENT = "User-Agent"
-    VIA = "Via"
-    X_CACHE = "X-Cache"
-    X_POWERED_BY = "X-Powered-By"
-    X_DATA_ORIGIN = "X-Data-Origin"
-    X_FRAME_OPT = "X-Frame-Options"
-    X_FORWARDED_FOR = "X-Forwarded-For"
-    X_SERVER = "X-Server"
+    PROXY_CONNECTION    = "Proxy-Connection"
+    RANGE               = "Range"
+    REFERER             = "Referer"
+    REFRESH             = "Refresh"
+    SERVER              = "Server"
+    SET_COOKIE          = "Set-Cookie"
+    TRANSFER_ENCODING   = "Transfer-Encoding"
+    URI                 = "URI"
+    USER_AGENT          = "User-Agent"
+    VIA                 = "Via"
+    X_CACHE             = "X-Cache"
+    X_POWERED_BY        = "X-Powered-By"
+    X_DATA_ORIGIN       = "X-Data-Origin"
+    X_FRAME_OPT         = "X-Frame-Options"
+    X_FORWARDED_FOR     = "X-Forwarded-For"
+    X_SERVER            = "X-Server"
 
 
 def get_page(url, **kwargs):
@@ -179,6 +179,8 @@ def configure_request_headers(**kwargs):
     tor = kwargs.get("tor", False)
     use_random_agent = kwargs.get("random_agent", False)
 
+    supported_proxies = ("socks5", "socks4", "http", "https")
+
     invalid_msg = "invalid switches detected, switch {} cannot be used in conjunction with switch {}"
     proxy_msg = "running behind proxy '{}'"
 
@@ -195,7 +197,16 @@ def configure_request_headers(**kwargs):
     if use_random_agent:
         agent = get_random_agent()
     if proxy is not None:
-        lib.formatter.info(proxy_msg.format(proxy))
+        if any(item in proxy for item in supported_proxies):
+            lib.formatter.info(proxy_msg.format(proxy))
+        else:
+            lib.formatter.error(
+                "you did not provide a supported proxy protocol, "
+                "supported protocols are '{}'. check your proxy and try again".format(
+                    ", ".join([p for p in supported_proxies])
+                )
+            )
+            exit(1)
     else:
         lib.formatter.warn("it is highly advised to use a proxy when using WhatWaf")
     if agent is not None:
