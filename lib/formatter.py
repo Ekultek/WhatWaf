@@ -7,6 +7,7 @@ def set_color(string, level=None):
         15: "\033[1m\033[32m{}\033[0m",
         20: "\033[32m{}\033[0m",
         30: "\033[1m\033[33m{}\033[0m",
+        35: "\033[33m{}\033[0m",
         40: "\033[1m\033[31m{}\033[0m",
         50: "\033[1m\033[30m{}\033[0m",
         60: "\033[7;31;31m{}\033[0m"
@@ -29,10 +30,15 @@ def debug(string):
     )
 
 
-def warn(string):
-    print(
-        set_color("[WARN] {}".format(string), level=30)
-    )
+def warn(string, minor=False):
+    if not minor:
+        print(
+            set_color("[WARN] {}".format(string), level=30)
+        )
+    else:
+        print(
+            set_color("[WARN] {}".format(string), level=35)
+        )
 
 
 def error(string):

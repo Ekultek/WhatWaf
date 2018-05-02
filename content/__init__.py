@@ -158,6 +158,33 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     return working_tampers
 
 
+def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
+    """
+    verification that there is not protection on the target
+    """
+    matched = 0
+    response = set()
+    norm_status, norm_html, norm_headers = normal_resp
+    payload_status, payload_html, payload_headers = payload_resp
+    for header in norm_headers.keys():
+        try:
+            _ = payload_headers[header]
+            matched += step
+        except:
+            response.add("header values differ when a payload is provided")
+    if norm_status == payload_status:
+        matched += step
+    else:
+        response.add("response status code differs when a payload is provided")
+    if len(response) != 0:
+        if matched <= verified:
+            return response
+        else:
+            return None
+    else:
+        return None
+
+
 def detection_main(url, payloads, **kwargs):
     """
     main detection function
@@ -217,7 +244,17 @@ def detection_main(url, payloads, **kwargs):
             lib.formatter.warn("skipping bypass checks")
 
     elif amount_of_products == 0:
-        lib.formatter.success("no protection identified on target")
+        lib.formatter.warn("no protection identified on target, verifying", minor=True)
+        verification_normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
+        payloaded_url = "{}{}".format(url, lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
+        verification_payloaded_response = lib.settings.get_page(payloaded_url, proxy=proxy, agent=agent)
+        results = check_if_matched(verification_normal_response, verification_payloaded_response)
+        if results is not None:
+            lib.formatter.info("target seems to be behind some kind of protection for the following reasons:\n")
+            for i, item in enumerate(results, start=1):
+                print("[{}] {}".format(i, item))
+        else:
+            lib.formatter.success("no protection identified on target")
 
     else:
         lib.formatter.success("multiple protections identified on target{}:".format(
