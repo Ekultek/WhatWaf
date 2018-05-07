@@ -81,6 +81,7 @@ def request_firewall_issue_creation(path):
         with open(path) as firewall_data:
             identifier = create_identifier(firewall_data.read(chunk))
             full_fingerprint = firewall_data.read()
+            full_fingerprint = full_fingerprint.decode('utf8')
             issue_title = "Unknown Firewall ({})".format(identifier)
 
             def __hide_url(args=sys.argv):
@@ -95,7 +96,7 @@ def request_firewall_issue_creation(path):
             "body": "WhatWaf version: `{}`\n"
                     "Running context: `{}`\n"
                     "Fingerprint:\n```\n<!---\n{}\n```".format(
-                lib.settings.VERSION, __hide_url(), full_fingerprint
+                        lib.settings.VERSION, __hide_url(), full_fingerprint
             )
         }
 
