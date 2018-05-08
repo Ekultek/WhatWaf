@@ -81,7 +81,7 @@ def request_firewall_issue_creation(path):
         with open(path) as firewall_data:
             identifier = create_identifier(firewall_data.read(chunk))
             full_fingerprint = firewall_data.read()
-            full_fingerprint = re.sub(r'[^\x00-\x7F]+', '[UNICODE]', full_fingerprint)
+            # full_fingerprint = re.sub(r'[^\x00-\x7F]+', '[UNICODE]', full_fingerprint)
             issue_title = "Unknown Firewall ({})".format(identifier)
 
             def __hide_url(args=sys.argv):
