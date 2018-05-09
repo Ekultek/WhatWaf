@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.3.5"
+VERSION = "0.3.6"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -80,7 +80,7 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
     "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
     "' )) AND 1=1 (( ' -- rgzd",
     ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '",
-    "' OR '1'=1 '", "OR 1=1"
+    "' OR '1'=1 '", " OR 1=1"
 )
 
 # random home pages to try and get cookies
@@ -275,7 +275,7 @@ def create_fingerprint(url, content, status, headers):
 
     __replace_http = lambda x: x.split("/")
     fingerprint = "<!---\nHTTP 1.1\nStatus code: {}\nHTTP headers: {}\n--->\n{}".format(
-        status, headers, content
+        str(status), str(headers), str(content)
     )
 
     filename = __replace_http(url)[2]
@@ -288,6 +288,3 @@ def create_fingerprint(url, content, status, headers):
     else:
         lib.formatter.warn("fingerprint has already been created")
     return full_file_path
-
-
-
