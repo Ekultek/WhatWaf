@@ -162,6 +162,8 @@ def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
     """
     verification that there is not protection on the target
     """
+    # five seems like a good number for verification status, you can change it
+    # by using the `--verify-num` flag
     matched = 0
     response = set()
     norm_status, norm_html, norm_headers = normal_resp
@@ -193,6 +195,7 @@ def detection_main(url, payloads, **kwargs):
     agent = kwargs.get("agent", lib.settings.DEFAULT_USER_AGENT)
     verbose = kwargs.get("verbose", False)
     skip_bypass_check = kwargs.get("skip_bypass_check", False)
+    verification_number = kwargs.get("verification_number", None)
 
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
@@ -246,14 +249,22 @@ def detection_main(url, payloads, **kwargs):
 
     elif amount_of_products == 0:
         lib.formatter.warn("no protection identified on target, verifying", minor=True)
+        if verification_number is None:
+            verification_number = 5
         verification_normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
         payloaded_url = "{}{}".format(url, lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
         verification_payloaded_response = lib.settings.get_page(payloaded_url, proxy=proxy, agent=agent)
-        results = check_if_matched(verification_normal_response, verification_payloaded_response)
+        results = check_if_matched(
+            verification_normal_response, verification_payloaded_response,
+            verified=verification_number
+        )
         if results is not None:
-            lib.formatter.info("target seems to be behind some kind of protection for the following reasons:\n")
+            data_sep = "-" * 30
+            lib.formatter.info("target seems to be behind some kind of protection for the following reasons:")
+            print(data_sep)
             for i, item in enumerate(results, start=1):
                 print("[{}] {}".format(i, item))
+            print(data_sep)
         else:
             lib.formatter.success("no protection identified on target")
 
