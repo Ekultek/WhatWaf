@@ -120,7 +120,8 @@ def main():
             info("running single web application '{}'".format(url_to_use))
             detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
-                verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks
+                verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                verification_number=opt.verifyNumber
             )
 
         elif opt.runMultipleWebsites:
@@ -131,7 +132,8 @@ def main():
                     info("currently running on site #{} ('{}')".format(i, url))
                     detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
-                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks
+                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                        verification_number=opt.verifyNumber
                     )
                     print("\n\b")
                     time.sleep(0.5)

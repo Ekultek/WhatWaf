@@ -16,7 +16,7 @@ class WhatWafParser(ArgumentParser):
                                               "arguments that have to be passed for the program to run")
         mandatory.add_argument("-u", "--url", dest="runSingleWebsite", metavar="URL",
                                help="Pass a single URL to detect the protection")
-        mandatory.add_argument("-l", "--list", dest="runMultipleWebsites", metavar="PATH",
+        mandatory.add_argument("-l", "--list", "-f", "--file", dest="runMultipleWebsites", metavar="PATH",
                                help="Pass a file containing URL's (one per line) to detect the protection")
 
         req_args = parser.add_argument_group("request arguments",
@@ -57,6 +57,8 @@ class WhatWafParser(ArgumentParser):
                           help="Save the encoded payloads into a file")
         misc.add_argument("--skip", dest="skipBypassChecks", action="store_true",
                           help="Skip checking for bypasses and just identify the firewall")
+        misc.add_argument("--verify-num", dest="verifyNumber", metavar="INT",
+                          help="Change the default amount (5) to verify if there really is not a WAF present")
 
         opts = parser.parse_args()
 
