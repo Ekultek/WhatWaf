@@ -1,6 +1,14 @@
+[![alt text][1.1]][1] [![alt text][6.1]][6]
+
+[1]: https://twitter.com/stay__salty
+[1.1]: http://i.imgur.com/tXSoThF.png
+
+[6]: http://www.github.com/ekultek
+[6.1]: http://i.imgur.com/0o48UoR.png
+
 # WhatWaf?
 
-WhatWaf is an advanced firewall detection tool who's goal is to give you the idea of "There's a WAF?". WhatWaf works by detecting a firewall on a web application, and attempting to detect a bypass (or two) for said firewall, on the specified target.
+WhatWaf is an advanced firewall detection tool who's goal is to give you the idea of "There's a WAF?". WhatWaf works by detecting a firewall on a web application, and attempting to detect a bypass (or two) for said firewall, on the specified target. 
 
 # Features
  - Ability to run on a single URL with the `-u/--url` flag
