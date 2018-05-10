@@ -311,7 +311,7 @@ def detection_main(url, payloads, **kwargs):
             for i, item in enumerate(results, start=1):
                 print("[{}] {}".format(i, item))
             print(data_sep)
-            html, status, headers = verification_payloaded_response
+            status, html, headers = verification_payloaded_response
             path = lib.settings.create_fingerprint(url, html, status, headers)
             lib.firewall_found.request_firewall_issue_creation(path)
         else:

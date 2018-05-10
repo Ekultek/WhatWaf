@@ -86,11 +86,14 @@ def request_firewall_issue_creation(path):
             issue_title = "Unknown Firewall ({})".format(identifier)
 
             def __hide_url(args=sys.argv):
-                url_index = args.index("-u") + 1
-                hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])
-                args.pop(url_index)
-                args.insert(url_index, hidden_url)
-                return ' '.join(args)
+                try:
+                    url_index = args.index("-u") + 1
+                    hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])
+                    args.pop(url_index)
+                    args.insert(url_index, hidden_url)
+                    return ' '.join(args)
+                except:
+                    return ' '.join([item for item in sys.argv])
 
         issue_data = {
             "title": issue_title,
