@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.4.2"
+VERSION = "0.4.3"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -47,6 +47,9 @@ ISSUES_LINK = "https://github.com/Ekultek/WhatWaf/issues/new"
 
 # regex to detect the URL protocol (http or https)
 PROTOCOL_DETECTION = re.compile("http(s)?")
+
+# check if a query is in a URL or not
+URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
 
 # name provided to unknow nfirewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"

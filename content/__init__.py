@@ -237,8 +237,12 @@ def detection_main(url, payloads, **kwargs):
     formatted = kwargs.get("formatted", False)
     tamper_int = kwargs.get("tamper_int", 5)
 
-    if url[-1] != "/":
-        url = url + "/"
+    # we'll check if the URL has a parameter
+    if lib.settings.URL_QUERY_REGEX.search(url) is None:
+        # if it doesn't and there is no '/' at the end we're going to add one
+        # this should take care of some bugs
+        if url[-1] != "/":
+            url = url + "/"
 
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
