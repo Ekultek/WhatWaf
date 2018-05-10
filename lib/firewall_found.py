@@ -78,10 +78,11 @@ def request_firewall_issue_creation(path):
     if question.lower().startswith("y"):
         # gonna read a chunk of it instead of one line
         chunk = 4096
-        with open(path) as firewall_data:
-            identifier = create_identifier(firewall_data.read(chunk))
-            full_fingerprint = firewall_data.read()
-            # full_fingerprint = re.sub(r'[^\x00-\x7F]+', '[UNICODE]', full_fingerprint)
+        with open(path) as data:
+            identifier = create_identifier(data.read(chunk))
+            # gotta seek to the beginning of the file since it's already been read `4096` into it
+            data.seek(0)
+            full_fingerprint = data.read()
             issue_title = "Unknown Firewall ({})".format(identifier)
 
             def __hide_url(args=sys.argv):
@@ -95,7 +96,7 @@ def request_firewall_issue_creation(path):
             "title": issue_title,
             "body": "WhatWaf version: `{}`\n"
                     "Running context: `{}`\n"
-                    "Fingerprint:\n```\n<!---\n{}\n```".format(
+                    "Fingerprint:\n```\n{}\n```".format(
                         lib.settings.VERSION, __hide_url(), full_fingerprint
             )
         }
@@ -120,4 +121,3 @@ def request_firewall_issue_creation(path):
             lib.formatter.error(
                 "someone has already sent in this firewalls fingerprint here: {}".format(find_url(identifier))
             )
-
