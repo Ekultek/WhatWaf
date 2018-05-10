@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import importlib
 import random
 
@@ -112,6 +113,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", None)
     verbose = kwargs.get("verbose", False)
+    max_successful_payloads = kwargs.get("tamper_int", 5)
 
     failed_schema = (
         re.compile("404", re.I), re.compile("captcha", re.I),
@@ -125,8 +127,14 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
         lib.settings.TAMPERS_DIRECTORY, lib.settings.TAMPERS_IMPORT_TEMPLATE, verbose=verbose
     ).load_scripts()
 
+    if max_successful_payloads > len(tampers):
+        lib.formatter.warn(
+            "the amount of tampers provided is higher than the amount of tampers available, "
+            "ALL tampers will be tried (slow!)"
+        )
+        max_successful_payloads = len(tampers)
+
     working_tampers = set()
-    max_successful_payloads = 5
     normal_status, _, _ = norm_response
     lib.formatter.info("running tampering bypass checks")
     for tamper in tampers:
@@ -187,6 +195,36 @@ def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
         return None
 
 
+def dictify_output(url, firewalls, tampers):
+    """
+    send the output into a JSON format and return the JSON format
+    """
+    data_sep = "-" * 30
+    lib.formatter.info("sending output to JSON format")
+    retval = {"url": url}
+    if isinstance(firewalls, list):
+        retval["identified firewall"] = [item for item in firewalls]
+    elif isinstance(firewalls, str):
+        retval["identified firewall"] = firewalls
+        retval["is protected"] = True
+    else:
+        retval["identified firewall"] = None
+        retval["is protected"] = False
+
+    if len(tampers) != 0:
+        retval["apparent working tampers"] = []
+        for item in tampers:
+            _, _, tamper_script = item
+            to_append = str(tamper_script).split(" ")[1].replace("'", "")
+            retval["apparent working tampers"].append(to_append)
+    else:
+        retval["apparent working tampers"] = None
+
+    jsonified = json.dumps(retval, indent=4, sort_keys=True)
+    print("{}\n{}\n{}".format(data_sep, jsonified, data_sep))
+    return jsonified
+
+
 def detection_main(url, payloads, **kwargs):
     """
     main detection function
@@ -196,6 +234,8 @@ def detection_main(url, payloads, **kwargs):
     verbose = kwargs.get("verbose", False)
     skip_bypass_check = kwargs.get("skip_bypass_check", False)
     verification_number = kwargs.get("verification_number", None)
+    formatted = kwargs.get("formatted", False)
+    tamper_int = kwargs.get("tamper_int", 5)
 
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
@@ -241,11 +281,17 @@ def detection_main(url, payloads, **kwargs):
         )
         if not skip_bypass_check:
             found_working_tampers = get_working_tampers(
-                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
+                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
+                tamper_int=int(tamper_int)
             )
-            lib.settings.produce_results(found_working_tampers)
+            if not formatted:
+                lib.settings.produce_results(found_working_tampers)
+            else:
+                return dictify_output(url, detected_protections, found_working_tampers)
         else:
             lib.formatter.warn("skipping bypass checks")
+            if formatted:
+                return dictify_output(url, detected_protections, [])
 
     elif amount_of_products == 0:
         lib.formatter.warn("no protection identified on target, verifying", minor=True)
@@ -265,6 +311,9 @@ def detection_main(url, payloads, **kwargs):
             for i, item in enumerate(results, start=1):
                 print("[{}] {}".format(i, item))
             print(data_sep)
+            html, status, headers = verification_payloaded_response
+            path = lib.settings.create_fingerprint(url, html, status, headers)
+            lib.firewall_found.request_firewall_issue_creation(path)
         else:
             lib.formatter.success("no protection identified on target")
 
@@ -280,8 +329,14 @@ def detection_main(url, payloads, **kwargs):
         if not skip_bypass_check:
             lib.formatter.info("searching for bypasses")
             found_working_tampers = get_working_tampers(
-                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose
+                url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
+                tamper_int=int(tamper_int)
             )
-            lib.settings.produce_results(found_working_tampers)
+            if not formatted:
+                lib.settings.produce_results(found_working_tampers)
+            else:
+                return dictify_output(url, detected_protections, found_working_tampers)
         else:
             lib.formatter.warn("skipping bypass tests")
+            if formatted:
+                return dictify_output(url, detected_protections, [])

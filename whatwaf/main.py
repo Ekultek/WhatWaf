@@ -18,6 +18,7 @@ from lib.formatter import (
     error,
     info,
     fatal,
+    warn,
     success
 )
 
@@ -85,6 +86,12 @@ def main():
     if not opt.hideBanner:
         print(BANNER)
 
+    if opt.skipBypassChecks and opt.amountOfTampersToDisplay is not None:
+        warn(
+            "you've chosen to skip bypass checks and chosen an amount of tamper to display, tampers will be skipped",
+            minor=True
+        )
+
     # there is an extra dependency that you need in order
     # for requests to run behind socks proxies, we'll just
     # do a little check to make sure you have it installed
@@ -121,7 +128,8 @@ def main():
             detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                verification_number=opt.verifyNumber
+                verification_number=opt.verifyNumber, formatted=opt.sendToJSON,
+                tamper_int=opt.amountOfTampersToDisplay
             )
 
         elif opt.runMultipleWebsites:
@@ -133,7 +141,8 @@ def main():
                     detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
                         verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                        verification_number=opt.verifyNumber
+                        verification_number=opt.verifyNumber, formatted=opt.sendToJSON,
+                        tamper_int=opt.amountOfTampersToDisplay
                     )
                     print("\n\b")
                     time.sleep(0.5)

@@ -45,6 +45,13 @@ class WhatWafParser(ArgumentParser):
                                    help="Encode a file containing payloads (one per line) "
                                         "by passing the path and load path")
 
+        output_opts = parser.add_argument_group("output options",
+                                                "arguments that control how WhatWaf handles output")
+        output_opts.add_argument("-J", "--json", action="store_true", dest="sendToJSON",
+                                 help="Send the output to a JSON format")
+        output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay",
+                                 help="Control the amount of tampers that are displayed (default is 5)")
+
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
         misc.add_argument("--verbose", dest="runInVerbose", action="store_true",
