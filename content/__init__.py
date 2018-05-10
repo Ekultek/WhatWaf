@@ -237,6 +237,9 @@ def detection_main(url, payloads, **kwargs):
     formatted = kwargs.get("formatted", False)
     tamper_int = kwargs.get("tamper_int", 5)
 
+    if url[-1] != "/":
+        url = url + "/"
+
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
     lib.formatter.info("gathering normal response to compare against")
@@ -282,7 +285,7 @@ def detection_main(url, payloads, **kwargs):
         if not skip_bypass_check:
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
-                tamper_int=int(tamper_int)
+                tamper_int=tamper_int
             )
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
