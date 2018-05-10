@@ -1,4 +1,4 @@
-[![alt text][1.1]][1] [![alt text][6.1]][6]
+<!--[![alt text][1.1]][1] [![alt text][6.1]][6]-->
 
 [1]: https://twitter.com/stay__salty
 [1.1]: http://i.imgur.com/tXSoThF.png
@@ -10,6 +10,19 @@
 
 WhatWaf is an advanced firewall detection tool who's goal is to give you the idea of "There's a WAF?". WhatWaf works by detecting a firewall on a web application, and attempting to detect a bypass (or two) for said firewall, on the specified target. 
 
+# Helpful links
+ - Create an [issue](https://github.com/Ekultek/WhatWaf/issues/new)
+ - Read the [manual](https://github.com/Ekultek/WhatWaf/wiki/Functionality)
+ - [WhatWafs Features](https://github.com/Ekultek/WhatWaf#features)
+ - [Installing WhatWaf](https://github.com/Ekultek/WhatWaf#installation)
+ - PoC
+   - [Demo video](https://github.com/Ekultek/WhatWaf#demo-video)
+   - [Proof of Concept images](https://github.com/Ekultek/WhatWaf#proof-of-concept)
+ - [Get involved](https://github.com/Ekultek/WhatWaf#get-involved)
+ - Follow me on [![alt text][1.1]][1]
+ - Follow me on [![alt text][6.1]][6]
+ ---
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 # Features
  - Ability to run on a single URL with the `-u/--url` flag
  - Ability to run through a list of URL's with the `-l/--list` flag
