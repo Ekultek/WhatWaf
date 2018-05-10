@@ -49,7 +49,7 @@ class WhatWafParser(ArgumentParser):
                                                 "arguments that control how WhatWaf handles output")
         output_opts.add_argument("-J", "--json", action="store_true", dest="sendToJSON",
                                  help="Send the output to a JSON format")
-        output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay",
+        output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int,
                                  help="Control the amount of tampers that are displayed (default is 5)")
 
         misc = parser.add_argument_group("misc arguments",

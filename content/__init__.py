@@ -312,8 +312,14 @@ def detection_main(url, payloads, **kwargs):
                 print("[{}] {}".format(i, item))
             print(data_sep)
             status, html, headers = verification_payloaded_response
-            path = lib.settings.create_fingerprint(url, html, status, headers)
-            lib.firewall_found.request_firewall_issue_creation(path)
+            if status != 0:
+                path = lib.settings.create_fingerprint(url, html, status, headers)
+                lib.firewall_found.request_firewall_issue_creation(path)
+            else:
+                lib.formatter.warn(
+                    "status code returned as `0` meaning that there is no content in the webpage, "
+                    "issue will not be created", minor=True
+                )
         else:
             lib.formatter.success("no protection identified on target")
 
@@ -330,7 +336,7 @@ def detection_main(url, payloads, **kwargs):
             lib.formatter.info("searching for bypasses")
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
-                tamper_int=int(tamper_int)
+                tamper_int=tamper_int
             )
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
