@@ -11,6 +11,7 @@
  - Auto assign protocol to HTTP or ability to force protocol to HTTPS
  - A built in encoder so you can encode your payloads into the discovered bypasses
  - Automatic issue creation if an unknown firewall is discovered
+ - Ability to send output to a JSON, CSV, or YAML file
  - More to come...
 
 # Installation
