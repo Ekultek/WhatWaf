@@ -86,6 +86,23 @@ def main():
     if not opt.hideBanner:
         print(BANNER)
 
+    if opt.formatOutput:
+        format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
+        amount_used = 0
+        for item in format_opts:
+            if item is True:
+                amount_used += 1
+        if amount_used > 1:
+            warn(
+                "multiple file formats have been detected, there is a high probability that this will cause "
+                "issues while saving file information. please use only one format at a time"
+            )
+        elif amount_used == 0:
+            warn(
+                "output will not be saved to a file as no file format was provided. to save output to file "
+                "pass one of the file format flags (IE `-J` for JSON format)", minor=True
+            )
+
     if opt.skipBypassChecks and opt.amountOfTampersToDisplay is not None:
         warn(
             "you've chosen to skip bypass checks and chosen an amount of tamper to display, tampers will be skipped",
@@ -128,8 +145,9 @@ def main():
             detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                verification_number=opt.verifyNumber, formatted=opt.sendToJSON,
-                tamper_int=opt.amountOfTampersToDisplay
+                verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV
             )
 
         elif opt.runMultipleWebsites:
@@ -141,8 +159,9 @@ def main():
                     detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
                         verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                        verification_number=opt.verifyNumber, formatted=opt.sendToJSON,
-                        tamper_int=opt.amountOfTampersToDisplay
+                        verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                        tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV
                     )
                     print("\n\b")
                     time.sleep(0.5)

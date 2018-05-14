@@ -47,8 +47,14 @@ class WhatWafParser(ArgumentParser):
 
         output_opts = parser.add_argument_group("output options",
                                                 "arguments that control how WhatWaf handles output")
+        output_opts.add_argument("-F", "--format", action="store_true", dest="formatOutput",
+                                 help="Format the output into a dict and display it")
         output_opts.add_argument("-J", "--json", action="store_true", dest="sendToJSON",
                                  help="Send the output to a JSON format")
+        output_opts.add_argument("-Y", "--yaml", action="store_true", dest="sendToYAML",
+                                 help="Send the output to a YAML file")
+        output_opts.add_argument("-C", "--csv", action="store_true", dest="sendToCSV",
+                                 help="Send the output to a CSV file")
         output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int,
                                  help="Control the amount of tampers that are displayed (default is 5)")
 

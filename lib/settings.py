@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import json
 import random
 import string
 import platform
@@ -11,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.4.5"
+VERSION = "0.5"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -54,8 +55,20 @@ URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
 # name provided to unknow nfirewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
 
-# fingerpritn path for unknown firewalls
-UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/.whatwaf".format(os.path.expanduser("~"))
+# path to our home directory
+HOME = "{}/.whatwaf".format(os.path.expanduser("~"))
+
+# fingerprint path for unknown firewalls
+UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/fingerprints".format(HOME)
+
+# JSON data file path
+JSON_FILE_PATH = "{}/json_output".format(HOME)
+
+# YAML data file path
+YAML_FILE_PATH = "{}/yaml_output".format(HOME)
+
+# CSV data file path
+CSV_FILE_PATH = "{}/csv_output".format(HOME)
 
 # request token path
 TOKEN_PATH = "{}/content/files/auth.key".format(os.getcwd())
@@ -211,7 +224,10 @@ def configure_request_headers(**kwargs):
             )
             exit(1)
     else:
-        lib.formatter.warn("it is highly advised to use a proxy when using WhatWaf", minor=True)
+        lib.formatter.warn(
+            "it is highly advised to use a proxy when using WhatWaf. do so by passing the proxy flag "
+            "(IE `--proxy http://127.0.0.1:9050`)", minor=True
+        )
     if agent is not None:
         lib.formatter.info("using User-Agent '{}'".format(agent))
     return proxy, agent
@@ -238,13 +254,20 @@ def produce_results(found_tampers):
         lib.formatter.warn("no valid bypasses discovered with provided payloads")
 
 
-def random_string(acceptable=string.ascii_letters, length=5):
+def random_string(acceptable=string.ascii_letters, length=5, use_json=False, use_yaml=False, use_csv=False):
     """
     create a random string for some of the tamper scripts that
     need a random string in order to work properly
     """
     random_chars = [random.choice(acceptable) for _ in range(length)]
-    return ''.join(random_chars)
+    if use_json:
+        return "{}.json".format(''.join(random_chars))
+    elif use_yaml:
+        return "{}.yaml".format(''.join(random_chars))
+    elif use_csv:
+        return "{}.csv".format(''.join(random_chars))
+    else:
+        return ''.join(random_chars)
 
 
 def auto_assign(url, ssl=False):
@@ -274,7 +297,7 @@ def create_fingerprint(url, content, status, headers):
     create the unknown firewall fingerprint file
     """
     if not os.path.exists(UNKNOWN_PROTECTION_FINGERPRINT_PATH):
-        os.mkdir(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
+        os.makedirs(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
 
     __replace_http = lambda x: x.split("/")
     fingerprint = "<!---\nHTTP 1.1\nStatus code: {}\nHTTP headers: {}\n--->\n{}".format(
@@ -291,3 +314,50 @@ def create_fingerprint(url, content, status, headers):
     else:
         lib.formatter.warn("fingerprint has already been created")
     return full_file_path
+
+
+def write_to_file(filename, path, data, write_yaml=False, write_json=False, write_csv=False):
+    """
+    write the data to a file
+    """
+    full_path = "{}/{}".format(path, filename)
+
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if write_json and not write_yaml and not write_csv:
+        with open(full_path, "a+") as _json:
+            _json_data = json.loads(data)
+            json.dump(_json_data, _json, sort_keys=True, indent=4)
+    elif write_yaml and not write_json and not write_csv:
+        try:
+            # there is an extra dependency that needs to be installed for you to save to YAML
+            # we'll check if you have it or not
+            import yaml
+
+            with open(full_path, "a+") as _yaml:
+                _yaml_data = yaml.load(data)
+                yaml.dump(_yaml_data, _yaml, default_flow_style=False)
+        except ImportError:
+            # if you don't we'll just skip the saving and warn you
+            lib.formatter.warn(
+                "you do not have the needed dependency to save YAML files, to install the dependency run "
+                "`pip install pyyaml`, skipping file writing"
+            )
+            return None
+    elif write_csv and not write_json and not write_yaml:
+        import csv
+
+        _json_data = json.loads(data)
+        csv_data = [
+            ["url", "is_protected", "protection", "working_tampers"],
+            [
+                _json_data["url"], _json_data["is protected"],
+                _json_data["identified firewall"] if _json_data["identified firewall"] is not None else "None",
+                _json_data["apparent working tampers"] if _json_data["apparent working tampers"] is not None else "None"
+            ]
+        ]
+        with open(full_path, "a+") as _csv:
+            writer = csv.writer(_csv)
+            writer.writerows(csv_data)
+    return full_path
+

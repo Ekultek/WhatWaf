@@ -236,6 +236,12 @@ def detection_main(url, payloads, **kwargs):
     verification_number = kwargs.get("verification_number", None)
     formatted = kwargs.get("formatted", False)
     tamper_int = kwargs.get("tamper_int", 5)
+    use_yaml = kwargs.get("use_yaml", False)
+    use_json = kwargs.get("use_json", False)
+    use_csv = kwargs.get("use_csv", False)
+
+    filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
+    filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
 
     # we'll check if the URL has a parameter
     if lib.settings.URL_QUERY_REGEX.search(url) is None:
@@ -294,11 +300,23 @@ def detection_main(url, payloads, **kwargs):
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
             else:
-                return dictify_output(url, detected_protections, found_working_tampers)
+                dict_data_output = dictify_output(url, detected_protections, found_working_tampers)
+                written_file_path = lib.settings.write_to_file(
+                    filename, filepath, dict_data_output,
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                )
+                if written_file_path is not None:
+                    lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
         else:
             lib.formatter.warn("skipping bypass checks")
             if formatted:
-                return dictify_output(url, detected_protections, [])
+                dict_data_output = dictify_output(url, detected_protections, [])
+                written_file_path = lib.settings.write_to_file(
+                    filename, filepath, dict_data_output,
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                )
+                if written_file_path is not None:
+                    lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
 
     elif amount_of_products == 0:
         lib.formatter.warn("no protection identified on target, verifying", minor=True)
@@ -348,8 +366,21 @@ def detection_main(url, payloads, **kwargs):
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
             else:
-                return dictify_output(url, detected_protections, found_working_tampers)
+                dict_data_output = dictify_output(url, detected_protections, found_working_tampers)
+                written_file_path = lib.settings.write_to_file(
+                    filename, filepath, dict_data_output,
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                )
+                if written_file_path is not None:
+                    lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
         else:
             lib.formatter.warn("skipping bypass tests")
             if formatted:
-                return dictify_output(url, detected_protections, [])
+                filename = lib.settings.random_string()
+                dict_data_output = dictify_output(url, detected_protections, [])
+                written_file_path = lib.settings.write_to_file(
+                    filename, filepath, dict_data_output,
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                )
+                if written_file_path is not None:
+                    lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
