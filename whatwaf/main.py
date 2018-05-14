@@ -86,8 +86,8 @@ def main():
     if not opt.hideBanner:
         print(BANNER)
 
+    format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
-        format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
         amount_used = 0
         for item in format_opts:
             if item is True:
@@ -102,6 +102,11 @@ def main():
                 "output will not be saved to a file as no file format was provided. to save output to file "
                 "pass one of the file format flags (IE `-J` for JSON format)", minor=True
             )
+    elif any(format_opts) and not opt.formatOutput:
+        warn(
+            "you've chosen to send the output to a file, but have not formatted the output, no file will be saved "
+            "do so by passing the format flag (IE `-F -J` for JSON format)"
+        )
 
     if opt.skipBypassChecks and opt.amountOfTampersToDisplay is not None:
         warn(
