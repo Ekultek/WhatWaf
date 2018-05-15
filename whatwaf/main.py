@@ -11,6 +11,7 @@ from content import (
 from lib.settings import (
     configure_request_headers,
     auto_assign,
+    get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER, ISSUES_LINK, HOME
 )
@@ -151,6 +152,18 @@ def main():
         proxy=opt.runBehindProxy, tor=opt.runBehindTor
     )
 
+    if opt.checkTorConnection:
+        import re
+
+        info("checking Tor connection")
+        check_url = "https://check.torproject.org/"
+        check_regex = re.compile("This browser is configured to use Tor.", re.I)
+        _, content, _ = get_page(check_url, proxy=proxy, agent=agent)
+        if check_regex.search(str(content)) is not None:
+            success("it appears that Tor is working properly")
+        else:
+            warn("it appears Tor is not configured properly")
+
     if opt.providedPayloads is not None:
         payload_list = [p.strip() if p[0] == " " else p for p in str(opt.providedPayloads).split(",")]
         info("using provided payloads")
@@ -198,10 +211,10 @@ def main():
                     time.sleep(0.5)
     except KeyboardInterrupt:
         fatal("user aborted scanning")
-    except Exception as e:
-        fatal(
-            "WhatWaf has caught an unhandled exception with the error message: '{}'. "
-            "You can create an issue here: '{}'".format(
-                str(e), ISSUES_LINK
-            )
-        )
+    # except Exception as e:
+    #     fatal(
+    #         "WhatWaf has caught an unhandled exception with the error message: '{}'. "
+    #         "You can create an issue here: '{}'".format(
+    #             str(e), ISSUES_LINK
+    #         )
+    #     )

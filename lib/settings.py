@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.5.2"
+VERSION = "0.5.3"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -354,14 +354,17 @@ def write_to_file(filename, path, data, **kwargs):
         import csv
 
         _json_data = json.loads(data)
-        csv_data = [
-            ["url", "is_protected", "protection", "working_tampers"],
-            [
-                _json_data["url"], _json_data["is protected"],
-                _json_data["identified firewall"] if _json_data["identified firewall"] is not None else "None",
-                _json_data["apparent working tampers"] if _json_data["apparent working tampers"] is not None else "None"
+        try:
+            csv_data = [
+                ["url", "is_protected", "protection", "working_tampers"],
+                [
+                    _json_data["url"], _json_data["is protected"],
+                    _json_data["identified firewall"] if _json_data["identified firewall"] is not None else "None",
+                    _json_data["apparent working tampers"] if _json_data["apparent working tampers"] is not None else "None"
+                ]
             ]
-        ]
+        except KeyError:
+            pass
         with open(full_path, "a+") as _csv:
             writer = csv.writer(_csv)
             writer.writerows(csv_data)
