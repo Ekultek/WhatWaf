@@ -1,6 +1,7 @@
 .idea/*
 *.pyc
 venv/*
+venv2/*
 test.txt
 .DS_Store
 payloads.txt

@@ -3,7 +3,10 @@ import sys
 import json
 import hashlib
 import base64
-import urllib2
+try:
+    from urllib2 import Request, urlopen
+except ImportError:
+    from urllib.request import Request, urlopen
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,8 +16,8 @@ import lib.formatter
 
 try:
     raw_input
-except Exception:
-    input = raw_input
+except NameError:
+    raw_input = input
 
 
 def create_identifier(data):
@@ -109,11 +112,11 @@ def request_firewall_issue_creation(path):
             _json_data = _json_data.encode("utf-8")
 
         if not ensure_no_issue(identifier):
-            req = urllib2.Request(
+            req = Request(
                 url="https://api.github.com/repos/ekultek/whatwaf/issues", data=_json_data,
                 headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
             )
-            urllib2.urlopen(req, timeout=10).read()
+            urlopen(req, timeout=10).read()
             lib.formatter.info(
                 "this firewalls fingerprint has successfully been submitted with the title '{}', "
                 "URL '{}'".format(
