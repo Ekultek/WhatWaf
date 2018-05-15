@@ -38,36 +38,46 @@ def get_token(path):
     return token
 
 
-def ensure_no_issue(param, url="https://github.com/Ekultek/WhatWaf/issues"):
+def ensure_no_issue(param):
     """
     ensure that there is not already an issue that has been created for yours
     """
-    req = requests.get(url)
-    param = re.compile(param)
-    if param.search(req.content) is not None:
-        return True
+    urls = (
+        "https://github.com/Ekultek/WhatWaf/issues",
+        "https://github.com/Ekultek/WhatWaf/issues?q=is%3Aissue+is%3Aclosed"
+    )
+    for url in urls:
+        req = requests.get(url)
+        param = re.compile(param)
+        if param.search(req.content) is not None:
+            return True
     return False
 
 
-def find_url(params, search="https://github.com/ekultek/whatwaf/issues"):
+def find_url(params):
     """
     get the URL that your issue is created at
     """
-    retval = "https://github.com{}"
-    href = None
-    searcher = re.compile(params, re.I)
-    req = requests.get(search)
-    status, html = req.status_code, req.content
-    if status == 200:
-        split_information = str(html).split("\n")
-        for i, line in enumerate(split_information):
-            if searcher.search(line) is not None:
-                href = split_information[i - 1]
-    if href is not None:
-        soup = BeautifulSoup(href, "html.parser")
-        for item in soup.findAll("a"):
-            link = item.get("href")
-            return retval.format(link)
+    searches = (
+        "https://github.com/Ekultek/WhatWaf/issues",
+        "https://github.com/Ekultek/WhatWaf/issues?q=is%3Aissue+is%3Aclosed"
+    )
+    for search in searches:
+        retval = "https://github.com{}"
+        href = None
+        searcher = re.compile(params, re.I)
+        req = requests.get(search)
+        status, html = req.status_code, req.content
+        if status == 200:
+            split_information = str(html).split("\n")
+            for i, line in enumerate(split_information):
+                if searcher.search(line) is not None:
+                    href = split_information[i - 1]
+        if href is not None:
+            soup = BeautifulSoup(href, "html.parser")
+            for item in soup.findAll("a"):
+                link = item.get("href")
+                return retval.format(link)
     return None
 
 
