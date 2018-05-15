@@ -1,4 +1,7 @@
-from argparse import ArgumentParser
+from argparse import (
+    ArgumentParser,
+    SUPPRESS
+)
 
 
 class WhatWafParser(ArgumentParser):
@@ -55,6 +58,8 @@ class WhatWafParser(ArgumentParser):
                                  help="Send the output to a YAML file")
         output_opts.add_argument("-C", "--csv", action="store_true", dest="sendToCSV",
                                  help="Send the output to a CSV file")
+        output_opts.add_argument("--fingerprint", action="store_true", dest="saveFingerprints",
+                                 help="Save all fingerprints for further investigation")
         output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int,
                                  help="Control the amount of tampers that are displayed (default is 5)")
 
@@ -72,6 +77,9 @@ class WhatWafParser(ArgumentParser):
                           help="Skip checking for bypasses and just identify the firewall")
         misc.add_argument("--verify-num", dest="verifyNumber", metavar="INT",
                           help="Change the default amount (5) to verify if there really is not a WAF present")
+
+        hidden = parser.add_argument_group()
+        hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
 
         opts = parser.parse_args()
 

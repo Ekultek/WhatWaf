@@ -48,6 +48,7 @@ class DetectionQueue(object):
         self.agent = kwargs.get("agent", lib.settings.DEFAULT_USER_AGENT)
         self.proxy = kwargs.get("proxy", None)
         self.verbose = kwargs.get("verbose", False)
+        self.save_fingerprint = kwargs.get("save_fingerprint", False)
 
     def get_response(self):
         response_retval = []
@@ -85,6 +86,10 @@ class DetectionQueue(object):
                         )
                     )
                     response_retval.append(None)
+            if self.save_fingerprint:
+                lib.settings.create_fingerprint(
+                    self.url, response_retval[0][1], response_retval[0][0], response_retval[0][2], speak=True
+                )
         return response_retval
 
 
@@ -234,6 +239,7 @@ def detection_main(url, payloads, **kwargs):
     verbose = kwargs.get("verbose", False)
     skip_bypass_check = kwargs.get("skip_bypass_check", False)
     verification_number = kwargs.get("verification_number", None)
+    fingerprint_waf = kwargs.get("fingerprint_waf", False)
     formatted = kwargs.get("formatted", False)
     tamper_int = kwargs.get("tamper_int", 5)
     use_yaml = kwargs.get("use_yaml", False)
@@ -251,7 +257,9 @@ def detection_main(url, payloads, **kwargs):
             url = url + "/"
 
     lib.formatter.info("gathering HTTP responses")
-    responses = DetectionQueue(url, payloads, proxy=proxy, agent=agent, verbose=verbose).get_response()
+    responses = DetectionQueue(
+        url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf
+    ).get_response()
     lib.formatter.info("gathering normal response to compare against")
     normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
 

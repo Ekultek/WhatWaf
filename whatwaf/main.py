@@ -12,7 +12,7 @@ from lib.settings import (
     configure_request_headers,
     auto_assign,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER, ISSUES_LINK
+    BANNER, ISSUES_LINK, HOME
 )
 from lib.formatter import (
     error,
@@ -31,6 +31,24 @@ def main():
         time.sleep(2)
         cmd = "python whatwaf.py --help"
         subprocess.call(shlex.split(cmd))
+        exit(0)
+
+    # if you feel that you have to many folders or files in the whatwaf home folder
+    # we'll give you an option to clean it free of charge
+    if opt.cleanHomeFolder:
+        import shutil
+
+        try:
+            warn("cleaning home folder, all information will be deleted, if you changed your mind press CNTRL-C now")
+            # you have three seconds to change your mind
+            time.sleep(3)
+            info("attempting to clean home folder")
+            shutil.rmtree(HOME)
+            info("home folder removed")
+        except KeyboardInterrupt:
+            fatal("cleaning aborted")
+        except OSError:
+            fatal("no home folder detected, already cleaned?")
         exit(0)
 
     if opt.encodePayload:
@@ -143,6 +161,12 @@ def main():
         payload_list = WAF_REQUEST_DETECTION_PAYLOADS
         info("using default payloads")
 
+    if opt.saveFingerprints:
+        warn(
+            "fingerprinting is enabled, all fingerprints (WAF related or not) will be saved for further analysis",
+            minor=True
+        )
+
     try:
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
@@ -152,7 +176,8 @@ def main():
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                 tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
-                use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV
+                use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                fingerprint_waf=opt.saveFingerprints
             )
 
         elif opt.runMultipleWebsites:
@@ -166,7 +191,8 @@ def main():
                         verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                         verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                         tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
-                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV
+                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                        fingerprint_waf=opt.saveFingerprints
                     )
                     print("\n\b")
                     time.sleep(0.5)

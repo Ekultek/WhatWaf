@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.5"
+VERSION = "0.5.1"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -292,7 +292,7 @@ def auto_assign(url, ssl=False):
             return url.strip()
 
 
-def create_fingerprint(url, content, status, headers):
+def create_fingerprint(url, content, status, headers, speak=False):
     """
     create the unknown firewall fingerprint file
     """
@@ -311,15 +311,21 @@ def create_fingerprint(url, content, status, headers):
     if not os.path.exists(full_file_path):
         with open(full_file_path, "a+") as log:
             log.write(fingerprint)
+        if speak:
+            lib.formatter.success("fingerprint saved to '{}'".format(full_file_path))
     else:
-        lib.formatter.warn("fingerprint has already been created")
+        lib.formatter.warn("fingerprint has already been created", minor=True)
     return full_file_path
 
 
-def write_to_file(filename, path, data, write_yaml=False, write_json=False, write_csv=False):
+def write_to_file(filename, path, data, **kwargs):
     """
     write the data to a file
     """
+    write_yaml = kwargs.get("write_yaml", False)
+    write_json = kwargs.get("write_json", False)
+    write_csv = kwargs.get("write_csv", False)
+
     full_path = "{}/{}".format(path, filename)
 
     if not os.path.exists(path):
