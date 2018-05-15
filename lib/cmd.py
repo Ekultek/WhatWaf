@@ -39,6 +39,8 @@ class WhatWafParser(ArgumentParser):
                               help="Provide a file containing a list of payloads 1 per line")
         req_args.add_argument("--force-ssl", dest="forceSSL", action="store_true",
                               help="Force the assignment of HTTPS instead of HTTP while processing")
+        req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
+                              help="Check your Tor connection")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
@@ -75,7 +77,7 @@ class WhatWafParser(ArgumentParser):
                           help="Save the encoded payloads into a file")
         misc.add_argument("--skip", dest="skipBypassChecks", action="store_true",
                           help="Skip checking for bypasses and just identify the firewall")
-        misc.add_argument("--verify-num", dest="verifyNumber", metavar="INT",
+        misc.add_argument("--verify-num", dest="verifyNumber", metavar="INT", type=int,
                           help="Change the default amount (5) to verify if there really is not a WAF present")
 
         hidden = parser.add_argument_group()
