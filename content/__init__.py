@@ -209,6 +209,7 @@ def dictify_output(url, firewalls, tampers):
     retval = {"url": url}
     if isinstance(firewalls, list):
         retval["identified firewall"] = [item for item in firewalls]
+        retval["is protected"] = True
     elif isinstance(firewalls, str):
         retval["identified firewall"] = firewalls
         retval["is protected"] = True
