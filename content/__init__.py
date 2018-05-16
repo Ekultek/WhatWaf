@@ -205,7 +205,7 @@ def dictify_output(url, firewalls, tampers):
     send the output into a JSON format and return the JSON format
     """
     data_sep = "-" * 30
-    lib.formatter.info("sending output to JSON format")
+    lib.formatter.info("formatting output")
     retval = {"url": url}
     if isinstance(firewalls, list):
         retval["identified firewall"] = [item for item in firewalls]
