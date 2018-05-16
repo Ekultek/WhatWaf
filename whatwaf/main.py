@@ -13,7 +13,7 @@ from lib.settings import (
     auto_assign,
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER, ISSUES_LINK, HOME
+    BANNER, HOME
 )
 from lib.formatter import (
     error,

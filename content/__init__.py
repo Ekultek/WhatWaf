@@ -284,8 +284,7 @@ def detection_main(url, payloads, **kwargs):
                     if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1:
                         lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
                         path = lib.settings.create_fingerprint(url, html, status, headers)
-                        lib.firewall_found.request_firewall_issue_creation(path)
-                        exit(1)
+                        return lib.firewall_found.request_firewall_issue_creation(path)
                     else:
                         detected_protections.add(detection.__product__)
         else:
