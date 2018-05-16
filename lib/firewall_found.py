@@ -85,10 +85,9 @@ def request_firewall_issue_creation(path):
     """
     request the creation and create the issue
     """
-    # question = raw_input(
-    #     "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
-    # )
-    question = "yes"
+    question = raw_input(
+        "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
+    )
     if question.lower().startswith("y"):
         # gonna read a chunk of it instead of one line
         chunk = 4096
