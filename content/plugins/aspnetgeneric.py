@@ -17,5 +17,7 @@ def detect(content, **kwargs):
             for header in headers.keys():
                 if detection.search(header) is not None:
                     return True
+                if detection.search(headers[header]) is not None:
+                    return True
         if detection.search(content) is not None:
             return True
