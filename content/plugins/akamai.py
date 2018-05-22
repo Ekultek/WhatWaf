@@ -11,11 +11,13 @@ def detect(content, **kwargs):
     content = str(content)
     detection_schema = (
         re.compile(r"you.don.t.have.permission.to.access", re.I),
-        re.compile(r"<.+>access.denied<.+.>", re.I),
+        re.compile(r"<.+>access.denied<.+.>", re.I), re.compile(r"akamaighost", re.I),
+        re.compile(r"ak.bmsc.")
     )
     for detection in detection_schema:
+        if detection.search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
+            return True
+        if detection.search(headers.get(HTTP_HEADER.SET_COOKIE, "")) is not None:
+            return True
         if detection.search(content) is not None:
-            if re.compile(r"\bakamaighost", re.I).search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
-                return True
-            if re.compile(r"\bak.bmsc.", re.I).search(headers.get(HTTP_HEADER.SET_COOKIE, "")) is not None:
-                return True
+            return True
