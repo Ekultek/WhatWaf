@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6"
+VERSION = "0.6.1"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -167,11 +167,12 @@ def get_page(url, **kwargs):
         headers = {"Connection": "close", "User-Agent": agent}
     else:
         headers = provided_headers
+        headers["User-Agent"] = agent
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = (0, "", {})
 
     try:
-        req = requests.get(url, params=headers, proxies=proxies, timeout=15)
+        req = requests.get(url, headers=headers, proxies=proxies, timeout=15)
         soup = BeautifulSoup(req.content, "html.parser")
         return req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
