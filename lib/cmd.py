@@ -1,7 +1,29 @@
 from argparse import (
     ArgumentParser,
+    Action,
     SUPPRESS
 )
+
+
+class StoreDictKeyPairs(Action):
+
+    """
+    custom action to create a dict from a provided string in the format of key=value
+    """
+
+    retval = {}
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        for kv in values.split(","):
+            if kv.count("=") != 1:
+                first_equal_index = kv.index("=")
+                key = kv[:first_equal_index]
+                value = kv[first_equal_index + 1:]
+                self.retval[key] = value
+            else:
+                k, v = kv.split("=")
+                self.retval[k] = v
+        setattr(namespace, self.dest, self.retval)
 
 
 class WhatWafParser(ArgumentParser):
@@ -41,6 +63,11 @@ class WhatWafParser(ArgumentParser):
                               help="Force the assignment of HTTPS instead of HTTP while processing")
         req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
                               help="Check your Tor connection")
+        req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
+                              metavar="HEADER=VALUE,HEADER=VALUE..",
+                              help="Add your own custom headers to the request. To use multiple "
+                                   "separate headers by comma. Your headers need to be exact"
+                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For=127.0.0.1")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")

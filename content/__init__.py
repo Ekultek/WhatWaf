@@ -48,6 +48,7 @@ class DetectionQueue(object):
         self.agent = kwargs.get("agent", lib.settings.DEFAULT_USER_AGENT)
         self.proxy = kwargs.get("proxy", None)
         self.verbose = kwargs.get("verbose", False)
+        self.provided_headers = kwargs.get("provided_headers", None)
         self.save_fingerprint = kwargs.get("save_fingerprint", False)
 
     def get_response(self):
@@ -65,12 +66,18 @@ class DetectionQueue(object):
                     lib.formatter.debug(
                         "trying: '{}'".format(primary_url)
                     )
-                response_retval.append((lib.settings.get_page(primary_url, agent=self.agent, proxy=self.proxy)))
+                response_retval.append((
+                    lib.settings.get_page(
+                        primary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers
+                    )
+                ))
                 if self.verbose:
                     lib.formatter.debug(
                         "trying: {}".format(secondary_url)
                     )
-                response_retval.append((lib.settings.get_page(secondary_url, agent=self.agent, proxy=self.proxy
+                response_retval.append((
+                    lib.settings.get_page(
+                        secondary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers
                 )))
 
             except Exception as e:
@@ -118,6 +125,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", None)
     verbose = kwargs.get("verbose", False)
+    provided_headers = kwargs.get("provided_headers", None)
     max_successful_payloads = kwargs.get("tamper_int", 5)
 
     failed_schema = (
@@ -151,7 +159,9 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
             if verbose:
                 lib.formatter.payload(vector.strip())
             payloaded_url = "{}{}".format(url, vector)
-            status, html, _ = lib.settings.get_page(payloaded_url, agent=agent, proxy=proxy, verbose=verbose)
+            status, html, _ = lib.settings.get_page(
+                payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers
+            )
             if not find_failures(str(html), failed_schema):
                 if verbose:
                     if status != 0:
@@ -253,6 +263,7 @@ def detection_main(url, payloads, **kwargs):
     use_yaml = kwargs.get("use_yaml", False)
     use_json = kwargs.get("use_json", False)
     use_csv = kwargs.get("use_csv", False)
+    provided_headers = kwargs.get("provided_headers", None)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -266,10 +277,11 @@ def detection_main(url, payloads, **kwargs):
 
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(
-        url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf
+        url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
+        provided_headers=provided_headers
     ).get_response()
     lib.formatter.info("gathering normal response to compare against")
-    normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
+    normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent, provided_headers=provided_headers)
 
     amount_of_products = 0
     detected_protections = set()
@@ -310,7 +322,7 @@ def detection_main(url, payloads, **kwargs):
         if not skip_bypass_check:
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
-                tamper_int=tamper_int
+                tamper_int=tamper_int, provided_headers=provided_headers
             )
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
@@ -337,9 +349,13 @@ def detection_main(url, payloads, **kwargs):
         lib.formatter.warn("no protection identified on target, verifying", minor=True)
         if verification_number is None:
             verification_number = 5
-        verification_normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent)
+        verification_normal_response = lib.settings.get_page(
+            url, proxy=proxy, agent=agent, provided_headers=provided_headers
+        )
         payloaded_url = "{}{}".format(url, lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
-        verification_payloaded_response = lib.settings.get_page(payloaded_url, proxy=proxy, agent=agent)
+        verification_payloaded_response = lib.settings.get_page(
+            payloaded_url, proxy=proxy, agent=agent, provided_headers=provided_headers
+        )
         results = check_if_matched(
             verification_normal_response, verification_payloaded_response,
             verified=verification_number

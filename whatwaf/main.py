@@ -13,7 +13,7 @@ from lib.settings import (
     auto_assign,
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER, HOME
+    BANNER, HOME, ISSUES_LINK
 )
 from lib.formatter import (
     error,
@@ -190,7 +190,7 @@ def main():
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                 tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                 use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                fingerprint_waf=opt.saveFingerprints
+                fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders
             )
 
         elif opt.runMultipleWebsites:
@@ -205,16 +205,16 @@ def main():
                         verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                         tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                         use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                        fingerprint_waf=opt.saveFingerprints
+                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders
                     )
                     print("\n\b")
                     time.sleep(0.5)
     except KeyboardInterrupt:
         fatal("user aborted scanning")
-    # except Exception as e:
-    #     fatal(
-    #         "WhatWaf has caught an unhandled exception with the error message: '{}'. "
-    #         "You can create an issue here: '{}'".format(
-    #             str(e), ISSUES_LINK
-    #         )
-    #     )
+    except Exception as e:
+        fatal(
+            "WhatWaf has caught an unhandled exception with the error message: '{}'. "
+            "You can create an issue here: '{}'".format(
+                str(e), ISSUES_LINK
+            )
+        )

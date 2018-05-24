@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.5.8"
+VERSION = "0.6"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -162,7 +162,11 @@ def get_page(url, **kwargs):
     """
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", DEFAULT_USER_AGENT)
-    headers = {"Connection": "close", "User-Agent": agent}
+    provided_headers = kwargs.get("provided_headers", None)
+    if provided_headers is None:
+        headers = {"Connection": "close", "User-Agent": agent}
+    else:
+        headers = provided_headers
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = (0, "", {})
 
