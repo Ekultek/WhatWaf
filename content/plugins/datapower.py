@@ -12,5 +12,5 @@ def detect(content, **kwargs):
         re.compile(r"\A(ok|fail)", re.I),
     )
     for detection in detection_schema:
-        if detection.search(headers.get("X-Backside-Transport", "")) is not None:
+        if detection.search(headers.get(HTTP_HEADER.X_BACKSIDE_TRANS, "")) is not None:
             return True

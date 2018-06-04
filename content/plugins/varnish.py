@@ -10,7 +10,7 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", None)
     detection_schema = (
-        re.compile(r"\bXID: \d+", re.I),
+        re.compile(r"\bxid. \d+", re.I),
         re.compile(r"varnish\Z", re.I),
         re.compile(r"varnish"), re.I,
         re.compile(r"\d+")

@@ -10,10 +10,10 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", None)
     content = str(content)
     detection_schemas = (
-        re.compile(r"CloudFlare Ray ID:|var CloudFlare=", re.I),
-        re.compile(r"cloudflare-nginx", re.I),
-        re.compile(r"\A__cfduid=", re.I),
-        re.compile(r"CF_RAY", re.I),
+        re.compile(r"cloudflare.ray.id.|var.cloudflare.", re.I),
+        re.compile(r"cloudflare.nginx", re.I),
+        re.compile(r"\A(__)?cfduid.", re.I),
+        re.compile(r"cf_ray", re.I),
         re.compile(r"<.+>attention.required\S.\S.cloudflare<.+.>", re.I)
     )
     for detection in detection_schemas:

@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.1"
+VERSION = "0.6.2"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -152,6 +152,7 @@ class HTTP_HEADER:
     X_FRAME_OPT         = "X-Frame-Options"
     X_FORWARDED_FOR     = "X-Forwarded-For"
     X_SERVER            = "X-Server"
+    X_BACKSIDE_TRANS    = "X-Backside-Transport"
 
 
 def get_page(url, **kwargs):
