@@ -222,12 +222,9 @@ def main():
                 str(e), ISSUES_LINK
             )
         )
-        warn("you will need the following information:")
-        print(sep)
-        print("Traceback:\n```")
-        traceback.print_exc()
-        print("```")
+        warn("you will need the following information to create an issue:")
         print(
-            "CMD line: `{}`".format(hide_url(sys.argv))
+            "{}\nTraceback:\n```\n{}```\nCMD line: `{}`\n{}".format(
+                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_url(sys.argv), sep
+            )
         )
-        print(sep)
