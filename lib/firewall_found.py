@@ -81,6 +81,17 @@ def find_url(params):
     return None
 
 
+def hide_url(args):
+    try:
+        url_index = args.index("-u") + 1
+        hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])
+        args.pop(url_index)
+        args.insert(url_index, hidden_url)
+        return ' '.join(args)
+    except:
+        return ' '.join([item for item in sys.argv])
+
+
 def request_firewall_issue_creation(path):
     """
     request the creation and create the issue
@@ -98,22 +109,12 @@ def request_firewall_issue_creation(path):
             full_fingerprint = data.read()
             issue_title = "Unknown Firewall ({})".format(identifier)
 
-            def __hide_url(args=sys.argv):
-                try:
-                    url_index = args.index("-u") + 1
-                    hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])
-                    args.pop(url_index)
-                    args.insert(url_index, hidden_url)
-                    return ' '.join(args)
-                except:
-                    return ' '.join([item for item in sys.argv])
-
         issue_data = {
             "title": issue_title,
             "body": "WhatWaf version: `{}`\n"
                     "Running context: `{}`\n"
                     "Fingerprint:\n```\n{}\n```".format(
-                        lib.settings.VERSION, __hide_url(), full_fingerprint
+                        lib.settings.VERSION, hide_url(sys.argv), full_fingerprint
             )
         }
 

@@ -4,6 +4,7 @@ import time
 import subprocess
 
 from lib.cmd import WhatWafParser
+from lib.firewall_found import hide_url
 from content import (
     detection_main,
     encode
@@ -212,9 +213,21 @@ def main():
     except KeyboardInterrupt:
         fatal("user aborted scanning")
     except Exception as e:
+        import traceback
+
+        sep = "-" * 30
         fatal(
             "WhatWaf has caught an unhandled exception with the error message: '{}'. "
             "You can create an issue here: '{}'".format(
                 str(e), ISSUES_LINK
             )
         )
+        warn("you will need the following information:")
+        print(sep)
+        print("Traceback:\n```")
+        traceback.print_exc()
+        print("```")
+        print(
+            "CMD line: `{}`".format(hide_url(sys.argv))
+        )
+        print(sep)
