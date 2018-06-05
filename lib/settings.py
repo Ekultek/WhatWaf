@@ -4,6 +4,7 @@ import sys
 import json
 import random
 import string
+import urlparse
 import platform
 
 import requests
@@ -12,7 +13,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.6"
+VERSION = "0.6.7"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -177,6 +178,15 @@ def validate_url(url):
     return URL_VALIDATION.match(url)
 
 
+def get_query(url):
+    """
+    get the query parameter out of a URL
+    """
+    data = urlparse.urlparse(url)
+    query = "{}?{}".format(data.path, data.query)
+    return query
+
+
 def get_page(url, **kwargs):
     """
     get the website page, this will return a `tuple`
@@ -192,12 +202,12 @@ def get_page(url, **kwargs):
         headers = provided_headers
         headers["User-Agent"] = agent
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
-    error_retval = (0, "", {})
+    error_retval = ("", 0, "", {})
 
     try:
         req = requests.get(url, headers=headers, proxies=proxies, timeout=15)
         soup = BeautifulSoup(req.content, "html.parser")
-        return req.status_code, soup, req.headers
+        return "GET {}".format(get_query(url)), req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
         return error_retval
 
@@ -341,8 +351,6 @@ def create_fingerprint(url, content, status, headers, speak=False):
             log.write(fingerprint)
         if speak:
             lib.formatter.success("fingerprint saved to '{}'".format(full_file_path))
-    else:
-        lib.formatter.warn("fingerprint has already been created", minor=True)
     return full_file_path
 
 

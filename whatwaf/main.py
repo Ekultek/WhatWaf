@@ -160,7 +160,7 @@ def main():
         info("checking Tor connection")
         check_url = "https://check.torproject.org/"
         check_regex = re.compile("This browser is configured to use Tor.", re.I)
-        _, content, _ = get_page(check_url, proxy=proxy, agent=agent)
+        _, _, content, _ = get_page(check_url, proxy=proxy, agent=agent)
         if check_regex.search(str(content)) is not None:
             success("it appears that Tor is working properly")
         else:
@@ -182,6 +182,9 @@ def main():
             minor=True
         )
 
+    if opt.trafficFile is not None:
+        info("saving HTTP traffic to '{}'".format(opt.trafficFile))
+
     try:
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
@@ -192,7 +195,8 @@ def main():
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                 tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                 use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders
+                fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
+                traffic_file=opt.trafficFile
             )
 
         elif opt.runMultipleWebsites:
@@ -207,7 +211,8 @@ def main():
                         verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                         tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                         use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders
+                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
+                        traffic_file=opt.trafficFile
                     )
                     print("\n\b")
                     time.sleep(0.5)

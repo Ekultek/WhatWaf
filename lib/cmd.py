@@ -67,7 +67,9 @@ class WhatWafParser(ArgumentParser):
                               metavar="HEADER=VALUE,HEADER=VALUE..",
                               help="Add your own custom headers to the request. To use multiple "
                                    "separate headers by comma. Your headers need to be exact"
-                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For=127.0.0.1")
+                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For=127.0.0.1)")
+        req_args.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
+                              help="store all HTTP traffic headers into a file of your choice")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")

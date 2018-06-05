@@ -50,6 +50,7 @@ class DetectionQueue(object):
         self.verbose = kwargs.get("verbose", False)
         self.provided_headers = kwargs.get("provided_headers", None)
         self.save_fingerprint = kwargs.get("save_fingerprint", False)
+        self.traffic_file = kwargs.get("traffic_file", None)
 
     def get_response(self):
         response_retval = []
@@ -97,6 +98,17 @@ class DetectionQueue(object):
                 lib.settings.create_fingerprint(
                     self.url, response_retval[0][1], response_retval[0][0], response_retval[0][2], speak=True
                 )
+            if self.traffic_file is not None:
+                with open(self.traffic_file, "a+") as traffic:
+                    for i, item in enumerate(response_retval, start=1):
+                        param, status_code, content, headers = item
+                        traffic.write(
+                            "HTTP Request #{}\n{}\nRequest Status Code: {}\n<!--\n{} HTTP/1.1\n{}\n-->{}\n\n\n".format(
+                                i, "-" * 16, status_code, param,
+                                "\n".join(["{}: {}".format(h, v) for h, v in headers.items()]),
+                                content
+                            )
+                        )
         return response_retval
 
 
@@ -148,18 +160,21 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
         max_successful_payloads = len(tampers)
 
     working_tampers = set()
-    normal_status, _, _ = norm_response
+    _, normal_status, _, _ = norm_response
     lib.formatter.info("running tampering bypass checks")
     for tamper in tampers:
         load = tamper
         if verbose:
-            lib.formatter.debug("currently tampering with script '{}".format(str(load).split(" ")[1].split(".")[-1]))
+            try:
+                lib.formatter.debug("currently tampering with script '{}".format(str(load).split(" ")[1].split(".")[-1]))
+            except:
+                pass
         for vector in payloads:
             vector = tamper.tamper(vector)
             if verbose:
                 lib.formatter.payload(vector.strip())
             payloaded_url = "{}{}".format(url, vector)
-            status, html, _ = lib.settings.get_page(
+            _, status, html, _ = lib.settings.get_page(
                 payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers
             )
             if not find_failures(str(html), failed_schema):
@@ -196,8 +211,8 @@ def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
     # by using the `--verify-num` flag
     matched = 0
     response = set()
-    norm_status, norm_html, norm_headers = normal_resp
-    payload_status, payload_html, payload_headers = payload_resp
+    _, norm_status, norm_html, norm_headers = normal_resp
+    _, payload_status, payload_html, payload_headers = payload_resp
     for header in norm_headers.keys():
         try:
             _ = payload_headers[header]
@@ -264,6 +279,7 @@ def detection_main(url, payloads, **kwargs):
     use_json = kwargs.get("use_json", False)
     use_csv = kwargs.get("use_csv", False)
     provided_headers = kwargs.get("provided_headers", None)
+    traffic_file = kwargs.get("traffic_file", None)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -281,7 +297,7 @@ def detection_main(url, payloads, **kwargs):
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(
         url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
-        provided_headers=provided_headers
+        provided_headers=provided_headers, traffic_file=traffic_file
     ).get_response()
     lib.formatter.info("gathering normal response to compare against")
     normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent, provided_headers=provided_headers)
@@ -299,7 +315,7 @@ def detection_main(url, payloads, **kwargs):
     for item in responses:
         item = item if item is not None else normal_response
         if item is not None:
-            status, html, headers = item
+            _, status, html, headers = item
             for detection in loaded_plugins:
                 if detection.detect(str(html), status=status, headers=headers) is True:
                     temp.append(detection.__product__)
@@ -370,7 +386,7 @@ def detection_main(url, payloads, **kwargs):
             for i, item in enumerate(results, start=1):
                 print("[{}] {}".format(i, item))
             print(data_sep)
-            status, html, headers = verification_payloaded_response
+            _, status, html, headers = verification_payloaded_response
             if status != 0:
                 path = lib.settings.create_fingerprint(url, html, status, headers)
                 lib.firewall_found.request_firewall_issue_creation(path)
