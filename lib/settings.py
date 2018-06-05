@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.4"
+VERSION = "0.6.6"
 
 # version string
 VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
@@ -110,6 +110,21 @@ RAND_HOMEPAGES = (
     "Default.htm", "Home.html", "Home.htm", "placeholder.html"
 )
 
+# this is a regex to validate a URL. It was taken from Django's URL validation technique
+# reference can be found here:
+# `https://stackoverflow.com/questions/7160737/python-how-to-validate-a-url-in-python-malformed-or-not/7160778#7160778`
+URL_VALIDATION = re.compile(
+    r'^(?:http|ftp)s?://'  # http:// or https://
+    r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'  # domain...
+    r'localhost|'  # localhost...
+    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
+    r'(?::\d+)?'  # optional port
+    r'(?:/?|[/?]\S+)$', re.IGNORECASE
+)
+
+
+class InvalidURLProvided(Exception): pass
+
 
 class HTTP_HEADER:
     """
@@ -153,6 +168,13 @@ class HTTP_HEADER:
     X_FORWARDED_FOR     = "X-Forwarded-For"
     X_SERVER            = "X-Server"
     X_BACKSIDE_TRANS    = "X-Backside-Transport"
+
+
+def validate_url(url):
+    """
+    validate a provided URL
+    """
+    return URL_VALIDATION.match(url)
 
 
 def get_page(url, **kwargs):

@@ -14,7 +14,8 @@ from lib.settings import (
     auto_assign,
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER, HOME, ISSUES_LINK
+    BANNER, HOME, ISSUES_LINK,
+    InvalidURLProvided
 )
 from lib.formatter import (
     error,
@@ -212,6 +213,11 @@ def main():
                     time.sleep(0.5)
     except KeyboardInterrupt:
         fatal("user aborted scanning")
+    except InvalidURLProvided:
+        fatal(
+            "the provided URL is unable to be validated, check the URL and try again (you may need to unquote the "
+            "HTML entities)"
+        )
     except Exception as e:
         import traceback
 

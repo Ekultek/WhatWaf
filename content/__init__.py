@@ -268,6 +268,9 @@ def detection_main(url, payloads, **kwargs):
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
 
+    if lib.settings.validate_url(url) is None:
+        raise lib.settings.InvalidURLProvided
+
     # we'll check if the URL has a parameter
     if lib.settings.URL_QUERY_REGEX.search(url) is None:
         # if it doesn't and there is no '/' at the end we're going to add one
