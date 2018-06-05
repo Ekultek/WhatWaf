@@ -5,3 +5,4 @@ venv2/*
 test.txt
 .DS_Store
 payloads.txt
+traffic*.txt

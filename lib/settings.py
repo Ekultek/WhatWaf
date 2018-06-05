@@ -13,10 +13,10 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.7"
+VERSION = "0.6.8"
 
 # version string
-VERSION_TYPE = "(#dev)" if VERSION.count(".") > 1 else "(#stable)"
+VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
 
 # cool looking banner
 BANNER = """\b\033[1m
@@ -53,7 +53,7 @@ PROTOCOL_DETECTION = re.compile("http(s)?")
 # check if a query is in a URL or not
 URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
 
-# name provided to unknow nfirewalls
+# name provided to unknown firewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
 
 # path to our home directory
