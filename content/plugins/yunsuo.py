@@ -11,9 +11,11 @@ def detect(content, **kwargs):
     content = str(content)
     detection_schema = (
         re.compile(r"<img.class=.yunsuologo.", re.I),
+        re.compile(r"yunsuo.session", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
-    if re.search(r"yunsuo.session", headers.get(HTTP_HEADER.SET_COOKIE, ""), re.I) is not None:
-        return True
+        for header in headers.keys():
+            if detection.search(headers[header]) is not None:
+                return True

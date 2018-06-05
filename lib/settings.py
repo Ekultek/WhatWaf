@@ -13,7 +13,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.8"
+VERSION = "0.6.9"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -89,15 +89,16 @@ WAF_REQUEST_DETECTION_PAYLOADS = (
     " AND 1=1 ORDERBY(1,2,3,4,5) --;",
     '><script>alert("testing");</script>',
     (
-        " AND 1=1 UNION ALL SELECT 1,NULL,'<script>alert(\"XSS\")</script>',"
+        " AND 1=1 UNION ALL SELECT 1,NULL,1,'<script>alert(\"666\")</script>',"
         "table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC "
-        "xp_cmdshell('cat ../../../etc/passwd')#"  # thank you sqlmap
+        "xp_cmdshell('cat ../../../etc/passwd')#"  # you don't get my thanks anymore douche
     ),
     '<img src="javascript:alert(\'XSS\');">',
     "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
     "' )) AND 1=1 (( ' -- rgzd",
     ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '",
-    "' OR '1'=1 '", " OR 1=1"
+    "' OR '1'=1 '", " OR 1=1",
+    "<scri<script>pt>alert('123');</scri</script>pt>"
 )
 
 # random home pages to try and get cookies

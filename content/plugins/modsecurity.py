@@ -1,7 +1,7 @@
 import re
 
 
-__product__ = "ModSecurity: Open Source Web Application Firewall"
+__product__ = "Open Source Web Application Firewall (Modsecurity)"
 
 
 def detect(content, **kwargs):
