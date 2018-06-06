@@ -9,7 +9,7 @@ __product__ = "Airlock (Phion/Ergon)"
 def detect(content, **kwargs):
     headers = kwargs.get("headers", None)
     detection_schema = (
-        re.compile(r"(ses|lb).(sess|al)?.([a-z])?(=)?\w+", re.I),
+        re.compile(r"\Aal[.-]?(sess|lb)(=)?(.)?", re.I),
     )
 
     for detection in detection_schema:
