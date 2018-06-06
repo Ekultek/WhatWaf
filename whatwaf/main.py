@@ -15,7 +15,7 @@ from lib.settings import (
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER, HOME, ISSUES_LINK,
-    InvalidURLProvided
+    InvalidURLProvided, VERSION
 )
 from lib.formatter import (
     error,
@@ -178,12 +178,15 @@ def main():
 
     if opt.saveFingerprints:
         warn(
-            "fingerprinting is enabled, all fingerprints (WAF related or not) will be saved for further analysis",
+            "fingerprinting is enabled, all fingerprints (WAF related or not) will be saved for further analysis "
+            "if the fingerprint already exists it will be skipped",
             minor=True
         )
 
     if opt.trafficFile is not None:
         info("saving HTTP traffic to '{}'".format(opt.trafficFile))
+    if opt.sleepTimeThrottle != 0:
+        info("sleep throttle has been set to {}s".format(opt.sleepTimeThrottle))
 
     try:
         if opt.runSingleWebsite:
@@ -196,7 +199,8 @@ def main():
                 tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                 use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
                 fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
-                traffic_file=opt.trafficFile
+                traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                req_timeout=opt.requestTimeout
             )
 
         elif opt.runMultipleWebsites:
@@ -212,7 +216,8 @@ def main():
                         tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
                         use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
                         fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
-                        traffic_file=opt.trafficFile
+                        traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                        req_timeout=opt.requestTimeout
                     )
                     print("\n\b")
                     time.sleep(0.5)
@@ -235,7 +240,8 @@ def main():
         )
         warn("you will need the following information to create an issue:")
         print(
-            "{}\nTraceback:\n```\n{}```\nCMD line: `{}`\n{}".format(
-                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_url(sys.argv), sep
+            "{}\nTraceback:\n```\n{}```\nCMD line: `{}`\nVersion: `{}`\n{}".format(
+                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_url(sys.argv),
+                VERSION, sep
             )
         )

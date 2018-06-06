@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import json
+import time
 import random
 import string
 import urlparse
@@ -13,7 +14,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.6.9"
+VERSION = "0.7"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -197,6 +198,9 @@ def get_page(url, **kwargs):
     proxy = kwargs.get("proxy", None)
     agent = kwargs.get("agent", DEFAULT_USER_AGENT)
     provided_headers = kwargs.get("provided_headers", None)
+    throttle = kwargs.get("throttle", 0)
+    req_timeout = kwargs.get("timeout", 15)
+
     if provided_headers is None:
         headers = {"Connection": "close", "User-Agent": agent}
     else:
@@ -205,8 +209,10 @@ def get_page(url, **kwargs):
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = ("", 0, "", {})
 
+    time.sleep(throttle)
+
     try:
-        req = requests.get(url, headers=headers, proxies=proxies, timeout=15)
+        req = requests.get(url, headers=headers, proxies=proxies, timeout=req_timeout)
         soup = BeautifulSoup(req.content, "html.parser")
         return "GET {}".format(get_query(url)), req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):

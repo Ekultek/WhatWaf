@@ -51,6 +51,8 @@ class DetectionQueue(object):
         self.provided_headers = kwargs.get("provided_headers", None)
         self.save_fingerprint = kwargs.get("save_fingerprint", False)
         self.traffic_file = kwargs.get("traffic_file", None)
+        self.throttle = kwargs.get("throttle", 0)
+        self.req_timeout = kwargs.get("timeout", 15)
 
     def get_response(self):
         response_retval = []
@@ -69,7 +71,8 @@ class DetectionQueue(object):
                     )
                 response_retval.append((
                     lib.settings.get_page(
-                        primary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers
+                        primary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
+                        throttle=self.throttle, timeout=self.req_timeout
                     )
                 ))
                 if self.verbose:
@@ -78,7 +81,8 @@ class DetectionQueue(object):
                     )
                 response_retval.append((
                     lib.settings.get_page(
-                        secondary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers
+                        secondary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
+                        throttle=self.throttle, timeout=self.req_timeout
                 )))
 
             except Exception as e:
@@ -139,6 +143,8 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     verbose = kwargs.get("verbose", False)
     provided_headers = kwargs.get("provided_headers", None)
     max_successful_payloads = kwargs.get("tamper_int", 5)
+    throttle = kwargs.get("throttle", 0)
+    req_timeout = kwargs.get("timeout", 15)
 
     failed_schema = (
         re.compile("404", re.I), re.compile("captcha", re.I),
@@ -175,7 +181,8 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                 lib.formatter.payload(vector.strip())
             payloaded_url = "{}{}".format(url, vector)
             _, status, html, _ = lib.settings.get_page(
-                payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers
+                payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers,
+                throttle=throttle, timeout=req_timeout
             )
             if not find_failures(str(html), failed_schema):
                 if verbose:
@@ -280,6 +287,8 @@ def detection_main(url, payloads, **kwargs):
     use_csv = kwargs.get("use_csv", False)
     provided_headers = kwargs.get("provided_headers", None)
     traffic_file = kwargs.get("traffic_file", None)
+    throttle = kwargs.get("throttle", 0)
+    req_timeout = kwargs.get("req_timeout", 15)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -297,10 +306,14 @@ def detection_main(url, payloads, **kwargs):
     lib.formatter.info("gathering HTTP responses")
     responses = DetectionQueue(
         url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
-        provided_headers=provided_headers, traffic_file=traffic_file
+        provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
+        timeout=req_timeout
     ).get_response()
     lib.formatter.info("gathering normal response to compare against")
-    normal_response = lib.settings.get_page(url, proxy=proxy, agent=agent, provided_headers=provided_headers)
+    normal_response = lib.settings.get_page(
+        url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
+        timeout=req_timeout
+    )
 
     amount_of_products = 0
     detected_protections = set()
@@ -369,11 +382,13 @@ def detection_main(url, payloads, **kwargs):
         if verification_number is None:
             verification_number = 5
         verification_normal_response = lib.settings.get_page(
-            url, proxy=proxy, agent=agent, provided_headers=provided_headers
+            url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
+            timeout=req_timeout
         )
         payloaded_url = "{}{}".format(url, lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
         verification_payloaded_response = lib.settings.get_page(
-            payloaded_url, proxy=proxy, agent=agent, provided_headers=provided_headers
+            payloaded_url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
+            timeout=req_timeout
         )
         results = check_if_matched(
             verification_normal_response, verification_payloaded_response,

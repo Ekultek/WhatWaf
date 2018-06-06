@@ -68,8 +68,10 @@ class WhatWafParser(ArgumentParser):
                               help="Add your own custom headers to the request. To use multiple "
                                    "separate headers by comma. Your headers need to be exact"
                                    "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For=127.0.0.1)")
-        req_args.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
-                              help="store all HTTP traffic headers into a file of your choice")
+        req_args.add_argument("--throttle", dest="sleepTimeThrottle", type=int, metavar="THROTTLE-TIME (seconds)",
+                              default=0, help="Provide a sleep time per request (default is 0)")
+        req_args.add_argument("--timeout", dest="requestTimeout", type=int, metavar="TIMEOUT",
+                              default=15, help="Control the timeout time of the requests (default is 15)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
@@ -93,6 +95,8 @@ class WhatWafParser(ArgumentParser):
                                  help="Save all fingerprints for further investigation")
         output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int,
                                  help="Control the amount of tampers that are displayed (default is 5)")
+        output_opts.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
+                                 help="store all HTTP traffic headers into a file of your choice")
 
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
