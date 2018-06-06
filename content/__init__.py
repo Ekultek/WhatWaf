@@ -427,7 +427,7 @@ def detection_main(url, payloads, **kwargs):
             lib.formatter.info("searching for bypasses")
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
-                tamper_int=tamper_int
+                tamper_int=tamper_int, throttle=throttle, timeout=req_timeout
             )
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
