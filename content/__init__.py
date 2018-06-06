@@ -354,7 +354,8 @@ def detection_main(url, payloads, **kwargs):
         if not skip_bypass_check:
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
-                tamper_int=tamper_int, provided_headers=provided_headers
+                tamper_int=tamper_int, provided_headers=provided_headers, throttle=throttle,
+                timeout=req_timeout
             )
             if not formatted:
                 lib.settings.produce_results(found_working_tampers)
