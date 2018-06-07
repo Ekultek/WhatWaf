@@ -13,7 +13,7 @@ def detect(content, **kwargs):
         re.compile(r"cloudflare.ray.id.|var.cloudflare.", re.I),
         re.compile(r"cloudflare.nginx", re.I),
         re.compile(r"\A(__)?cfduid.", re.I),
-        re.compile(r"(cf[-|_]ray)?(..)?([0-9a-f]{16})?[-|_]?(dfw)?", re.I),
+        re.compile(r"cf[-|_]ray(..)?([0-9a-f]{16})?[-|_]?(dfw)?", re.I),
         re.compile(r"<.+>attention.required\S.\S.cloudflare<.+.>", re.I)
     )
     for detection in detection_schemas:
