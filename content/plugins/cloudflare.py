@@ -13,7 +13,7 @@ def detect(content, **kwargs):
         re.compile(r"cloudflare.ray.id.|var.cloudflare.", re.I),
         re.compile(r"cloudflare.nginx", re.I),
         re.compile(r"\A(__)?cfduid.", re.I),
-        re.compile(r"cf_ray", re.I),
+        re.compile(r"(cf[-|_]ray)?(..)?([0-9a-f]{16})?[-|_]?(dfw)?", re.I),
         re.compile(r"<.+>attention.required\S.\S.cloudflare<.+.>", re.I)
     )
     for detection in detection_schemas:
@@ -25,5 +25,8 @@ def detect(content, **kwargs):
             return True
         if detection.search(headers.get(HTTP_HEADER.SET_COOKIE, "")) is not None:
             return True
-        if detection.search(str(headers)) is not None:
-            return True
+        for header in headers.keys():
+            if detection.search(headers[header]) is not None:
+                return True
+            if detection.search(header) is not None:
+                return True
