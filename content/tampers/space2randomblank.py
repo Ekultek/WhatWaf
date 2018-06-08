@@ -6,7 +6,7 @@ __type__ = "changing the payload spaces to random ASCII blank characters"
 
 
 def tamper(payload, **kwargs):
-    blanks = ("%09", "%0A", "%0C", "%0D")
+    blanks = ("%09", "%0A", "%0C", "%0D", "%00")
     retval = ""
     for char in payload:
         modifier = random.choice(blanks)

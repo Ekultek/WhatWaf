@@ -15,7 +15,7 @@ def tamper(payload, **kwargs):
         return payload
     for char in payload:
         if char in unicode_changes.keys():
-            retval += "%u00{}".format(unicode_changes[char])
+            retval += u"\\u00{}".format(unicode_changes[char])
         else:
             retval += char
     return retval

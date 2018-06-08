@@ -1,4 +1,4 @@
-__example_payload__ = "&;lt'"
+__example_payload__ = "<script>alert(\"XSS\");</script>"
 __type__ = "changing certain characters in the payload into their ordinal equivalent"
 
 
