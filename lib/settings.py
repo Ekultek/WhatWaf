@@ -5,6 +5,7 @@ import json
 import time
 import random
 import string
+import base64
 import urlparse
 import platform
 
@@ -14,7 +15,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.7.5"
+VERSION = "0.8"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -200,21 +201,43 @@ def get_page(url, **kwargs):
     provided_headers = kwargs.get("provided_headers", None)
     throttle = kwargs.get("throttle", 0)
     req_timeout = kwargs.get("timeout", 15)
+    request_method = kwargs.get("request_method", "GET")
+    post_data = kwargs.get("post_data", " ")
+
+    if post_data.isspace():
+        items = list(post_data)
+        for i, item in enumerate(items):
+            if item == "=":
+                items[i] = "{}{}{}".format(items[i-1], items[i], random_string(length=7))
+        post_data = ''.join(items)
+
+    if request_method == "GET":
+        req = requests.get
+    elif request_method == "POST":
+        req = requests.post
+    else:
+        req = requests.get
 
     if provided_headers is None:
         headers = {"Connection": "close", "User-Agent": agent}
     else:
-        headers = provided_headers
-        headers["User-Agent"] = agent
+        headers = {}
+        if type(provided_headers) == dict:
+            for key, value in provided_headers.items():
+                headers[key] = value
+            headers["User-Agent"] = agent
+        else:
+            headers = provided_headers
+            headers["User-Agent"] = agent
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = ("", 0, "", {})
 
     time.sleep(throttle)
 
     try:
-        req = requests.get(url, headers=headers, proxies=proxies, timeout=req_timeout)
+        req = req(url, headers=headers, proxies=proxies, timeout=req_timeout, data=post_data)
         soup = BeautifulSoup(req.content, "html.parser")
-        return "GET {}".format(get_query(url)), req.status_code, soup, req.headers
+        return "{} {}".format(request_method, get_query(url)), req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
         return error_retval
 
@@ -413,3 +436,45 @@ def write_to_file(filename, path, data, **kwargs):
             writer.writerows(csv_data)
     return full_path
 
+
+def is_64(string):
+    if len(string) != 4 and len(string) % 4 == 0:
+        return base64.b64decode(string)
+    else:
+        return string
+
+
+def parse_burp_request(filename):
+    """
+    parse an XML file from Burp Suite and make a request based on what is parsed
+    """
+
+    import xml.etree.ElementTree as Parser
+
+    retval = {}
+    tmp = {}
+
+    tree = Parser.parse(filename)
+    root = tree.getroot()
+    burp_attributes = root.attrib
+
+    lib.formatter.info("parsing XML file from Burp version: {}; creation time: {}".format(
+        burp_attributes["burpVersion"], burp_attributes["exportTime"]
+    ))
+
+    retval["base_url"] = is_64(root[0][1].text.strip())
+    retval["protocol"] = is_64(root[0][4].text.strip())
+    retval["request_method"] = is_64(root[0][5].text.split(" ")[-1])
+    retval["request_headers"] = is_64(root[0][8].text.strip())
+
+    for header in retval["request_headers"].split("\n"):
+        if retval["request_method"] not in header and retval["base_url"] not in header and "Host" not in header:
+            data = header.split(":")
+            try:
+                tmp[data[0]] = data[1].strip()
+            except IndexError:
+                retval["post_data"] = ''.join(data)
+    retval["request_headers"] = {}
+    retval["request_headers"] = tmp
+
+    return retval

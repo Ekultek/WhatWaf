@@ -43,6 +43,8 @@ class WhatWafParser(ArgumentParser):
                                help="Pass a single URL to detect the protection")
         mandatory.add_argument("-l", "--list", "-f", "--file", dest="runMultipleWebsites", metavar="PATH",
                                help="Pass a file containing URL's (one per line) to detect the protection")
+        mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
+                               help="Pass a Burp Suite request file to perform WAF evaluation")
 
         req_args = parser.add_argument_group("request arguments",
                                              "arguments that will control your requests")
@@ -72,6 +74,10 @@ class WhatWafParser(ArgumentParser):
                               default=0, help="Provide a sleep time per request (default is 0)")
         req_args.add_argument("--timeout", dest="requestTimeout", type=int, metavar="TIMEOUT",
                               default=15, help="Control the timeout time of the requests (default is 15)")
+        req_args.add_argument("-P", "--post", dest="postRequest", action="store_true",
+                              help="Send a POST request, default request type is GET")
+        req_args.add_argument("-D", "--data", dest="postRequestData", metavar="POST-STRING",
+                              help="Send this data with the POST request (IE password=123&name=Josh)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")

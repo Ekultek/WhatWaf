@@ -15,7 +15,8 @@ from lib.settings import (
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER, HOME, ISSUES_LINK,
-    InvalidURLProvided, VERSION
+    InvalidURLProvided, VERSION,
+    parse_burp_request
 )
 from lib.formatter import (
     error,
@@ -189,6 +190,13 @@ def main():
         info("sleep throttle has been set to {}s".format(opt.sleepTimeThrottle))
 
     try:
+        if opt.postRequest:
+            request_type = "POST"
+        else:
+            request_type = "GET"
+
+        info("making {} requests to the target (all tampers will be done with GET requests)".format(request_type))
+
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             info("running single web application '{}'".format(url_to_use))
@@ -200,7 +208,8 @@ def main():
                 use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
                 fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
-                req_timeout=opt.requestTimeout
+                req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
+                request_type=request_type
             )
 
         elif opt.runMultipleWebsites:
@@ -217,10 +226,25 @@ def main():
                         use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
                         fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
                         traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
-                        req_timeout=opt.requestTimeout
+                        req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
+                        request_type=request_type
                     )
                     print("\n\b")
                     time.sleep(0.5)
+        elif opt.burpRequestFile:
+            request_data = parse_burp_request(opt.burpRequestFile)
+            info("URL parsed from request file: '{}'".format(request_data["base_url"]))
+            detection_main(
+                request_data["base_url"], payload_list,
+                verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                fingerprint_waf=opt.saveFingerprints, provided_headers=request_data["request_headers"],
+                traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                req_timeout=opt.requestTimeout, post_data=request_data["post_data"],
+                request_type=request_data["request_method"]
+            )
     except KeyboardInterrupt:
         fatal("user aborted scanning")
     except InvalidURLProvided:

@@ -53,6 +53,8 @@ class DetectionQueue(object):
         self.traffic_file = kwargs.get("traffic_file", None)
         self.throttle = kwargs.get("throttle", 0)
         self.req_timeout = kwargs.get("timeout", 15)
+        self.request_type = kwargs.get("request_type", "GET")
+        self.post_data = kwargs.get("post_data", "")
 
     def get_response(self):
         response_retval = []
@@ -72,7 +74,8 @@ class DetectionQueue(object):
                 response_retval.append((
                     lib.settings.get_page(
                         primary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
-                        throttle=self.throttle, timeout=self.req_timeout
+                        throttle=self.throttle, timeout=self.req_timeout, request_method=self.request_type,
+                        post_data=self.post_data
                     )
                 ))
                 if self.verbose:
@@ -82,7 +85,8 @@ class DetectionQueue(object):
                 response_retval.append((
                     lib.settings.get_page(
                         secondary_url, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
-                        throttle=self.throttle, timeout=self.req_timeout
+                        throttle=self.throttle, timeout=self.req_timeout, request_method=self.request_type,
+                        post_data=self.post_data
                 )))
 
             except Exception as e:
@@ -289,9 +293,14 @@ def detection_main(url, payloads, **kwargs):
     traffic_file = kwargs.get("traffic_file", None)
     throttle = kwargs.get("throttle", 0)
     req_timeout = kwargs.get("req_timeout", 15)
+    request_type = kwargs.get("request_type", "GET")
+    post_data = kwargs.get("post_data", "")
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
+
+    if post_data is None:
+        post_data = ""
 
     if lib.settings.validate_url(url) is None:
         raise lib.settings.InvalidURLProvided
@@ -307,12 +316,12 @@ def detection_main(url, payloads, **kwargs):
     responses = DetectionQueue(
         url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
         provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
-        timeout=req_timeout
+        timeout=req_timeout, request_type=request_type, post_data=post_data
     ).get_response()
     lib.formatter.info("gathering normal response to compare against")
     normal_response = lib.settings.get_page(
         url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
-        timeout=req_timeout
+        timeout=req_timeout, request_method=request_type, post_data=post_data
     )
 
     amount_of_products = 0
@@ -384,12 +393,12 @@ def detection_main(url, payloads, **kwargs):
             verification_number = 5
         verification_normal_response = lib.settings.get_page(
             url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
-            timeout=req_timeout
+            timeout=req_timeout, request_method=request_type, post_data=post_data
         )
         payloaded_url = "{}{}".format(url, lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
         verification_payloaded_response = lib.settings.get_page(
             payloaded_url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
-            timeout=req_timeout
+            timeout=req_timeout, request_method=request_type, post_data=post_data
         )
         results = check_if_matched(
             verification_normal_response, verification_payloaded_response,
