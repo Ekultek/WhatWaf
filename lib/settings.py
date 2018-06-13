@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8"
+VERSION = "0.8.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -360,7 +360,7 @@ def auto_assign(url, ssl=False):
             return url.strip()
 
 
-def create_fingerprint(url, content, status, headers, speak=False):
+def create_fingerprint(url, content, status, headers, req_data=None, speak=False):
     """
     create the unknown firewall fingerprint file
     """
@@ -368,8 +368,11 @@ def create_fingerprint(url, content, status, headers, speak=False):
         os.makedirs(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
 
     __replace_http = lambda x: x.split("/")
-    fingerprint = "<!---\nHTTP 1.1\nStatus code: {}\nHTTP headers: {}\n--->\n{}".format(
-        str(status), str(headers), str(content)
+    fingerprint = "<!---\n{}\nStatus code: {}\n{}\n--->\n{}".format(
+        "GET {} HTTP/1.1".format(url) if req_data is None else "{} HTTP/1.1".format(req_data),
+        str(status),
+        '\n'.join("{}: {}".format(h, k) for h, k in headers.items()),
+        str(content)
     )
 
     filename = __replace_http(url)[2]
@@ -438,8 +441,15 @@ def write_to_file(filename, path, data, **kwargs):
 
 
 def is_64(string):
+    """
+    will allow you to tell if a string is base64 or not
+    """
     if len(string) != 4 and len(string) % 4 == 0:
-        return base64.b64decode(string)
+        try:
+            return base64.b64decode(string)
+        except:
+            # assume the string is not base64 and return the string
+            return string
     else:
         return string
 

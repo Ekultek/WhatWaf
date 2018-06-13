@@ -195,8 +195,6 @@ def main():
         else:
             request_type = "GET"
 
-        info("making {} requests to the target (all tampers will be done with GET requests)".format(request_type))
-
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             info("running single web application '{}'".format(url_to_use))

@@ -104,7 +104,12 @@ class DetectionQueue(object):
                     response_retval.append(None)
             if self.save_fingerprint:
                 lib.settings.create_fingerprint(
-                    self.url, response_retval[0][1], response_retval[0][0], response_retval[0][2], speak=True
+                    self.url,
+                    response_retval[0][2],
+                    response_retval[0][1],
+                    response_retval[0][3],
+                    req_data=response_retval[0][0],
+                    speak=True
                 )
             if self.traffic_file is not None:
                 with open(self.traffic_file, "a+") as traffic:
@@ -299,8 +304,16 @@ def detection_main(url, payloads, **kwargs):
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
 
+    lib.formatter.info("request type: {}".format(request_type))
+
     if post_data is None:
         post_data = ""
+
+    if post_data is not None and post_data != "":
+        lib.formatter.info("POST string to be sent: '{}'".format(post_data))
+    elif request_type == "POST":
+        if len(post_data) == 0:
+            lib.formatter.warn("no POST string being sent with post request", minor=True)
 
     if lib.settings.validate_url(url) is None:
         raise lib.settings.InvalidURLProvided
