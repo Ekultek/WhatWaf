@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.1"
+VERSION = "0.8.2"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -472,19 +472,23 @@ def parse_burp_request(filename):
         burp_attributes["burpVersion"], burp_attributes["exportTime"]
     ))
 
-    retval["base_url"] = is_64(root[0][1].text.strip())
-    retval["protocol"] = is_64(root[0][4].text.strip())
-    retval["request_method"] = is_64(root[0][5].text.split(" ")[-1])
-    retval["request_headers"] = is_64(root[0][8].text.strip())
+    try:
+        retval["base_url"] = is_64(root[0][1].text.strip())
+        retval["protocol"] = is_64(root[0][4].text.strip())
+        retval["request_method"] = is_64(root[0][5].text.split(" ")[-1])
+        retval["request_headers"] = is_64(root[0][8].text.strip())
 
-    for header in retval["request_headers"].split("\n"):
-        if retval["request_method"] not in header and retval["base_url"] not in header and "Host" not in header:
-            data = header.split(":")
-            try:
-                tmp[data[0]] = data[1].strip()
-            except IndexError:
-                retval["post_data"] = ''.join(data)
-    retval["request_headers"] = {}
-    retval["request_headers"] = tmp
+        for header in retval["request_headers"].split("\n"):
+            if retval["request_method"] not in header and retval["base_url"] not in header and "Host" not in header:
+                data = header.split(":")
+                try:
+                    tmp[data[0]] = data[1].strip()
+                except IndexError:
+                    retval["post_data"] = ''.join(data)
+        retval["request_headers"] = {}
+        retval["request_headers"] = tmp
 
-    return retval
+        return retval
+    except IndexError:
+        lib.formatter.fatal("it appears the burp request file provided has no usable information in it")
+        exit(-1)
