@@ -4,7 +4,7 @@ import time
 import subprocess
 
 from lib.cmd import WhatWafParser
-from lib.firewall_found import hide_url
+from lib.firewall_found import hide_sensitive
 from content import (
     detection_main,
     encode
@@ -263,7 +263,7 @@ def main():
         warn("you will need the following information to create an issue:")
         print(
             "{}\nTraceback:\n```\n{}```\nCMD line: `{}`\nVersion: `{}`\n{}".format(
-                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_url(sys.argv),
+                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_sensitive(sys.argv, "-u"),
                 VERSION, sep
             )
         )

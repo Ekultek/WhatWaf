@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.2"
+VERSION = "0.8.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -440,18 +440,22 @@ def write_to_file(filename, path, data, **kwargs):
     return full_path
 
 
-def is_64(string):
+def is_64(_string):
     """
     will allow you to tell if a string is base64 or not
     """
-    if len(string) != 4 and len(string) % 4 == 0:
+    if len(_string) != 4 and len(_string) % 4 == 0:
         try:
-            return base64.b64decode(string)
+            data = base64.b64decode(string)
+            if all(c in string.printable for c in _string):
+                return data
+            else:
+                return _string
         except:
             # assume the string is not base64 and return the string
-            return string
+            return _string
     else:
-        return string
+        return _string
 
 
 def parse_burp_request(filename):
@@ -486,6 +490,8 @@ def parse_burp_request(filename):
                 except IndexError:
                     retval["post_data"] = ''.join(data)
         retval["request_headers"] = {}
+        if "post_data" not in retval:
+            retval["post_data"] = None
         retval["request_headers"] = tmp
 
         return retval

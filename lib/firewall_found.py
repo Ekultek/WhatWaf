@@ -81,9 +81,9 @@ def find_url(params):
     return None
 
 
-def hide_url(args):
+def hide_sensitive(args, command):
     try:
-        url_index = args.index("-u") + 1
+        url_index = args.index(command) + 1
         hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])
         args.pop(url_index)
         args.insert(url_index, hidden_url)
@@ -109,12 +109,17 @@ def request_firewall_issue_creation(path):
             full_fingerprint = data.read()
             issue_title = "Unknown Firewall ({})".format(identifier)
 
+        sensitive = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
+        for item in sys.argv:
+            if item in sensitive:
+                data = hide_sensitive(sys.argv, item)
+
         issue_data = {
             "title": issue_title,
             "body": "WhatWaf version: `{}`\n"
                     "Running context: `{}`\n"
                     "Fingerprint:\n```\n{}\n```".format(
-                        lib.settings.VERSION, hide_url(sys.argv), full_fingerprint
+                        lib.settings.VERSION, data, full_fingerprint
             )
         }
 
