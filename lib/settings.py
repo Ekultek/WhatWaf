@@ -6,8 +6,12 @@ import time
 import random
 import string
 import base64
-import urlparse
 import platform
+try:
+    import urlparse
+except Exception:
+    # python 2.x doesn't have a ModuleNotFoundError so we'll just catch the exception I guess
+    import urllib.parse as urlparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -15,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.3"
+VERSION = "0.8.4"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"

@@ -99,7 +99,7 @@ class WhatWafParser(ArgumentParser):
                                  help="Send the output to a CSV file")
         output_opts.add_argument("--fingerprint", action="store_true", dest="saveFingerprints",
                                  help="Save all fingerprints for further investigation")
-        output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int,
+        output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int, default=5,
                                  help="Control the amount of tampers that are displayed (default is 5)")
         output_opts.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
                                  help="store all HTTP traffic headers into a file of your choice")
