@@ -22,7 +22,10 @@ except NameError:
 
 def create_identifier(data):
     obj = hashlib.sha1()
-    obj.update(data)
+    try:
+        obj.update(data)
+    except:
+        obj.update(data.encode("utf-8"))
     return obj.hexdigest()[1:10]
 
 
@@ -49,8 +52,13 @@ def ensure_no_issue(param):
     for url in urls:
         req = requests.get(url)
         param = re.compile(param)
-        if param.search(req.content) is not None:
-            return True
+        try:
+            if param.search(req.content) is not None:
+                return True
+        except:
+            content = str(req.content)
+            if param.search(content) is not None:
+                return True
     return False
 
 
