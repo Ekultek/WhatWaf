@@ -204,11 +204,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                         try:
                             working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
                         except:
-                            # this should help with personal tamper scripts
-                            working_tampers.add((
-                                    "n/a", "n/a", tamper.tamper(
-                                    lib.settings.WAF_REQUEST_DETECTION_PAYLOADS[3])
-                                ))
+                            pass
             else:
                 if verbose:
                     lib.formatter.warn("failure found in response content")

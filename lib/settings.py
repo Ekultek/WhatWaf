@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.5"
+VERSION = "0.8.6"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -315,7 +315,10 @@ def produce_results(found_tampers):
         print(spacer)
         for i, tamper in enumerate(found_tampers, start=1):
             description, example, load = tamper
-            load = str(load).split(" ")[1].split("'")[1]
+            try:
+                load = str(load).split(" ")[1].split("'")[1]
+            except IndexError:
+                pass
             print("(#{}) description: tamper payload by {}\nexample: '{}'\nload path: {}".format(
                 i, description, example, load
             ))
