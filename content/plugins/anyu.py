@@ -12,10 +12,15 @@ def detect(content, **kwargs):
         re.compile(r"anyu", re.I),
         re.compile(r"anyu(-)?.the.green.channel", re.I)
     )
-    event_id = headers["WZWS-RAY"] if headers is not None else None
+    try:
+        event_id = headers["WZWS-RAY"] if headers is not None else None
+    except:
+        event_id = None
     if event_id is not None:
         detection_schema = list(detection_schema)
         detection_schema.append(re.compile(r"{}".format(event_id), re.I))
+        for item in detection_schema:
+            print item.pattern
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
