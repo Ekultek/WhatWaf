@@ -15,14 +15,18 @@ class StoreDictKeyPairs(Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
         for kv in values.split(","):
-            if kv.count("=") != 1:
-                first_equal_index = kv.index("=")
-                key = kv[:first_equal_index]
-                value = kv[first_equal_index + 1:]
+            if ":" in kv:
+                splitter = ":"
+            else:
+                splitter = "="
+            if kv.count(splitter) != 1:
+                first_equal_index = kv.index(splitter)
+                key = kv[:first_equal_index].strip()
+                value = kv[first_equal_index + 1:].strip()
                 self.retval[key] = value
             else:
-                k, v = kv.split("=")
-                self.retval[k] = v
+                k, v = kv.split(splitter)
+                self.retval[k.strip()] = v.strip()
         setattr(namespace, self.dest, self.retval)
 
 
@@ -66,10 +70,10 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
                               help="Check your Tor connection")
         req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
-                              metavar="HEADER=VALUE,HEADER=VALUE..",
+                              metavar="HEADER=VALUE,HEADER:VALUE..",
                               help="Add your own custom headers to the request. To use multiple "
                                    "separate headers by comma. Your headers need to be exact"
-                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For=127.0.0.1)")
+                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For:127.0.0.1)")
         req_args.add_argument("--throttle", dest="sleepTimeThrottle", type=int, metavar="THROTTLE-TIME (seconds)",
                               default=0, help="Provide a sleep time per request (default is 0)")
         req_args.add_argument("--timeout", dest="requestTimeout", type=int, metavar="TIMEOUT",
