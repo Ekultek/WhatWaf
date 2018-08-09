@@ -309,7 +309,12 @@ def detection_main(url, payloads, **kwargs):
         lib.formatter.info("POST string to be sent: '{}'".format(post_data))
     elif request_type == "POST":
         if len(post_data) == 0:
-            lib.formatter.warn("no POST string being sent with post request", minor=True)
+            lib.formatter.warn("no POST string supplied generating random", minor=True)
+            post_data = "{r7}={r5}&{r7}={r5}".format(
+                r7=lib.settings.random_string(length=7),
+                r5=lib.settings.random_string(length=5)
+            )
+            lib.formatter.info("random POST string to be sent: '{}'".format(post_data))
 
     if lib.settings.validate_url(url) is None:
         raise lib.settings.InvalidURLProvided
