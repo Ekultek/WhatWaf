@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.10"
+VERSION = "0.8.11"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -94,7 +94,7 @@ DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
 # the WAF is, along with the information we will need
 # to identify what tampering method we should use
 # they are located in ./content/files/default_payloads.lst
-WAF_REQUEST_DETECTION_PAYLOADS = (p.strip() for p in open(DEFAULT_PAYLOAD_PATH).readlines())
+WAF_REQUEST_DETECTION_PAYLOADS = [p.strip() for p in open(DEFAULT_PAYLOAD_PATH).readlines()]
 
 # random home pages to try and get cookies
 RAND_HOMEPAGES = (
