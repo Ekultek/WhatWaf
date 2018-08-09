@@ -16,7 +16,8 @@ from lib.settings import (
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER, HOME, ISSUES_LINK,
     InvalidURLProvided, VERSION,
-    parse_burp_request
+    parse_burp_request,
+    check_version
 )
 from lib.formatter import (
     error,
@@ -107,6 +108,7 @@ def main():
 
     if not opt.hideBanner:
         print(BANNER)
+    check_version()
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
