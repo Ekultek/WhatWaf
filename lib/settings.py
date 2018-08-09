@@ -523,5 +523,5 @@ def check_version():
     content = req.text
     current_version = content.split("\n")[21].split("=")[-1].split('"')[1]
     my_version = VERSION
-    if not current_version < my_version:
+    if not current_version == my_version:
         lib.formatter.warn("new version: {} is available".format(current_version))
