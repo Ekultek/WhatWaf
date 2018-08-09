@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.8"
+VERSION = "0.8.9"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -375,6 +375,14 @@ def create_fingerprint(url, content, status, headers, req_data=None, speak=False
         os.makedirs(UNKNOWN_PROTECTION_FINGERPRINT_PATH)
 
     __replace_http = lambda x: x.split("/")
+    __replace_specifics = lambda u: "http://{}".format(u.split("/")[2])
+
+    try:
+        url = __replace_specifics(url)
+    except Exception:
+        lib.formatter.warn("full URL will be displayed to the public")
+        url = url
+
     fingerprint = "<!---\n{}\nStatus code: {}\n{}\n--->\n{}".format(
         "GET {} HTTP/1.1".format(url) if req_data is None else "{} HTTP/1.1".format(req_data),
         str(status),
@@ -469,7 +477,6 @@ def parse_burp_request(filename):
     """
     parse an XML file from Burp Suite and make a request based on what is parsed
     """
-
     import xml.etree.ElementTree as Parser
 
     retval = {}
@@ -505,3 +512,16 @@ def parse_burp_request(filename):
     except IndexError:
         lib.formatter.fatal("it appears the burp request file provided has no usable information in it")
         exit(-1)
+
+
+def check_version():
+    """
+    check the version number for updates
+    """
+    version_url = "https://raw.githubusercontent.com/Ekultek/WhatWaf/master/lib/settings.py"
+    req = requests.get(version_url)
+    content = req.text
+    current_version = content.split("\n")[21].split("=")[-1].split('"')[1]
+    my_version = VERSION
+    if not current_version < my_version:
+        lib.formatter.warn("new version: {} is available".format(current_version))
