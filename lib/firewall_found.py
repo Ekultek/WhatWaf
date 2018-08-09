@@ -151,3 +151,4 @@ def request_firewall_issue_creation(path):
             lib.formatter.error(
                 "someone has already sent in this firewalls fingerprint here: {}".format(find_url(identifier))
             )
+    lib.formatter.info("for further analysis the WAF fingerprint can be found in: '{}'".format(path))
