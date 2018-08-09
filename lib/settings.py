@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.9"
+VERSION = "0.8.10"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -80,6 +80,9 @@ CSV_FILE_PATH = "{}/csv_output".format(HOME)
 # request token path
 TOKEN_PATH = "{}/content/files/auth.key".format(os.getcwd())
 
+# default payloads path
+DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(os.getcwd())
+
 # default user-agent
 DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
     VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
@@ -90,22 +93,8 @@ DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
 # us with the information we need to identify what
 # the WAF is, along with the information we will need
 # to identify what tampering method we should use
-WAF_REQUEST_DETECTION_PAYLOADS = (
-    "<frameset><frame src=\"javascript:alert('XSS');\"></frameset>",
-    " AND 1=1 ORDERBY(1,2,3,4,5) --;",
-    '><script>alert("testing");</script>',
-    (
-        " AND 1=1 UNION ALL SELECT 1,NULL,1,'<script>alert(\"666\")</script>',"
-        "table_name FROM information_schema.tables WHERE 2>1--/**/; EXEC "
-        "xp_cmdshell('cat ../../../etc/passwd')#"  # you don't get my thanks anymore douche
-    ),
-    '<img src="javascript:alert(\'XSS\');">',
-    "'))) AND 1=1,SELECT * FROM information_schema.tables ((('",
-    "' )) AND 1=1 (( ' -- rgzd",
-    ";SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '",
-    "' OR '1'=1 '", " OR 1=1",
-    "<scri<script>pt>alert('123');</scri</script>pt>"
-)
+# they are located in ./content/files/default_payloads.lst
+WAF_REQUEST_DETECTION_PAYLOADS = (p.strip() for p in open(DEFAULT_PAYLOAD_PATH).readlines())
 
 # random home pages to try and get cookies
 RAND_HOMEPAGES = (
@@ -298,7 +287,7 @@ def configure_request_headers(**kwargs):
     else:
         lib.formatter.warn(
             "it is highly advised to use a proxy when using WhatWaf. do so by passing the proxy flag "
-            "(IE `--proxy http://127.0.0.1:9050`)", minor=True
+            "(IE `--proxy http://127.0.0.1:9050`) or by passing the Tor flag (IE `--tor`)", minor=True
         )
     if agent is not None:
         lib.formatter.info("using User-Agent '{}'".format(agent))
