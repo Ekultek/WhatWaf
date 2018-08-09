@@ -380,7 +380,7 @@ def create_fingerprint(url, content, status, headers, req_data=None, speak=False
     try:
         url = __replace_specifics(url)
     except Exception:
-        lib.formatter.warn("full URL will be displayed to the public")
+        lib.formatter.warn("full URL will be displayed to the public if an issue is created")
         url = url
 
     fingerprint = "<!---\n{}\nStatus code: {}\n{}\n--->\n{}".format(
