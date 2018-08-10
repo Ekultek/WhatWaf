@@ -9,9 +9,8 @@ def detect(content, **kwargs):
         re.compile(
             r"<img.src(=)?(.csf|.)?([-_]|data)"
             r"?(small)?.(image.)?(jpg|png)?(.)"
-            r"?(base64.)?((?:[A-Za-z0-9+/]{4})"
             r"*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-"
-            r"9+/]{3}=)?)?", re.I),
+            r"9+/]{3}=)", re.I),
         re.compile(r"<img.src(=)?.csf[-_]?small.(jpg|png)?", re.I)
     )
     for detection in detection_schema:
