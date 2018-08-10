@@ -465,7 +465,6 @@ def detection_main(url, payloads, **kwargs):
         else:
             lib.formatter.warn("skipping bypass tests")
             if formatted:
-                filename = lib.settings.random_string()
                 dict_data_output = dictify_output(url, detected_protections, [])
                 written_file_path = lib.settings.write_to_file(
                     filename, filepath, dict_data_output,
