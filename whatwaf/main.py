@@ -214,6 +214,11 @@ def main():
 
         elif opt.runMultipleWebsites:
             info("reading from '{}'".format(opt.runMultipleWebsites))
+            try:
+                open(opt.runMultipleWebsites)
+            except IOError:
+                fatal("file: '{}' did not open, does it exist?".format(opt.runMultipleWebsites))
+                exit(-1)
             with open(opt.runMultipleWebsites) as urls:
                 for i, url in enumerate(urls, start=1):
                     url = auto_assign(url.strip(), ssl=opt.forceSSL)
