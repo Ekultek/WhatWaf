@@ -19,8 +19,6 @@ def detect(content, **kwargs):
     if event_id is not None:
         detection_schema = list(detection_schema)
         detection_schema.append(re.compile(r"{}".format(event_id), re.I))
-        for item in detection_schema:
-            print item.pattern
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
