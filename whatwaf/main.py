@@ -1,6 +1,6 @@
 import sys
-import shlex
 import time
+import shlex
 import subprocess
 
 from lib.cmd import WhatWafParser
@@ -28,6 +28,12 @@ from lib.formatter import (
 )
 
 
+try:
+    raw_input
+except Exception:
+    raw_input = input
+
+
 def main():
     opt = WhatWafParser().cmd_parser()
 
@@ -44,9 +50,12 @@ def main():
         import shutil
 
         try:
-            warn("cleaning home folder, all information will be deleted, if you changed your mind press CNTRL-C now")
+            warn(
+                "cleaning home folder, all information will be deleted, if you changed your mind press CNTRL-C now, "
+                "otherwise hit enter to continue"
+            )
             # you have three seconds to change your mind
-            time.sleep(3)
+            raw_input("")
             info("attempting to clean home folder")
             shutil.rmtree(HOME)
             info("home folder removed")
@@ -173,6 +182,11 @@ def main():
         payload_list = [p.strip() if p[0] == " " else p for p in str(opt.providedPayloads).split(",")]
         info("using provided payloads")
     elif opt.payloadList is not None:
+        try:
+            open(opt.payloadList).close()
+        except Exception:
+            fatal("provided file '{}' does not exists, check the path and try again".format(opt.payloadList))
+            exit(1)
         payload_list = [p.strip("\n") for p in open(opt.payloadList).readlines()]
         info("using provided payload file '{}'".format(opt.payloadList))
     else:

@@ -19,23 +19,23 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.8.19"
+VERSION = "0.9"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
 
 # cool looking banner
 BANNER = """\b\033[1m
-                          ,------.  
-                         '  .--.  ' 
-,--.   .--.   ,--.   .--.|  |  |  | 
-|  |   |  |   |  |   |  |'--'  |  | 
-|  |   |  |   |  |   |  |    __.  | 
-|  |.'.|  |   |  |.'.|  |   |   .'  
-|         |   |         |   |___|   
-|   ,'.   |hat|   ,'.   |af .---.   
-'--'   '--'   '--'   '--'   '---'  
-><script>alert("WhatWaf?<|>v{}{}");</script>
+\t                          ,------.  
+\t                         '  .--.  ' 
+\t,--.   .--.   ,--.   .--.|  |  |  | 
+\t|  |   |  |   |  |   |  |'--'  |  | 
+\t|  |   |  |   |  |   |  |    __.  | 
+\t|  |.'.|  |   |  |.'.|  |   |   .'  
+\t|         |   |         |   |___|   
+\t|   ,'.   |hat|   ,'.   |af .---.   
+\t'--'   '--'   '--'   '--'   '---'  
+"/><script>alert("\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
 # plugins (waf scripts) path
@@ -100,7 +100,7 @@ WAF_REQUEST_DETECTION_PAYLOADS = [p.strip() for p in open(DEFAULT_PAYLOAD_PATH).
 RAND_HOMEPAGES = (
     "index.php", "index.exe", "index.html", "index.py", "index.pl", "index.exe",
     "phpadmin.php", "home.php", "home.html", "home.py", "home.pl", "home.exe",
-    "phpcmd.exe","index.phpcmd.exe", "index.html", "index.htm", "index.shtml",
+    "phpcmd.exe", "index.phpcmd.exe", "index.html", "index.htm", "index.shtml",
     "index.php", "index.php5", "index.php5.exe", "index.php4.exe", "index.php4",
     "index.php3", "index.cgi", "default.html", "default.htm", "home.html", "home.htm",
     "Index.html", "Index.htm", "Index.shtml", "Index.php", "Index.cgi", "Default.html",
@@ -129,42 +129,42 @@ class HTTP_HEADER:
     it's just easier to grab them then to retype them over
     and over again
     """
-    ACCEPT              = "Accept"
-    ACCEPT_CHARSET      = "Accept-Charset"
-    ACCEPT_ENCODING     = "Accept-Encoding"
-    ACCEPT_LANGUAGE     = "Accept-Language"
-    AUTHORIZATION       = "Authorization"
-    CACHE_CONTROL       = "Cache-Control"
-    CONNECTION          = "Connection"
-    CONTENT_ENCODING    = "Content-Encoding"
-    CONTENT_LENGTH      = "Content-Length"
-    CONTENT_RANGE       = "Content-Range"
-    CONTENT_TYPE        = "Content-Type"
-    COOKIE              = "Cookie"
-    EXPIRES             = "Expires"
-    HOST                = "Host"
-    IF_MODIFIED_SINCE   = "If-Modified-Since"
-    LAST_MODIFIED       = "Last-Modified"
-    LOCATION            = "Location"
-    PRAGMA              = "Pragma"
+    ACCEPT = "Accept"
+    ACCEPT_CHARSET = "Accept-Charset"
+    ACCEPT_ENCODING = "Accept-Encoding"
+    ACCEPT_LANGUAGE = "Accept-Language"
+    AUTHORIZATION = "Authorization"
+    CACHE_CONTROL = "Cache-Control"
+    CONNECTION = "Connection"
+    CONTENT_ENCODING = "Content-Encoding"
+    CONTENT_LENGTH = "Content-Length"
+    CONTENT_RANGE = "Content-Range"
+    CONTENT_TYPE = "Content-Type"
+    COOKIE = "Cookie"
+    EXPIRES = "Expires"
+    HOST = "Host"
+    IF_MODIFIED_SINCE = "If-Modified-Since"
+    LAST_MODIFIED = "Last-Modified"
+    LOCATION = "Location"
+    PRAGMA = "Pragma"
     PROXY_AUTHORIZATION = "Proxy-Authorization"
-    PROXY_CONNECTION    = "Proxy-Connection"
-    RANGE               = "Range"
-    REFERER             = "Referer"
-    REFRESH             = "Refresh"
-    SERVER              = "Server"
-    SET_COOKIE          = "Set-Cookie"
-    TRANSFER_ENCODING   = "Transfer-Encoding"
-    URI                 = "URI"
-    USER_AGENT          = "User-Agent"
-    VIA                 = "Via"
-    X_CACHE             = "X-Cache"
-    X_POWERED_BY        = "X-Powered-By"
-    X_DATA_ORIGIN       = "X-Data-Origin"
-    X_FRAME_OPT         = "X-Frame-Options"
-    X_FORWARDED_FOR     = "X-Forwarded-For"
-    X_SERVER            = "X-Server"
-    X_BACKSIDE_TRANS    = "X-Backside-Transport"
+    PROXY_CONNECTION = "Proxy-Connection"
+    RANGE = "Range"
+    REFERER = "Referer"
+    REFRESH = "Refresh"
+    SERVER = "Server"
+    SET_COOKIE = "Set-Cookie"
+    TRANSFER_ENCODING = "Transfer-Encoding"
+    URI = "URI"
+    USER_AGENT = "User-Agent"
+    VIA = "Via"
+    X_CACHE = "X-Cache"
+    X_POWERED_BY = "X-Powered-By"
+    X_DATA_ORIGIN = "X-Data-Origin"
+    X_FRAME_OPT = "X-Frame-Options"
+    X_FORWARDED_FOR = "X-Forwarded-For"
+    X_SERVER = "X-Server"
+    X_BACKSIDE_TRANS = "X-Backside-Transport"
 
 
 def validate_url(url):
@@ -201,7 +201,7 @@ def get_page(url, **kwargs):
         items = list(post_data)
         for i, item in enumerate(items):
             if item == "=":
-                items[i] = "{}{}{}".format(items[i-1], items[i], random_string(length=7))
+                items[i] = "{}{}{}".format(items[i - 1], items[i], random_string(length=7))
         post_data = ''.join(items)
 
     if request_method == "GET":
@@ -432,8 +432,12 @@ def write_to_file(filename, path, data, **kwargs):
                 ["url", "is_protected", "protection", "working_tampers"],
                 [
                     _json_data["url"], _json_data["is protected"],
-                    _json_data["identified firewall"] if _json_data["identified firewall"] is not None else "None",
-                    _json_data["apparent working tampers"] if _json_data["apparent working tampers"] is not None else "None"
+                    _json_data[
+                        "identified firewall"
+                    ] if _json_data["identified firewall"] is not None else "None",
+                    _json_data[
+                        "apparent working tampers"
+                    ] if _json_data["apparent working tampers"] is not None else "None"
                 ]
             ]
         except KeyError:
@@ -455,7 +459,7 @@ def is_64(_string):
                 return data
             else:
                 return _string
-        except:
+        except Exception:
             # assume the string is not base64 and return the string
             return _string
     else:

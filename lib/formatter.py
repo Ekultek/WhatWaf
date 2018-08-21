@@ -1,3 +1,6 @@
+import time
+
+
 def set_color(string, level=None):
     """
     set the string color
@@ -20,36 +23,36 @@ def set_color(string, level=None):
 
 def info(string):
     print(
-        set_color("[INFO] {}".format(string), level=20)
+        "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[INFO] {}".format(string), level=20)
     )
 
 
 def debug(string):
     print(
-        set_color("[DEBUG] {}".format(string), level=10)
+            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[DEBUG] {}".format(string), level=10)
     )
 
 
 def warn(string, minor=False):
     if not minor:
         print(
-            set_color("[WARN] {}".format(string), level=30)
+                "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[WARN] {}".format(string), level=30)
         )
     else:
         print(
-            set_color("[WARN] {}".format(string), level=35)
+                "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[WARN] {}".format(string), level=35)
         )
 
 
 def error(string):
     print(
-        set_color("[ERROR] {}".format(string), level=40)
+            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[ERROR] {}".format(string), level=40)
     )
 
 
 def fatal(string):
     print(
-        set_color("[FATAL] {}".format(string), level=60)
+            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[FATAL] {}".format(string), level=60)
     )
 
 
@@ -61,5 +64,5 @@ def payload(string):
 
 def success(string):
     print(
-        set_color("[SUCCESS] {}".format(string), level=15)
+            "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[SUCCESS] {}".format(string), level=15)
     )
