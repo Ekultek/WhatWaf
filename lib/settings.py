@@ -202,11 +202,10 @@ def get_page(url, **kwargs):
         for i, item in enumerate(items):
             if item == "=":
                 items[i] = "{}{}{}".format(items[i - 1], items[i], random_string(length=7))
+
         post_data = ''.join(items)
 
-    if request_method == "GET":
-        req = requests.get
-    elif request_method == "POST":
+    if request_method == "POST":
         req = requests.post
     else:
         req = requests.get
