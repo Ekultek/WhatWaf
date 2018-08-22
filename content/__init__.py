@@ -362,8 +362,6 @@ def detection_main(url, payloads, **kwargs):
                     return lib.firewall_found.request_firewall_issue_creation(path)
                 else:
                     detected_protections.add(detection.__product__)
-        else:
-            lib.formatter.warn("no response was provided, skipping")
     if len(detected_protections) > 0:
         if lib.settings.UNKNOWN_FIREWALL_NAME not in detected_protections:
             amount_of_products += 1
