@@ -338,6 +338,8 @@ def detection_main(url, payloads, **kwargs):
         timeout=req_timeout, request_method=request_type, post_data=post_data
     )
 
+    #plus one for lib.settings.get_page call
+    requestCount = len(responses) + 1
     amount_of_products = 0
     detected_protections = set()
 
@@ -472,3 +474,5 @@ def detection_main(url, payloads, **kwargs):
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+
+    return requestCount

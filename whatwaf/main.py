@@ -211,10 +211,12 @@ def main():
         else:
             request_type = "GET"
 
+        requestCount = 0
+
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             info("running single web application '{}'".format(url_to_use))
-            detection_main(
+            requestCount += detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -237,7 +239,7 @@ def main():
                 for i, url in enumerate(urls, start=1):
                     url = auto_assign(url.strip(), ssl=opt.forceSSL)
                     info("currently running on site #{} ('{}')".format(i, url))
-                    detection_main(
+                    requestCount += detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
                         verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                         verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -250,10 +252,11 @@ def main():
                     )
                     print("\n\b")
                     time.sleep(0.5)
+
         elif opt.burpRequestFile:
             request_data = parse_burp_request(opt.burpRequestFile)
             info("URL parsed from request file: '{}'".format(request_data["base_url"]))
-            detection_main(
+            requestCount += detection_main(
                 request_data["base_url"], payload_list,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -264,6 +267,9 @@ def main():
                 req_timeout=opt.requestTimeout, post_data=request_data["post_data"],
                 request_type=request_data["request_method"]
             )
+
+        info("total requests sent: {}".format(requestCount))
+
     except KeyboardInterrupt:
         fatal("user aborted scanning")
     except InvalidURLProvided:
