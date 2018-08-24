@@ -296,6 +296,7 @@ def detection_main(url, payloads, **kwargs):
     req_timeout = kwargs.get("req_timeout", 15)
     request_type = kwargs.get("request_type", "GET")
     post_data = kwargs.get("post_data", "")
+    check_server = kwargs.get("check_server", False)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -337,6 +338,19 @@ def detection_main(url, payloads, **kwargs):
         url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,
         timeout=req_timeout, request_method=request_type, post_data=post_data
     )
+
+    if check_server:
+        found = None
+        for resp in responses:
+            headers = resp[-1]
+        for k in headers.keys():
+            if k.lower() == "server":
+                found = headers[k]
+                break
+        if found is None:
+            lib.formatter.warn("unable to determine web server")
+        else:
+            lib.formatter.success("web server determined as: {}".format(found))
 
     # plus one for lib.settings.get_page call
     request_count = len(responses) + 1
