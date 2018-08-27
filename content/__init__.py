@@ -359,7 +359,7 @@ def detection_main(url, payloads, **kwargs):
     request_type = kwargs.get("request_type", "GET")
     post_data = kwargs.get("post_data", "")
     check_server = kwargs.get("check_server", False)
-    threads = kwargs.get("threads", None)
+    threaded = kwargs.get("threaded", None)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -391,20 +391,18 @@ def detection_main(url, payloads, **kwargs):
             url = url + "/"
 
     lib.formatter.info("gathering HTTP responses")
-    if not threads:
+    if not threaded:
         responses = DetectionQueue(
             url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
             provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
             timeout=req_timeout, request_type=request_type, post_data=post_data
         ).get_response()
-    elif threads:
+    elif threaded:
         responses = DetectionQueue(
             url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
             provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
             timeout=req_timeout, request_type=request_type, post_data=post_data,
-            threads=threads
         ).threaded_get_response()
-
     if traffic_file is not None:
         with open(traffic_file, "a+") as traffic:
             for i, item in enumerate(responses, start=1):
