@@ -4,8 +4,11 @@ import json
 import importlib
 import random
 import threading
-import queue
-
+try:
+    import queue
+except ImportError:
+    import Queue as queue
+    
 import lib.settings
 import lib.formatter
 import lib.firewall_found
