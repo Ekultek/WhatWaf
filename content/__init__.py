@@ -57,7 +57,6 @@ class DetectionQueue(object):
         self.req_timeout = kwargs.get("timeout", 15)
         self.request_type = kwargs.get("request_type", "GET")
         self.post_data = kwargs.get("post_data", "")
-        self.threads = kwargs.get("threads", None)
         self.threading_queue = queue.Queue()
         self.response_retval = []
 
