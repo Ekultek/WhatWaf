@@ -125,7 +125,7 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc..)")
-        misc.add_argument("-t", "--threaded", dest="threaded", action="store_true",
+        misc.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
                           help="Send requests in parallel (specify number of threads)")
 
         hidden = parser.add_argument_group()

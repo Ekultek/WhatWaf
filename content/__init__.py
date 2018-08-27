@@ -57,6 +57,7 @@ class DetectionQueue(object):
         self.req_timeout = kwargs.get("timeout", 15)
         self.request_type = kwargs.get("request_type", "GET")
         self.post_data = kwargs.get("post_data", "")
+        self.threads = kwargs.get("threaded", None)
         self.threading_queue = queue.Queue()
         self.response_retval = []
 
@@ -118,7 +119,7 @@ class DetectionQueue(object):
 
         return response_retval
 
-    def threading(self):
+    def threader(self):
         while (True):
             url_thread, waf_vector = self.threading_queue.get()
             self.threaded_get_response_helper(url_thread, waf_vector)
@@ -130,13 +131,13 @@ class DetectionQueue(object):
                 lib.formatter.debug(
                     "trying: '{}'".format(url_thread)
                 )
-                self.response_retval.append((
-                    lib.settings.get_page(
-                        url_thread, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
-                        throttle=self.throttle, timeout=self.req_timeout, request_method=self.request_type,
-                        post_data=self.post_data
-                    )
-                ))
+            self.response_retval.append((
+                lib.settings.get_page(
+                    url_thread, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
+                    throttle=self.throttle, timeout=self.req_timeout, request_method=self.request_type,
+                    post_data=self.post_data
+                )
+            ))
 
         except Exception as e:
             if "ECONNRESET" in str(e):
@@ -165,11 +166,6 @@ class DetectionQueue(object):
     def threaded_get_response(self):
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
 
-        for i in range(self.threading_queue.qsize()):
-            t = threading.Thread(target=threading)
-            t.daemon = True
-            t.start()
-
         for i, waf_vector in enumerate(self.payloads):
             primary_url = self.url + "{}".format(waf_vector)
             secondary_url = strip_url(self.url)
@@ -178,10 +174,15 @@ class DetectionQueue(object):
             if self.verbose:
                 lib.formatter.payload(waf_vector.strip())
 
-                self.threading_queue.put(primary_url, waf_vector, i)
-                self.threading_queue.put(secondary_url, waf_vector, i)
+            self.threading_queue.put((primary_url, waf_vector))
+            self.threading_queue.put((secondary_url, waf_vector))
 
-            self.threading_queue.join()
+        for i in range(self.threads):
+            t = threading.Thread(target=self.threader)
+            t.daemon = True
+            t.start()
+
+        self.threading_queue.join()
 
         return self.response_retval
 
@@ -400,7 +401,7 @@ def detection_main(url, payloads, **kwargs):
         responses = DetectionQueue(
             url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
             provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
-            timeout=req_timeout, request_type=request_type, post_data=post_data,
+            timeout=req_timeout, request_type=request_type, post_data=post_data, threaded=threaded,
         ).threaded_get_response()
     if traffic_file is not None:
         with open(traffic_file, "a+") as traffic:
