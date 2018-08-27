@@ -4,7 +4,6 @@ import json
 import importlib
 import random
 import threading
-import time
 import queue
 
 import lib.settings

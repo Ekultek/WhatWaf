@@ -35,7 +35,6 @@ except Exception:
 
 
 def main():
-    start = time.time()
     opt = WhatWafParser().cmd_parser()
 
     if not len(sys.argv) > 1:
@@ -296,4 +295,3 @@ def main():
                 VERSION, sep
             )
         )
-    print("Threaded execution time = {0:.10f}".format(time.time() - start))
