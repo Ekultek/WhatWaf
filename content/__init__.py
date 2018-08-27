@@ -3,6 +3,9 @@ import re
 import json
 import importlib
 import random
+import threading
+import time
+import queue
 
 import lib.settings
 import lib.formatter
@@ -55,6 +58,9 @@ class DetectionQueue(object):
         self.req_timeout = kwargs.get("timeout", 15)
         self.request_type = kwargs.get("request_type", "GET")
         self.post_data = kwargs.get("post_data", "")
+        self.threads = kwargs.get("threads", None)
+        self.threading_queue = queue.Queue()
+        self.response_retval = []
 
     def get_response(self):
         response_retval = []
@@ -111,18 +117,75 @@ class DetectionQueue(object):
                     req_data=response_retval[0][0],
                     speak=True
                 )
-            if self.traffic_file is not None:
-                with open(self.traffic_file, "a+") as traffic:
-                    for i, item in enumerate(response_retval, start=1):
-                        param, status_code, content, headers = item
-                        traffic.write(
-                            "HTTP Request #{}\n{}\nRequest Status Code: {}\n<!--\n{} HTTP/1.1\n{}\n-->{}\n\n\n".format(
-                                i, "-" * 16, status_code, param,
-                                "\n".join(["{}: {}".format(h, v) for h, v in headers.items()]),
-                                content
-                            )
-                        )
+
         return response_retval
+
+    def threading(self):
+        while (True):
+            url_thread, waf_vector = self.threading_queue.get()
+            self.threaded_get_response_helper(url_thread, waf_vector)
+            self.threading_queue.task_done()
+
+    def threaded_get_response_helper(self, url_thread, waf_vector):
+        try:
+            if self.verbose:
+                lib.formatter.debug(
+                    "trying: '{}'".format(url_thread)
+                )
+                self.response_retval.append((
+                    lib.settings.get_page(
+                        url_thread, agent=self.agent, proxy=self.proxy, provided_headers=self.provided_headers,
+                        throttle=self.throttle, timeout=self.req_timeout, request_method=self.request_type,
+                        post_data=self.post_data
+                    )
+                ))
+
+        except Exception as e:
+            if "ECONNRESET" in str(e):
+                lib.formatter.warn(
+                    "possible network level firewall detected (hardware), received an aborted connection"
+                )
+                self.response_retval.append(None)
+            else:
+                lib.formatter.error(
+                    "failed to obtain target meta-data with payload {}, error: '{}'".format(
+                        waf_vector.strip(), str(e)
+                    )
+                )
+                self.response_retval.append(None)
+
+                if self.save_fingerprint:
+                    lib.settings.create_fingerprint(
+                        self.url,
+                        self.response_retval[0][2],
+                        self.response_retval[0][1],
+                        self.response_retval[0][3],
+                        req_data=self.response_retval[0][0],
+                        speak=True
+                    )
+
+    def threaded_get_response(self):
+        strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
+
+        for i in range(self.threading_queue.qsize()):
+            t = threading.Thread(target=threading)
+            t.daemon = True
+            t.start()
+
+        for i, waf_vector in enumerate(self.payloads):
+            primary_url = self.url + "{}".format(waf_vector)
+            secondary_url = strip_url(self.url)
+            secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
+            secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
+            if self.verbose:
+                lib.formatter.payload(waf_vector.strip())
+
+                self.threading_queue.put(primary_url, waf_vector, i)
+                self.threading_queue.put(secondary_url, waf_vector, i)
+
+            self.threading_queue.join()
+
+        return self.response_retval
 
 
 def encode(payload, script):
@@ -297,6 +360,7 @@ def detection_main(url, payloads, **kwargs):
     request_type = kwargs.get("request_type", "GET")
     post_data = kwargs.get("post_data", "")
     check_server = kwargs.get("check_server", False)
+    threads = kwargs.get("threads", None)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
@@ -328,11 +392,32 @@ def detection_main(url, payloads, **kwargs):
             url = url + "/"
 
     lib.formatter.info("gathering HTTP responses")
-    responses = DetectionQueue(
-        url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
-        provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
-        timeout=req_timeout, request_type=request_type, post_data=post_data
-    ).get_response()
+    if not threads:
+        responses = DetectionQueue(
+            url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
+            provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
+            timeout=req_timeout, request_type=request_type, post_data=post_data
+        ).get_response()
+    elif threads:
+        responses = DetectionQueue(
+            url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
+            provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
+            timeout=req_timeout, request_type=request_type, post_data=post_data,
+            threads=threads
+        ).threaded_get_response()
+
+    if traffic_file is not None:
+        with open(traffic_file, "a+") as traffic:
+            for i, item in enumerate(responses, start=1):
+                param, status_code, content, headers = item
+                traffic.write(
+                    "HTTP Request #{}\n{}\nRequest Status Code: {}\n<!--\n{} HTTP/1.1\n{}\n-->{}\n\n\n".format(
+                        i, "-" * 16, status_code, param,
+                        "\n".join(["{}: {}".format(h, v) for h, v in headers.items()]),
+                        content
+                    )
+                )
+
     lib.formatter.info("gathering normal response to compare against")
     normal_response = lib.settings.get_page(
         url, proxy=proxy, agent=agent, provided_headers=provided_headers, throttle=throttle,

@@ -35,6 +35,7 @@ except Exception:
 
 
 def main():
+    start = time.time()
     opt = WhatWafParser().cmd_parser()
 
     if not len(sys.argv) > 1:
@@ -225,7 +226,8 @@ def main():
                 fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
-                request_type=request_type, check_server=opt.determineWebServer
+                request_type=request_type, check_server=opt.determineWebServer,
+                threads=opt.threaded
             )
 
         elif opt.runMultipleWebsites:
@@ -294,3 +296,4 @@ def main():
                 VERSION, sep
             )
         )
+    print("Threaded execution time = {0:.10f}".format(time.time() - start))
