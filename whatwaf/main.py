@@ -216,7 +216,7 @@ def main():
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             info("running single web application '{}'".format(url_to_use))
-            request_count += detection_main(
+            requests = detection_main(
                 url_to_use, payload_list, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -228,7 +228,7 @@ def main():
                 request_type=request_type, check_server=opt.determineWebServer,
                 threaded=opt.threaded
             )
-
+            request_count = request_count + requests if requests is not None else request_count
         elif opt.runMultipleWebsites:
             info("reading from '{}'".format(opt.runMultipleWebsites))
             try:
@@ -240,7 +240,7 @@ def main():
                 for i, url in enumerate(urls, start=1):
                     url = auto_assign(url.strip(), ssl=opt.forceSSL)
                     info("currently running on site #{} ('{}')".format(i, url))
-                    request_count += detection_main(
+                    requests = detection_main(
                         url, payload_list, agent=agent, proxy=proxy,
                         verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                         verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -252,13 +252,14 @@ def main():
                         request_type=request_type, check_server=opt.determineWebServer,
                         threaded=opt.threaded
                     )
+                    request_count = request_count + requests if requests is not None else request_count
                     print("\n\b")
                     time.sleep(0.5)
 
         elif opt.burpRequestFile:
             request_data = parse_burp_request(opt.burpRequestFile)
             info("URL parsed from request file: '{}'".format(request_data["base_url"]))
-            request_count += detection_main(
+            requests = detection_main(
                 request_data["base_url"], payload_list,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -270,6 +271,7 @@ def main():
                 request_type=request_data["request_method"], check_server=opt.determineWebServer,
                 threaded=opt.threaded
             )
+            request_count = request_count + requests if requests is not None else request_count
 
         info("total requests sent: {}".format(request_count))
 
