@@ -225,7 +225,8 @@ def main():
                 fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
-                request_type=request_type, check_server=opt.determineWebServer
+                request_type=request_type, check_server=opt.determineWebServer,
+                threaded=opt.threaded
             )
 
         elif opt.runMultipleWebsites:
@@ -248,7 +249,8 @@ def main():
                         fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
                         traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                         req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
-                        request_type=request_type, check_server=opt.determineWebServer
+                        request_type=request_type, check_server=opt.determineWebServer,
+                        threaded=opt.threaded
                     )
                     print("\n\b")
                     time.sleep(0.5)
@@ -265,7 +267,8 @@ def main():
                 fingerprint_waf=opt.saveFingerprints, provided_headers=request_data["request_headers"],
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=request_data["post_data"],
-                request_type=request_data["request_method"], check_server=opt.determineWebServer
+                request_type=request_data["request_method"], check_server=opt.determineWebServer,
+                threaded=opt.threaded
             )
 
         info("total requests sent: {}".format(request_count))
