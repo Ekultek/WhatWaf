@@ -273,7 +273,10 @@ def main():
             )
             request_count = request_count + requests if requests is not None else request_count
 
-        info("total requests sent: {}".format(request_count))
+        if request_count != 0:
+            info("total requests sent: {}".format(request_count))
+        else:
+            warn("request counter failed to count correctly, deactivating", minor=True)
 
     except KeyboardInterrupt:
         fatal("user aborted scanning")
