@@ -14,7 +14,8 @@ def detect(content, **kwargs):
         re.compile(r"varnish\Z", re.I),
         re.compile(r"varnish"), re.I,
         re.compile(r"\d+"),
-        re.compile(r"<.+>(.)?security.by.cachewall(.)?<.+.>", re.I)
+        re.compile(r"<.+>(.)?security.by.cachewall(.)?<.+.>", re.I),
+        re.compile(r"cachewall", re.I)
     )
     try:
         for detection in detection_schema:
