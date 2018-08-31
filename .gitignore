@@ -8,3 +8,4 @@ payloads.txt
 traffic*.txt
 firewalls/*
 test-*.json
+test_env.sh
