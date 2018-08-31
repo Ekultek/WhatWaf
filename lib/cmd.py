@@ -49,6 +49,8 @@ class WhatWafParser(ArgumentParser):
                                help="Pass a file containing URL's (one per line) to detect the protection")
         mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
                                help="Pass a Burp Suite request file to perform WAF evaluation")
+        mandatory.add_argument("-g", "--googler", dest="googlerFile", metavar="GOOGLR-JSON-FILE",
+                               help="Pass a JSON file from the Googler CMD line tool")
 
         req_args = parser.add_argument_group("request arguments",
                                              "arguments that will control your requests")

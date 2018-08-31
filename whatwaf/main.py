@@ -14,9 +14,13 @@ from lib.settings import (
     auto_assign,
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
-    BANNER, HOME, ISSUES_LINK,
-    InvalidURLProvided, VERSION,
+    BANNER,
+    HOME,
+    ISSUES_LINK,
+    InvalidURLProvided,
+    VERSION,
     parse_burp_request,
+    parse_googler_file,
     check_version
 )
 from lib.formatter import (
@@ -272,6 +276,30 @@ def main():
                 threaded=opt.threaded
             )
             request_count = request_count + requests if requests is not None else request_count
+
+        elif opt.googlerFile is not None:
+            urls = parse_googler_file(opt.googlerFile)
+            if urls is not None:
+                info("parsed a total of {} URLS from Googler JSON file".format(len(urls)))
+                for i, url in enumerate(urls, start=1):
+                    info("currently running on '{}' (site #{})".format(url, i))
+                    requests = detection_main(
+                        url, payload_list, agent=agent, proxy=proxy,
+                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                        verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                        tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
+                        traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                        req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
+                        request_type=request_type, check_server=opt.determineWebServer,
+                        threaded=opt.threaded
+                    )
+                    request_count = request_count + requests if requests is not None else request_count
+                    print("\n\b")
+                    time.sleep(0.5)
+            else:
+                fatal("file failed to load, does it exist?")
 
         if request_count != 0:
             info("total requests sent: {}".format(request_count))
