@@ -49,8 +49,6 @@ class WhatWafParser(ArgumentParser):
                                help="Pass a file containing URL's (one per line) to detect the protection")
         mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
                                help="Pass a Burp Suite request file to perform WAF evaluation")
-        mandatory.add_argument("-g", "--googler", dest="googlerFile", metavar="GOOGLR-JSON-FILE",
-                               help="Pass a JSON file from the Googler CMD line tool")
 
         req_args = parser.add_argument_group("request arguments",
                                              "arguments that will control your requests")
@@ -127,8 +125,6 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc..)")
-        misc.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
-                          help="Send requests in parallel (specify number of threads)")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
