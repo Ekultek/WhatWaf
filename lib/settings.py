@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.10.1"
+VERSION = "0.9.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -504,21 +504,6 @@ def parse_burp_request(filename):
     except IndexError:
         lib.formatter.fatal("it appears the burp request file provided has no usable information in it")
         exit(-1)
-
-
-def parse_googler_file(filepath):
-    """
-    parse a JSON file provided from a Googler search
-    """
-    retval = set()
-    try:
-        with open(filepath) as f:
-            data = json.load(f)
-            for item in data:
-                retval.add(item["url"])
-    except IOError:
-        retval = None
-    return retval
 
 
 def check_version():
