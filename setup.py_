@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='whatwaf',
-    version="1.0",
+    version="0.10.1",
     packages=find_packages(),
     include_package_data=False,
     install_requires=["sys"],
