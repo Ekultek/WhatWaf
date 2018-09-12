@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from setuptools import setup, find_packages
+
+setup(
+    name='whatwaf',
+    version="0.10.1",
+    packages=find_packages(),
+    include_package_data=False,
+    install_requires=["sys"],
+)
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
+setup(...
+install_requires=required,
+...)
