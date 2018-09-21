@@ -1,10 +1,8 @@
 #!/bin/bash
 
-DATE=$(date +'%m-%d-%Y %H:%M:%S')
-
 chmod +x whatwaf.py
-mkdir /usr/local/etc/whataf
-cp -pRu ./* /usr/local/etc/whataf
+mkdir /usr/local/etc/whatwaf
+cp -pRu ./* /usr/local/etc/whatwaf
 python -c '
 import os;
 import stat;
