@@ -1,7 +1,8 @@
 #!/bin/bash
 
 chmod +x whatwaf.py
-rsync ./* /usr/local/etc/whatwaf
+mkdir /usr/local/etc/whataf
+cp -pRu ./* /usr/local/etc/whataf
 cat<<EOT >> /usr/local/bin/whatwaf
 #!/bin/bash
 # this is the execution script for whatWaf
