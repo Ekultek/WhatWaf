@@ -38,7 +38,7 @@ class WhatWafParser(ArgumentParser):
     @staticmethod
     def cmd_parser():
         parser = ArgumentParser(prog="whatwaf.py", add_help=True, usage=(
-            "./whatwaf.py -[u|l|b] VALUE|PATH|PATH -[p|-pl] PAYLOADS --[args]"
+            "./whatwaf.py -[u|l|b|g] VALUE|PATH|PATH|PATH [-p|--pl] PAYLOAD,..|PATH [--args]"
         ))
 
         mandatory = parser.add_argument_group("mandatory arguments",
@@ -76,15 +76,17 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("--pl", dest="payloadList", metavar="PAYLOAD-LIST-PATH",
                               help="Provide a file containing a list of payloads 1 per line")
         req_args.add_argument("--force-ssl", dest="forceSSL", action="store_true",
-                              help="Force the assignment of HTTPS instead of HTTP while processing")
+                              help="Force the assignment of HTTPS instead of HTTP while processing "
+                                   "(*default=HTTP unless otherwise specified by URL)")
         req_args.add_argument("--throttle", dest="sleepTimeThrottle", type=int, metavar="THROTTLE-TIME (seconds)",
-                              default=0, help="Provide a sleep time per request (default is 0)")
+                              default=0, help="Provide a sleep time per request (*default=0)")
         req_args.add_argument("--timeout", dest="requestTimeout", type=int, metavar="TIMEOUT",
-                              default=15, help="Control the timeout time of the requests (default is 15)")
+                              default=15, help="Control the timeout time of the requests (*default=15)")
         req_args.add_argument("-P", "--post", dest="postRequest", action="store_true",
-                              help="Send a POST request, default request type is GET")
+                              help="Send a POST request (*default=GET)")
         req_args.add_argument("-D", "--data", dest="postRequestData", metavar="POST-STRING",
-                              help="Send this data with the POST request (IE password=123&name=Josh)")
+                              help="Send this data with the POST request "
+                                   "(IE password=123&name=Josh *default=random)")
         req_args.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
                               help="Send requests in parallel (specify number of threads *default=1)")
 
@@ -109,7 +111,7 @@ class WhatWafParser(ArgumentParser):
         output_opts.add_argument("--fingerprint", action="store_true", dest="saveFingerprints",
                                  help="Save all fingerprints for further investigation")
         output_opts.add_argument("--tamper-int", metavar="INT", dest="amountOfTampersToDisplay", type=int, default=5,
-                                 help="Control the amount of tampers that are displayed (default is 5)")
+                                 help="Control the amount of tampers that are displayed (*default=5)")
         output_opts.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
                                  help="store all HTTP traffic headers into a file of your choice")
 
@@ -126,10 +128,11 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("--skip", dest="skipBypassChecks", action="store_true",
                           help="Skip checking for bypasses and just identify the firewall")
         misc.add_argument("--verify-num", dest="verifyNumber", metavar="INT", type=int,
-                          help="Change the default amount (5) to verify if there really is not a WAF present")
+                          help="Change the request amount to verify if there really is not a WAF present"
+                               "(*default=5)")
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
-                               "(IE Apache, Nginx, etc..)")
+                               "(IE Apache, Nginx, etc.. *default=False)")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
