@@ -49,8 +49,9 @@ class WhatWafParser(ArgumentParser):
                                help="Pass a file containing URL's (one per line) to detect the protection")
         mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
                                help="Pass a Burp Suite request file to perform WAF evaluation")
-        mandatory.add_argument("-g", "--googler", dest="googlerFile", metavar="GOOGLR-JSON-FILE",
-                               help="Pass a JSON file from the Googler CMD line tool")
+        mandatory.add_argument("-g", "--googler", dest="googlerFile", metavar="GOOGLER-JSON-FILE",
+                               help="Pass a JSON file from the Googler CMD line tool "
+                                    "(IE googler -n 100 --json >> `date +%F`.json)")
 
         req_args = parser.add_argument_group("request arguments",
                                              "arguments that will control your requests")
@@ -58,24 +59,24 @@ class WhatWafParser(ArgumentParser):
                               help="Provide your own personal agent to use it for the HTTP requests")
         req_args.add_argument("--ra", dest="useRandomAgent", action="store_true",
                               help="Use a random user-agent for the HTTP requests")
+        req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
+                              metavar="HEADER=VALUE,HEADER:VALUE..",
+                              help="Add your own custom headers to the request. To use multiple "
+                                   "separate headers by comma. Your headers need to be exact"
+                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For:127.0.0.1)")
         req_args.add_argument("--proxy", dest="runBehindProxy", metavar="PROXY",
                               help="Provide a proxy to run behind in the format "
                                    "type://address:port (IE socks5://10.54.127.4:1080")
         req_args.add_argument("--tor", dest="runBehindTor", action="store_true",
                               help="Use Tor as the proxy to run behind, must have Tor installed")
+        req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
+                              help="Check your Tor connection")
         req_args.add_argument("-p", "--payloads", dest="providedPayloads", metavar="PAYLOADS",
                               help="Provide your own payloads separated by a comma IE AND 1=1,AND 2=2")
         req_args.add_argument("--pl", dest="payloadList", metavar="PAYLOAD-LIST-PATH",
                               help="Provide a file containing a list of payloads 1 per line")
         req_args.add_argument("--force-ssl", dest="forceSSL", action="store_true",
                               help="Force the assignment of HTTPS instead of HTTP while processing")
-        req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
-                              help="Check your Tor connection")
-        req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
-                              metavar="HEADER=VALUE,HEADER:VALUE..",
-                              help="Add your own custom headers to the request. To use multiple "
-                                   "separate headers by comma. Your headers need to be exact"
-                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For:127.0.0.1)")
         req_args.add_argument("--throttle", dest="sleepTimeThrottle", type=int, metavar="THROTTLE-TIME (seconds)",
                               default=0, help="Provide a sleep time per request (default is 0)")
         req_args.add_argument("--timeout", dest="requestTimeout", type=int, metavar="TIMEOUT",
@@ -84,6 +85,8 @@ class WhatWafParser(ArgumentParser):
                               help="Send a POST request, default request type is GET")
         req_args.add_argument("-D", "--data", dest="postRequestData", metavar="POST-STRING",
                               help="Send this data with the POST request (IE password=123&name=Josh)")
+        req_args.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
+                              help="Send requests in parallel (specify number of threads *default=1)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
@@ -127,8 +130,6 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc..)")
-        misc.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
-                          help="Send requests in parallel (specify number of threads)")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
