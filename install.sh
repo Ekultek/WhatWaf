@@ -2,7 +2,7 @@
 
 chmod +x whatwaf.py
 mkdir /usr/local/etc/whatwaf
-cp -pRu ./* /usr/local/etc/whatwaf
+cp -R ./* /usr/local/etc/whatwaf
 python -c '
 import os;
 import stat;
