@@ -365,7 +365,18 @@ def detection_main(url, payloads, **kwargs):
     threaded = kwargs.get("threaded", None)
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
-    filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
+    try:
+        file_start = url.split("/")[2].split(".")[1]
+        if use_json:
+            ext = ".json"
+        elif use_yaml:
+            ext = ".yaml"
+        elif use_csv:
+            ext = ".csv"
+        filename = "{}{}".format(file_start, ext)
+    except:
+        lib.formatter.warn("unable to comprehend URL structure, random filename generated", minor=True)
+        filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
 
     lib.formatter.info("request type: {}".format(request_type))
 
