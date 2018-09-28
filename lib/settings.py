@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.11.3"
+VERSION = "0.11.4"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -342,7 +342,7 @@ def auto_assign(url, ssl=False):
             lib.formatter.warn("no protocol discovered, assigning HTTPS (SSL)")
             return "https://{}".format(url.strip())
         else:
-            lib.formatter.warn("no protocol found assigning HTTP")
+            lib.formatter.warn("no protocol discovered assigning HTTP")
             return "http://{}".format(url.strip())
     else:
         if ssl:
