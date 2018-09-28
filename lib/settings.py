@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.11.5"
+VERSION = "0.11.6"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -38,12 +38,6 @@ BANNER = """\b\033[1m
 "/><script>alert("\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
-# plugins (waf scripts) path
-PLUGINS_DIRECTORY = "{}/content/plugins".format(os.getcwd())
-
-# tampers (tamper scripts) path
-TAMPERS_DIRECTORY = "{}/content/tampers".format(os.getcwd())
-
 # directory to do the importing for the WAF scripts
 PLUGINS_IMPORT_TEMPLATE = "content.plugins.{}"
 
@@ -58,6 +52,15 @@ PROTOCOL_DETECTION = re.compile("http(s)?")
 
 # check if a query is in a URL or not
 URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
+
+# current working directory
+CUR_DIR = os.getcwd()
+
+# plugins (waf scripts) path
+PLUGINS_DIRECTORY = "{}/content/plugins".format(CUR_DIR)
+
+# tampers (tamper scripts) path
+TAMPERS_DIRECTORY = "{}/content/tampers".format(CUR_DIR)
 
 # name provided to unknown firewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
@@ -78,10 +81,10 @@ YAML_FILE_PATH = "{}/yaml_output".format(HOME)
 CSV_FILE_PATH = "{}/csv_output".format(HOME)
 
 # request token path
-TOKEN_PATH = "{}/content/files/auth.key".format(os.getcwd())
+TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
 
 # default payloads path
-DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(os.getcwd())
+DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
 
 # default user-agent
 DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
@@ -239,7 +242,7 @@ def get_random_agent(path="{}/content/files/user_agents.txt"):
     grab a random user-agent from the file to pass as
     the HTTP User-Agent header
     """
-    with open(path.format(os.getcwd())) as agents:
+    with open(path.format(CUR_DIR)) as agents:
         items = [agent.strip() for agent in agents.readlines()]
         return random.choice(items)
 

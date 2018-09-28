@@ -364,6 +364,12 @@ def detection_main(url, payloads, **kwargs):
     check_server = kwargs.get("check_server", False)
     threaded = kwargs.get("threaded", None)
 
+    if lib.settings.URL_QUERY_REGEX.search(str(url)) is None:
+        lib.formatter.warn(
+            "URL does not appear to have a query (parameter), this may interfere with the detection results",
+            minor=True
+        )
+
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     try:
         file_start = url.split("/")[2].split(".")[1]
