@@ -375,7 +375,6 @@ def detection_main(url, payloads, **kwargs):
             ext = ".csv"
         filename = "{}{}".format(file_start, ext)
     except:
-        lib.formatter.warn("unable to comprehend URL structure, random filename generated", minor=True)
         filename = lib.settings.random_string(length=10, use_yaml=use_yaml, use_json=use_json, use_csv=use_csv)
 
     lib.formatter.info("request type: {}".format(request_type))

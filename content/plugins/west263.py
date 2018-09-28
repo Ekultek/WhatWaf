@@ -3,6 +3,9 @@ import re
 from lib.settings import HTTP_HEADER
 
 
+__product__ = "West236 Firewall"
+
+
 def detect(content, **kwargs):
     headers = kwargs.get("headers", None)
     detection_schema = (
