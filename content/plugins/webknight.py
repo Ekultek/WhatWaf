@@ -14,7 +14,7 @@ def detect(content, **kwargs):
         re.compile(r"webknight", re.I)
     )
     if status is not None:
-        if status == 999:
+        if status == 999 and headers.get(HTTP_HEADER.SERVER, "") == "WebKnight":
             return True
     for detection in detection_schema:
         if detection.search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
