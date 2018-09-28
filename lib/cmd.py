@@ -49,9 +49,14 @@ class WhatWafParser(ArgumentParser):
                                help="Pass a file containing URL's (one per line) to detect the protection")
         mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
                                help="Pass a Burp Suite request file to perform WAF evaluation")
+        # apparently Python 3.x doesn't like it when there's a '%' in the string
+        # this will cause some issues, more specifically a `TypeError` because it's trying
+        # to format the string. so the simplest solution for the problem? remove the '%'
+        # sign from the string. because Python 3.x likes to be as difficult and ridiculous
+        # as it possibly can.
         mandatory.add_argument("-g", "--googler", dest="googlerFile", metavar="GOOGLER-JSON-FILE",
                                help="Pass a JSON file from the Googler CMD line tool "
-                                    "(IE googler -n 100 --json >> `date +%F`.json)")
+                                    "(IE googler -n 100 --json >> googler.json)")
 
         req_args = parser.add_argument_group("request arguments",
                                              "arguments that will control your requests")
