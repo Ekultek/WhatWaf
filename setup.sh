@@ -37,20 +37,29 @@ function uninstall {
 }
 
 function main {
-  echo -e " Installing:";
-  echo -e "	                          ,------. ";
-  echo -e "	                         '  .--.  '";
-  echo -e "	,--.   .--.   ,--.   .--.|  |  |  |";
-  echo -e "	|  |   |  |   |  |   |  |'--'  |  |";
-  echo -e "	|  |   |  |   |  |   |  |    __.  |";
-  echo -e "	|  |.'.|  |   |  |.'.|  |   |   .' ";
-  echo -e "	|         |   |         |   |___|  ";
-  echo -e "	|   ,'.   |hat|   ,'.   |af .---.  ";
-  echo -e "	'--'   '--'   '--'   '--'   '---'  ";
-
   if [[ "$1" == "install" ]]; then
+    echo -e " Installing:";
+    echo -e "	                          ,------. ";
+    echo -e "	                         '  .--.  '";
+    echo -e "	,--.   .--.   ,--.   .--.|  |  |  |";
+    echo -e "	|  |   |  |   |  |   |  |'--'  |  |";
+    echo -e "	|  |   |  |   |  |   |  |    __.  |";
+    echo -e "	|  |.'.|  |   |  |.'.|  |   |   .' ";
+    echo -e "	|         |   |         |   |___|  ";
+    echo -e "	|   ,'.   |hat|   ,'.   |af .---.  ";
+    echo -e "	'--'   '--'   '--'   '--'   '---'  ";
     install;
   elif [[ "$1" == "remove" ]]; then
+    echo -e " Uninstalling:";
+    echo -e "	                          ,------. ";
+    echo -e "	                         '  .--.  '";
+    echo -e "	,--.   .--.   ,--.   .--.|  |  |  |";
+    echo -e "	|  |   |  |   |  |   |  |'--'  |  |";
+    echo -e "	|  |   |  |   |  |   |  |    __.  |";
+    echo -e "	|  |.'.|  |   |  |.'.|  |   |   .' ";
+    echo -e "	|         |   |         |   |___|  ";
+    echo -e "	|   ,'.   |hat|   ,'.   |af .---.  ";
+    echo -e "	'--'   '--'   '--'   '--'   '---'  ";
     uninstall;
   else
     helpPage;
