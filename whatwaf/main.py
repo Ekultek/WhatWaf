@@ -55,8 +55,11 @@ def main():
 
         try:
             warn(
-                "cleaning home folder, all information will be deleted, if you changed your mind press CNTRL-C now, "
-                "otherwise hit enter to continue"
+                "cleaning the home folder: {home}, if you have installed with setup.sh, "
+                "this will erase the executable script along with everything inside "
+                "of the {home} directory (fingerprints, scripts, copies of whatwaf, etc) "
+                "if you are sure you want to do this press ENTER now. If you changed "
+                "your mind press CNTRL-C now".format(home=HOME)
             )
             # you have three seconds to change your mind
             raw_input("")
