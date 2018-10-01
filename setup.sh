@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 function helpPage {
   echo -e "\n./setup.sh {install|remove}\n";
 }
