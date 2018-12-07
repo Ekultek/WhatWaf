@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.11.9"
+VERSION = "0.11.10"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -374,7 +374,7 @@ def create_fingerprint(url, content, status, headers, req_data=None, speak=False
         lib.formatter.warn("full URL will be displayed to the public if an issue is created")
         url = url
 
-    fingerprint = "<!---\n{}\nStatus code: {}\n{}\n--->\n{}".format(
+    fingerprint = "<!--\n{}\nStatus code: {}\n{}\n-->\n{}".format(
         "GET {} HTTP/1.1".format(url) if req_data is None else "{} HTTP/1.1".format(req_data),
         str(status),
         '\n'.join("{}: {}".format(h, k) for h, k in headers.items()),
@@ -535,3 +535,13 @@ def check_version():
     my_version = VERSION
     if not current_version == my_version:
         lib.formatter.warn("new version: {} is available".format(current_version))
+
+
+def get_encoding_list():
+    retval = set()
+    items = os.listdir(TAMPERS_DIRECTORY)
+    for item in items:
+        if "__init__" not in item:
+            item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
+            retval.add(item)
+    return retval

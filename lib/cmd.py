@@ -102,6 +102,8 @@ class WhatWafParser(ArgumentParser):
         encoding_opts.add_argument("-el", "--encode-list", dest="encodePayloadList", nargs=2, metavar=("PATH", "TAMPER-SCRIPT-LOAD-PATH"),
                                    help="Encode a file containing payloads (one per line) "
                                         "by passing the path and load path")
+        encoding_opts.add_argument("-L", "--list-encodings", action="store_true", dest="listEncodingTechniques",
+                                   help="Output a list of usable tamper script load paths")
 
         output_opts = parser.add_argument_group("output options",
                                                 "arguments that control how WhatWaf handles output")

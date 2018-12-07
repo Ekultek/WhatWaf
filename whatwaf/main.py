@@ -21,7 +21,8 @@ from lib.settings import (
     VERSION,
     parse_burp_request,
     parse_googler_file,
-    check_version
+    check_version,
+    get_encoding_list
 )
 from lib.formatter import (
     error,
@@ -72,7 +73,7 @@ def main():
             fatal("no home folder detected, already cleaned?")
         exit(0)
 
-    if opt.encodePayload:
+    if opt.encodePayload is not None:
         spacer = "-" * 30
         payload, load_path = opt.encodePayload
         info("encoding '{}' using '{}'".format(payload, load_path))
@@ -88,7 +89,7 @@ def main():
             fatal("invalid load path given, check the load path and try again")
         exit(0)
 
-    if opt.encodePayloadList:
+    if opt.encodePayloadList is not None:
         spacer = "-" * 30
         try:
             file_path, load_path = opt.encodePayloadList
@@ -124,7 +125,15 @@ def main():
 
     if not opt.hideBanner:
         print(BANNER)
+    info("checking for updates")
     check_version()
+
+    if opt.listEncodingTechniques:
+        info("gathering available tamper script load paths")
+        tamper_list = get_encoding_list()
+        for tamper in sorted(tamper_list):
+            print(tamper)
+        exit(0)
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
