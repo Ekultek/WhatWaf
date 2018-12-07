@@ -75,18 +75,19 @@ def main():
 
     if opt.encodePayload is not None:
         spacer = "-" * 30
-        payload, load_path = opt.encodePayload
-        info("encoding '{}' using '{}'".format(payload, load_path))
-        try:
-            encoded = encode(payload, load_path)
-            success("encoded successfully:")
-            print(
-                "{}\n{}\n{}".format(
-                    spacer, encoded, spacer
-                )
+        payload = opt.encodePayload[0]
+        load_path = opt.encodePayload[1:]
+        for load in load_path:
+            try:
+                payload = encode(payload, load)
+            except (AttributeError, ImportError):
+                warn("invalid load path given: '{}', skipping it and continuing".format(load))
+        success("encoded successfully:")
+        print(
+            "{}\n{}\n{}".format(
+                spacer, payload, spacer
             )
-        except (AttributeError, ImportError):
-            fatal("invalid load path given, check the load path and try again")
+        )
         exit(0)
 
     if opt.encodePayloadList is not None:
@@ -125,8 +126,6 @@ def main():
 
     if not opt.hideBanner:
         print(BANNER)
-    info("checking for updates")
-    check_version()
 
     if opt.listEncodingTechniques:
         info("gathering available tamper script load paths")
@@ -134,6 +133,9 @@ def main():
         for tamper in sorted(tamper_list):
             print(tamper)
         exit(0)
+
+    info("checking for updates")
+    check_version()
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
