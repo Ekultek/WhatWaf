@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.11.10"
+VERSION = "0.11.11"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -538,6 +538,9 @@ def check_version():
 
 
 def get_encoding_list():
+    """
+    get a quick simple list of encodings
+    """
     retval = set()
     items = os.listdir(TAMPERS_DIRECTORY)
     for item in items:
