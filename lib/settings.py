@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.11.11"
+VERSION = "0.12"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -473,6 +473,11 @@ def parse_burp_request(filename):
     parse an XML file from Burp Suite and make a request based on what is parsed
     """
     import xml.etree.ElementTree as Parser
+
+    try:
+        open(filename).close()
+    except IOError:
+        return None
 
     retval = {}
     tmp = {}

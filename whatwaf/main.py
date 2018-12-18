@@ -4,7 +4,10 @@ import shlex
 import subprocess
 
 from lib.cmd import WhatWafParser
-from lib.firewall_found import hide_sensitive
+from lib.firewall_found import (
+    hide_sensitive,
+    request_issue_creation
+)
 from content import (
     detection_main,
     encode
@@ -276,6 +279,9 @@ def main():
 
         elif opt.burpRequestFile:
             request_data = parse_burp_request(opt.burpRequestFile)
+            if request_data is None:
+                fatal("seems that the file doesn't exist, check the path and try again")
+                exit(1)
             info("URL parsed from request file: '{}'".format(request_data["base_url"]))
             requests = detection_main(
                 request_data["base_url"], payload_list,
@@ -332,15 +338,15 @@ def main():
 
         sep = "-" * 30
         fatal(
-            "WhatWaf has caught an unhandled exception with the error message: '{}'. "
-            "You can create an issue here: '{}'".format(
-                str(e), ISSUES_LINK
+            "WhatWaf has caught an unhandled exception with the error message: '{}'.".format(str(e))
+        )
+        exception_data = "Traceback (most recent call):\n{}{}".format(
+            "".join(traceback.format_tb(sys.exc_info()[2])), str(e)
+        )
+        error(
+            "\n{}\n{}\n{}".format(
+                sep, exception_data, sep
             )
         )
-        warn("you will need the following information to create an issue:")
-        print(
-            "{}\nTraceback:\n```\n{}```\nCMD line: `{}`\nVersion: `{}`\n{}".format(
-                sep, "".join(traceback.format_tb(sys.exc_info()[2])), hide_sensitive(sys.argv, "-u"),
-                VERSION, sep
-            )
-        )
+        request_issue_creation(exception_data, )
+

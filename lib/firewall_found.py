@@ -80,7 +80,7 @@ def find_url(params):
             split_information = str(html).split("\n")
             for i, line in enumerate(split_information):
                 if searcher.search(line) is not None:
-                    href = split_information[i - 1]
+                    href = split_information[i]
         if href is not None:
             soup = BeautifulSoup(href, "html.parser")
             for item in soup.findAll("a"):
@@ -98,6 +98,54 @@ def hide_sensitive(args, command):
         return ' '.join(args)
     except:
         return ' '.join([item for item in sys.argv])
+
+
+def request_issue_creation(exception_details):
+    """
+    create an issue instead of a firewall
+    """
+    import platform
+
+    question = raw_input(
+        "do you want to create an anonymized issue for the caught exception[y/N]: "
+    )
+    if question.lower().startswith("y"):
+        identifier = create_identifier(exception_details)
+
+        sensitive = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
+        for item in sys.argv:
+            if item in sensitive:
+                argv_data = hide_sensitive(sys.argv, item)
+        title = "Whatwaf Unhandled Exception ({})".format(identifier)
+
+        issue_creation_template = {
+            "title": title,
+            "body": "Whatwaf version: `{}`\n"
+                    "Running context: `{}`\n"
+                    "Traceback: \n```\n{}\n```\n"
+                    "Running platform: `{}`".format(
+                lib.settings.VERSION, argv_data, exception_details, platform.platform()
+            )
+        }
+
+        issue_creation_json = json.dumps(issue_creation_template)
+        if sys.version_info > (3,):  # python 3
+            issue_creation_json = issue_creation_json.encode("utf-8")
+        if not ensure_no_issue(identifier):
+            req = Request(
+                url="https://api.github.com/repos/ekultek/whatwaf/issues", data=issue_creation_json,
+                headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
+            )
+            urlopen(req, timeout=10).read()
+            lib.formatter.info(
+                "this exception has been submitted successfully with the title '{}', URL: '{}'".format(
+                    title, find_url(identifier)
+                )
+            )
+        else:
+            lib.formatter.error(
+                "this exception has already been reported: '{}'".format(find_url(identifier))
+            )
 
 
 def request_firewall_issue_creation(path):
