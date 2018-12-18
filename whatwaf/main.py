@@ -4,10 +4,7 @@ import shlex
 import subprocess
 
 from lib.cmd import WhatWafParser
-from lib.firewall_found import (
-    hide_sensitive,
-    request_issue_creation
-)
+from lib.firewall_found import request_issue_creation
 from content import (
     detection_main,
     encode
@@ -19,9 +16,7 @@ from lib.settings import (
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER,
     HOME,
-    ISSUES_LINK,
     InvalidURLProvided,
-    VERSION,
     parse_burp_request,
     parse_googler_file,
     check_version,
