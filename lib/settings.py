@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.12"
+VERSION = "0.12.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -529,7 +529,7 @@ def parse_googler_file(filepath):
     return retval
 
 
-def check_version():
+def check_version(speak=True):
     """
     check the version number for updates
     """
@@ -539,7 +539,13 @@ def check_version():
     current_version = content.split("\n")[21].split("=")[-1].split('"')[1]
     my_version = VERSION
     if not current_version == my_version:
-        lib.formatter.warn("new version: {} is available".format(current_version))
+        if speak:
+            lib.formatter.warn("new version: {} is available".format(current_version))
+        else:
+            return False
+    else:
+        if not speak:
+            return True
 
 
 def get_encoding_list():

@@ -343,5 +343,5 @@ def main():
                 sep, exception_data, sep
             )
         )
-        request_issue_creation(exception_data, )
+        request_issue_creation(exception_data)
 

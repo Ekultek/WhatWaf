@@ -110,6 +110,13 @@ def request_issue_creation(exception_details):
         "do you want to create an anonymized issue for the caught exception[y/N]: "
     )
     if question.lower().startswith("y"):
+        is_newest = lib.settings.check_version(speak=False)
+        if not is_newest:
+            lib.formatter.error(
+                "whatwaf is not the newest version, in order to create an issue, please update whatwaf"
+            )
+            exit(1)
+
         identifier = create_identifier(exception_details)
 
         sensitive = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
@@ -156,6 +163,13 @@ def request_firewall_issue_creation(path):
         "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
     )
     if question.lower().startswith("y"):
+        is_newest = lib.settings.check_version(speak=False)
+        if not is_newest:
+            lib.formatter.error(
+                "whatwaf is currently not the newest version, please update to request a firewall script creation"
+            )
+            exit(1)
+
         # gonna read a chunk of it instead of one line
         chunk = 4096
         with open(path) as data:
