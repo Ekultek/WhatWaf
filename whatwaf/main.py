@@ -179,7 +179,7 @@ def main():
 
     proxy, agent = configure_request_headers(
         random_agent=opt.useRandomAgent, agent=opt.usePersonalAgent,
-        proxy=opt.runBehindProxy, tor=opt.runBehindTor
+        proxy=opt.runBehindProxy, tor=opt.runBehindTor, tor_port=opt.configTorPort
     )
 
     if opt.checkTorConnection:

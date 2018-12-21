@@ -94,6 +94,8 @@ class WhatWafParser(ArgumentParser):
                                    "(IE password=123&name=Josh *default=random)")
         req_args.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
                               help="Send requests in parallel (specify number of threads *default=1)")
+        req_args.add_argument("-tP", "--tor-port", type=int, default=9050, dest="configTorPort",
+                              help="Change the port that Tor runs on (*default=9050)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")

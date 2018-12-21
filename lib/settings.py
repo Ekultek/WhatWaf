@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.12.2"
+VERSION = "0.12.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -257,6 +257,7 @@ def configure_request_headers(**kwargs):
     proxy = kwargs.get("proxy", None)
     tor = kwargs.get("tor", False)
     use_random_agent = kwargs.get("random_agent", False)
+    tor_port = kwargs.get("tor_port", 9050)
 
     supported_proxies = ("socks5", "socks4", "http", "https")
 
@@ -270,7 +271,7 @@ def configure_request_headers(**kwargs):
         lib.formatter.error(invalid_msg.format("--ra", "--pa"))
         exit(1)
     if tor:
-        proxy = "socks5://127.0.0.1:9050"
+        proxy = "socks5://127.0.0.1:{}".format(tor_port)
     if agent is None:
         agent = DEFAULT_USER_AGENT
     if use_random_agent:
@@ -555,7 +556,7 @@ def get_encoding_list():
     retval = set()
     items = os.listdir(TAMPERS_DIRECTORY)
     for item in items:
-        if "__init__" not in item:
+        if not any(skip in item for skip in ["__init__", "__pycache__"]):
             item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
             retval.add(item)
     return retval
