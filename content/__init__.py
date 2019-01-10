@@ -35,8 +35,11 @@ class ScriptQueue(object):
             script = script[:-3]
             if self.verbose:
                 lib.formatter.debug("loading {} script '{}'".format(self.script_type, script))
-            script = importlib.import_module(self.path.format(script))
-            retval.append(script)
+            try:
+                script = importlib.import_module(self.path.format(script))
+                retval.append(script)
+            except Exception:
+                lib.formatter.warn("failed to load tamper '{}', pretending it doesn't exist".format(script))
         return retval
 
 
