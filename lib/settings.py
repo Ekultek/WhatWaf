@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.12.3"
+VERSION = "0.12.4"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -233,7 +233,7 @@ def get_page(url, **kwargs):
         req = req(url, headers=headers, proxies=proxies, timeout=req_timeout, data=post_data)
         soup = BeautifulSoup(req.content, "html.parser")
         return "{} {}".format(request_method, get_query(url)), req.status_code, soup, req.headers
-    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.TooManyRedirects):
         return error_retval
 
 
