@@ -90,6 +90,9 @@ def find_url(params):
 
 
 def hide_sensitive(args, command):
+    """
+    hide sensitive information out of the arguments
+    """
     try:
         url_index = args.index(command) + 1
         hidden_url = ''.join([x.replace(x, "*") for x in str(args[url_index])])

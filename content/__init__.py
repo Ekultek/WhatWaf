@@ -13,6 +13,11 @@ import lib.settings
 import lib.formatter
 import lib.firewall_found
 
+try:
+    raw_input
+except:
+    raw_input = input
+
 
 class ScriptQueue(object):
 
@@ -64,6 +69,7 @@ class DetectionQueue(object):
         self.request_type = kwargs.get("request_type", "GET")
         self.post_data = kwargs.get("post_data", "")
         self.threads = kwargs.get("threaded", None)
+        self.placement = kwargs.get("placement", False)
         self.threading_queue = queue.Queue()
         self.response_retval = []
 
@@ -71,7 +77,11 @@ class DetectionQueue(object):
         response_retval = []
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
         for i, waf_vector in enumerate(self.payloads):
-            primary_url = self.url + "{}".format(waf_vector)
+            if not self.placement:
+                primary_url = self.url + "{}".format(waf_vector)
+            else:
+                url = self.url.split("*")
+                primary_url = "{}{}{}".format(url[0], waf_vector, url[len(url) - 1])
             secondary_url = strip_url(self.url)
             secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
             secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
@@ -173,7 +183,11 @@ class DetectionQueue(object):
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
 
         for i, waf_vector in enumerate(self.payloads):
-            primary_url = self.url + "{}".format(waf_vector)
+            if not self.placement:
+                primary_url = self.url + "{}".format(waf_vector)
+            else:
+                url = self.url.split("*")
+                primary_url = "{}{}{}".format(url[0], waf_vector, url[len(url) - 1])
             secondary_url = strip_url(self.url)
             secondary_url = "{}//{}".format(secondary_url[0], secondary_url[1])
             secondary_url = "{}/{}".format(secondary_url, random.choice(lib.settings.RAND_HOMEPAGES))
@@ -373,6 +387,16 @@ def detection_main(url, payloads, **kwargs):
             minor=True
         )
 
+    __check_custom_placement = lambda u: "*" in u
+    if __check_custom_placement(url):
+        choice = raw_input("custom placement marker found in URL `*` would you like to use it to place the attacks[y/N]: ")
+        if choice.lower().startswith("y"):
+            use_placement = True
+        else:
+            use_placement = False
+    else:
+        use_placement = False
+
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     try:
         file_start = url.split("/")[2].split(".")[1]
@@ -419,13 +443,14 @@ def detection_main(url, payloads, **kwargs):
         responses = DetectionQueue(
             url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
             provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
-            timeout=req_timeout, request_type=request_type, post_data=post_data
+            timeout=req_timeout, request_type=request_type, post_data=post_data, placement=use_placement
         ).get_response()
     elif threaded:
         responses = DetectionQueue(
             url, payloads, proxy=proxy, agent=agent, verbose=verbose, save_fingerprint=fingerprint_waf,
             provided_headers=provided_headers, traffic_file=traffic_file, throttle=throttle,
             timeout=req_timeout, request_type=request_type, post_data=post_data, threaded=threaded,
+            placement=use_placement
         ).threaded_get_response()
     if traffic_file is not None:
         with open(traffic_file, "a+") as traffic:
