@@ -31,7 +31,7 @@ from lib.formatter import (
     success
 )
 from lib.database import (
-   initialize,
+    initialize,
     insert_payload,
     fetch_payloads
 )

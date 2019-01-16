@@ -5,6 +5,9 @@ import lib.settings
 
 
 def initialize():
+    """
+    initialize the database
+    """
     if not os.path.exists(lib.settings.DATABASE_FILENAME):
         cursor = sqlite3.connect(lib.settings.DATABASE_FILENAME)
         cursor.execute(
@@ -18,6 +21,9 @@ def initialize():
 
 
 def fetch_payloads(cursor):
+    """
+    fetch all payloads out of the database
+    """
     try:
         cached_payloads = cursor.execute("SELECT * FROM cached_payloads")
         return cached_payloads.fetchall()
@@ -27,6 +33,9 @@ def fetch_payloads(cursor):
 
 
 def insert_payload(payload, cursor):
+    """
+    insert a payload into the database
+    """
     try:
         is_inserted = False
         current_cache = fetch_payloads(cursor)
