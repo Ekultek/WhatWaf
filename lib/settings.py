@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.12.6"
+VERSION = "0.13"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -227,6 +227,7 @@ def get_page(url, **kwargs):
     proxies = {} if proxy is None else {"http": proxy, "https": proxy}
     error_retval = ("", 0, "", {})
 
+    # throttle the requests from here
     time.sleep(throttle)
 
     try:
@@ -560,3 +561,22 @@ def get_encoding_list():
             item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
             retval.add(item)
     return retval
+
+
+def test_target_connection(url, proxy, agent, headers):
+    """
+    test connection to the target URL before doing anything else
+    """
+    test_times = 2
+    failed = 0
+    for _ in range(test_times):
+        results = get_page(url, proxy=proxy, agent=agent, provided_headers=headers)
+        _, status, _, _ = results
+        if status == 0:
+            failed += 1
+    if failed == 1:
+        return "acceptable"
+    elif failed == 2:
+        return "nogo"
+    else:
+        return "ok"
