@@ -147,6 +147,8 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc.. *default=False)")
+        misc.add_argument("-vC", "--view-cache", action="store_true", default=False, dest="viewCachedPayloads",
+                          help="View all payloads that have been cached inside of the database")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)

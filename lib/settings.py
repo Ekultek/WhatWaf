@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "0.13"
+VERSION = "1.0"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -82,6 +82,9 @@ CSV_FILE_PATH = "{}/csv_output".format(HOME)
 
 # request token path
 TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+
+# path to the database file
+DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
 
 # default payloads path
 DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)

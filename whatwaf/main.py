@@ -30,6 +30,11 @@ from lib.formatter import (
     warn,
     success
 )
+from lib.database import (
+   initialize,
+    insert_payload,
+    fetch_payloads
+)
 
 
 try:
@@ -72,6 +77,20 @@ def main():
             fatal("no home folder detected, already cleaned?")
         exit(0)
 
+    cursor = initialize()
+
+    if opt.viewCachedPayloads:
+        payloads = fetch_payloads(cursor)
+        if len(payloads) != 0:
+            info("total of {} payload(s) cached".format(len(payloads)))
+            for i, payload in enumerate(payloads, start=1):
+                if i % 200 == 0:
+                    raw_input("\npress enter to continue...\n")
+                print("#{}  {}".format(payload[0], payload[1]))
+        else:
+            warn("there appears to be no payloads stored in the database")
+        exit(0)
+
     if opt.encodePayload is not None:
         spacer = "-" * 30
         payload = opt.encodePayload[0]
@@ -87,6 +106,8 @@ def main():
                 spacer, payload, spacer
             )
         )
+        insert_payload(payload, cursor)
+        info("payload has been cached for future use")
         exit(0)
 
     if opt.encodePayloadList is not None:
@@ -107,10 +128,12 @@ def main():
                     success("payloads encoded successfully:")
                     print(spacer)
                     for i, item in enumerate(encoded, start=1):
+                        insert_payload(item, cursor)
                         print(
                             "#{} {}".format(i, item)
                         )
                     print(spacer)
+            info("payloads have been cached for future use")
         except IOError:
             fatal("provided file '{}' appears to not exist, check the path and try again".format(file_path))
         except (AttributeError, ImportError):
