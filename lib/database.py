@@ -6,9 +6,15 @@ import lib.settings
 
 def initialize():
     """
-    initialize the database
+    initialize the database and the HOME directory (~/.whatwaf)
     """
     if not os.path.exists(lib.settings.DATABASE_FILENAME):
+        # idk why but apparently i never create the directory :|
+        if not os.path.exists(lib.settings.HOME):
+            try:
+                os.makedirs(lib.settings.HOME)
+            except:
+                pass
         cursor = sqlite3.connect(lib.settings.DATABASE_FILENAME)
         cursor.execute(
             'CREATE TABLE "cached_payloads" ('
