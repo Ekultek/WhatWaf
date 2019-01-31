@@ -21,7 +21,8 @@ from lib.settings import (
     parse_googler_file,
     check_version,
     get_encoding_list,
-    test_target_connection
+    test_target_connection,
+    parse_help_menu
 )
 from lib.formatter import (
     error,
@@ -88,7 +89,12 @@ def main():
                     raw_input("\npress enter to continue...\n")
                 print("#{}  {}".format(payload[0], payload[1]))
         else:
-            warn("there appears to be no payloads stored in the database")
+            warn(
+                "there appears to be no payloads stored in the database, to create payloads use the following options:"
+            )
+            proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
+            parsed_help = parse_help_menu(proc, "encoding options:", "output options:")
+            print(parsed_help)
         exit(0)
 
     if opt.encodePayload is not None:
@@ -281,7 +287,7 @@ def main():
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                 request_type=request_type, check_server=opt.determineWebServer,
-                threaded=opt.threaded
+                threaded=opt.threaded, force_file_creation=opt.forceFileCreation
             )
             request_count = request_count + requests if requests is not None else request_count
         elif opt.runMultipleWebsites:
@@ -320,7 +326,7 @@ def main():
                         traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                         req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                         request_type=request_type, check_server=opt.determineWebServer,
-                        threaded=opt.threaded
+                        threaded=opt.threaded, force_file_creation=opt.forceFileCreation
                     )
                     request_count = request_count + requests if requests is not None else request_count
                     print("\n\b")
@@ -359,7 +365,7 @@ def main():
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=request_data["post_data"],
                 request_type=request_data["request_method"], check_server=opt.determineWebServer,
-                threaded=opt.threaded
+                threaded=opt.threaded, force_file_creation=opt.forceFileCreation
             )
             request_count = request_count + requests if requests is not None else request_count
 
@@ -394,7 +400,7 @@ def main():
                         traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                         req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                         request_type=request_type, check_server=opt.determineWebServer,
-                        threaded=opt.threaded
+                        threaded=opt.threaded, force_file_creation=opt.forceFileCreation
                     )
                     request_count = request_count + requests if requests is not None else request_count
                     print("\n\b")

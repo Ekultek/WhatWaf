@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.0"
+VERSION = "1.0.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -583,3 +583,13 @@ def test_target_connection(url, proxy, agent, headers):
         return "nogo"
     else:
         return "ok"
+
+
+def parse_help_menu(data, start, end):
+    """
+    parse the help menu from a certain string to a certain string
+    and return the parsed help
+    """
+    start_index = data.index(start)
+    end_index = data.index(end)
+    return data[start_index:end_index].strip()
