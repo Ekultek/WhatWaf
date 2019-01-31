@@ -128,6 +128,8 @@ class WhatWafParser(ArgumentParser):
                                  help="Control the amount of tampers that are displayed (*default=5)")
         output_opts.add_argument("--traffic", metavar="FILENAME", dest="trafficFile",
                                  help="store all HTTP traffic headers into a file of your choice")
+        output_opts.add_argument("--force-file", action="store_true", default=False, dest="forceFileCreation",
+                                 help="Force the creation of a file even if there is no protection identified")
 
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")

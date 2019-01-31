@@ -380,6 +380,7 @@ def detection_main(url, payloads, **kwargs):
     post_data = kwargs.get("post_data", "")
     check_server = kwargs.get("check_server", False)
     threaded = kwargs.get("threaded", None)
+    force_file_creation = kwargs.get("force_file_creation", False)
 
     if lib.settings.URL_QUERY_REGEX.search(str(url)) is None:
         lib.formatter.warn(
@@ -399,7 +400,10 @@ def detection_main(url, payloads, **kwargs):
 
     filepath = lib.settings.YAML_FILE_PATH if use_yaml else lib.settings.JSON_FILE_PATH if use_json else lib.settings.CSV_FILE_PATH
     try:
-        file_start = url.split("/")[2].split(".")[1]
+        if "http" in url:
+            file_start = url.split("/")[2].split(".")[1]
+        else:
+            file_start = url.split(".")[1]
         if use_json:
             ext = ".json"
         elif use_yaml:
@@ -580,6 +584,25 @@ def detection_main(url, payloads, **kwargs):
                 )
         else:
             lib.formatter.success("no protection identified on target")
+            if formatted:
+                if not force_file_creation:
+                    lib.formatter.warn(
+                        "no data will be written to files since no protection could be identified, "
+                        "to force file creation pass the `--force-file` argument"
+                    )
+                else:
+                    # if the argument `--force-file` is passed we will create the file
+                    # anyways, this should give users who are relying on the JSON files
+                    # for thirdparty information a chance to get the data out of the directory
+                    # then they can easily parse it without problems.
+                    lib.formatter.warn("forcing file creation without successful identification", minor=True)
+                    dict_data_output = dictify_output(url, None, [])
+                    written_file_path = lib.settings.write_to_file(
+                        filename, filepath, dict_data_output,
+                        write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                    )
+                    if written_file_path is not None:
+                        lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
 
     else:
         lib.formatter.success("multiple protections identified on target{}:".format(
