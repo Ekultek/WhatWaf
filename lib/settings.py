@@ -239,6 +239,9 @@ def get_page(url, **kwargs):
         return "{} {}".format(request_method, get_query(url)), req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.TooManyRedirects):
         return error_retval
+    except Exception as e:
+        if "timed out" in str(e):
+            return error_retval
 
 
 def get_random_agent(path="{}/content/files/user_agents.txt"):
