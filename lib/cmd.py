@@ -130,6 +130,10 @@ class WhatWafParser(ArgumentParser):
                                  help="store all HTTP traffic headers into a file of your choice")
         output_opts.add_argument("--force-file", action="store_true", default=False, dest="forceFileCreation",
                                  help="Force the creation of a file even if there is no protection identified")
+        output_opts.add_argument("--export", metavar="FILE-TYPE", default=None, dest="exportEncodedToFile",
+                                 choices=["text", "json", "csv", "yaml"],
+                                 help="Export the already encoded payloads to a specified file type and save them "
+                                      "under the home directory")
 
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")

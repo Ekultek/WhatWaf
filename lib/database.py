@@ -33,8 +33,7 @@ def fetch_payloads(cursor):
     try:
         cached_payloads = cursor.execute("SELECT * FROM cached_payloads")
         return cached_payloads.fetchall()
-    except Exception as e:
-        print e
+    except Exception:
         return []
 
 

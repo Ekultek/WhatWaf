@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.0.2"
+VERSION = "1.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -91,6 +91,9 @@ POST_STRING_NAMES_PATH = "{}/content/files/post_strings.lst".format(CUR_DIR)
 
 # path to the database file
 DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
+
+# payloads that have been exported from database cache
+EXPORTED_PAYLOADS_PATH = "{}/payload_exports".format(HOME)
 
 # default payloads path
 DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
@@ -636,3 +639,52 @@ def save_temp_issue(data):
     with open(file_path, "a+") as outfile:
         json.dump(data, outfile)
     return file_path
+
+
+def export_payloads(payloads, file_type):
+    """
+    export cached payloads from the database into a file for further use
+    """
+    if not os.path.exists(EXPORTED_PAYLOADS_PATH):
+        os.makedirs(EXPORTED_PAYLOADS_PATH)
+    is_json, is_csv, is_yaml = False, False, False
+    if file_type.lower() == "json":
+        is_json = True
+    elif file_type.lower() == "csv":
+        is_csv = True
+    elif file_type.lower() == "yaml":
+        try:
+            import yaml
+            is_yaml = True
+        except ImportError:
+            lib.formatter.fatal("you need the pyYAML library to export to yaml, get it by typing `pip install pyyaml`")
+            exit(1)
+    filename = random_string(use_csv=is_csv, use_json=is_json, use_yaml=is_yaml, length=15)
+    file_path = "{}/whatwaf_{}_export_{}".format(EXPORTED_PAYLOADS_PATH, file_type.lower(), filename)
+    with open(file_path, "a+") as dump_file:
+        if is_json:
+            retval = {"payloads": []}
+            for item in payloads:
+                retval["payloads"].append(str(item[-1]))
+            json.dump(retval, dump_file)
+        elif is_csv:
+            import csv
+
+            try:
+                csv_data = [["payloads"], [str(p[-1]) for p in payloads]]
+            except KeyError:
+                pass
+            writer = csv.writer(dump_file)
+            writer.writerows(csv_data)
+        elif is_yaml:
+            import yaml
+
+            retval = {"payloads": []}
+            for item in payloads:
+                retval["payloads"].append(str(item[-1]))
+            yaml.dump(retval, dump_file, default_flow_style=False)
+        else:
+            for item in payloads:
+                dump_file.write("{}\n".format(str(item[-1])))
+    return file_path
+

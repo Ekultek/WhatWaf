@@ -22,7 +22,8 @@ from lib.settings import (
     check_version,
     get_encoding_list,
     test_target_connection,
-    parse_help_menu
+    parse_help_menu,
+    export_payloads
 )
 from lib.formatter import (
     error,
@@ -79,6 +80,20 @@ def main():
         exit(0)
 
     cursor = initialize()
+
+    if opt.exportEncodedToFile is not None:
+        payloads = fetch_payloads(cursor)
+        if len(payloads) != 0:
+            exported_payloads_path = export_payloads(payloads, opt.exportEncodedToFile)
+            info("payloads exported to: {}".format(exported_payloads_path))
+        else:
+            warn(
+                "there appears to be no payloads stored in the database, to create payloads use the following options:"
+            )
+            proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
+            parsed_help = parse_help_menu(proc, "encoding options:", "output options:")
+            print(parsed_help)
+        exit(1)
 
     if opt.viewCachedPayloads:
         payloads = fetch_payloads(cursor)
