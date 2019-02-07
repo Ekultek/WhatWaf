@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -80,8 +80,14 @@ YAML_FILE_PATH = "{}/yaml_output".format(HOME)
 # CSV data file path
 CSV_FILE_PATH = "{}/csv_output".format(HOME)
 
+# for when an issue occurs but is not processed due to an error
+UNPROCESSED_ISSUES_PATH = "{}/unprocessed_issues".format(HOME)
+
 # request token path
 TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+
+# known POST strings (I'll probably think of more later)
+POST_STRING_NAMES_PATH = "{}/content/files/post_strings.lst".format(CUR_DIR)
 
 # path to the database file
 DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
@@ -344,6 +350,28 @@ def random_string(acceptable=string.ascii_letters, length=5, use_json=False, use
         return ''.join(random_chars)
 
 
+def generate_random_post_string(amount=2):
+    """
+    generate a random POST string from a list of provided keywords
+    """
+    send_string_retval = []
+    post_name_retval = set()
+    for _ in range(amount):
+        send_string_retval.append(
+            random_string(
+                acceptable=string.ascii_letters + string.digits,
+                length=random.choice(range(4, 18))
+            )
+        )
+    with open(POST_STRING_NAMES_PATH, "r") as data:
+        line_data = [c.strip() for c in data.readlines()]
+        while len(post_name_retval) != 2:
+            post_name_retval.add(random.choice(line_data))
+    post_name_retval = list(post_name_retval)
+    post_string_retval_data = (post_name_retval[0], send_string_retval[0], post_name_retval[1], send_string_retval[1])
+    return "{}={}&{}={}".format(*post_string_retval_data)
+
+
 def auto_assign(url, ssl=False):
     """
     check if a protocol is given in the URL if it isn't we'll auto assign it
@@ -596,3 +624,15 @@ def parse_help_menu(data, start, end):
     start_index = data.index(start)
     end_index = data.index(end)
     return data[start_index:end_index].strip()
+
+
+def save_temp_issue(data):
+    """
+    save unprocessed issues into a file so that they can be worked with later
+    """
+    if not os.path.exists(UNPROCESSED_ISSUES_PATH):
+        os.makedirs(UNPROCESSED_ISSUES_PATH)
+    file_path = "{}/{}.json".format(UNPROCESSED_ISSUES_PATH,random_string(length=32))
+    with open(file_path, "a+") as outfile:
+        json.dump(data, outfile)
+    return file_path
