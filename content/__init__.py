@@ -236,6 +236,11 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     max_successful_payloads = kwargs.get("tamper_int", 5)
     throttle = kwargs.get("throttle", 0)
     req_timeout = kwargs.get("timeout", 15)
+    if req_timeout is None:
+        lib.formatter.warn(
+            "issue occured and the timeout resolved to None, defaulting to 15", minor=True
+        )
+        req_timeout = 15
 
     failed_schema = (
         re.compile("404", re.I), re.compile("captcha", re.I),
@@ -424,12 +429,7 @@ def detection_main(url, payloads, **kwargs):
     elif request_type == "POST":
         if len(post_data) == 0:
             lib.formatter.warn("no POST string supplied generating random", minor=True)
-            post_data = "{}={}&{}={}".format(
-                lib.settings.random_string(length=random.randint(8, 18)),
-                lib.settings.random_string(length=random.randint(8, 18)),
-                lib.settings.random_string(length=random.randint(8, 18)),
-                lib.settings.random_string(length=random.randint(8, 18))
-            )
+            post_data = lib.settings.generate_random_post_string()
             lib.formatter.info("random POST string to be sent: '{}'".format(post_data))
 
     if lib.settings.validate_url(url) is None:
