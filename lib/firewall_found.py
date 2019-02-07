@@ -146,12 +146,22 @@ def request_issue_creation(exception_details):
                 url="https://api.github.com/repos/ekultek/whatwaf/issues", data=issue_creation_json,
                 headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
             )
-            urlopen(req, timeout=10).read()
-            lib.formatter.info(
-                "this exception has been submitted successfully with the title '{}', URL: '{}'".format(
-                    title, find_url(identifier)
+            try:
+                urlopen(req, timeout=10).read()
+                lib.formatter.info(
+                    "this exception has been submitted successfully with the title '{}', URL: '{}'".format(
+                        title, find_url(identifier)
+                    )
                 )
-            )
+            except Exception as e:
+                unprocessed_file_path = lib.settings.save_temp_issue(issue_creation_template)
+                lib.formatter.fatal(
+                    "caught an exception while trying to process request: {}, you can either create "
+                    "this issue manually, or try again. if you have decided to create the issue "
+                    "manually you can find the issue information in the following file: {}".format(
+                        str(e), unprocessed_file_path
+                    )
+                )
         else:
             lib.formatter.error(
                 "this exception has already been reported: '{}'".format(find_url(identifier))
@@ -205,13 +215,23 @@ def request_firewall_issue_creation(path):
                 url="https://api.github.com/repos/ekultek/whatwaf/issues", data=_json_data,
                 headers={"Authorization": "token {}".format(get_token(lib.settings.TOKEN_PATH))}
             )
-            urlopen(req, timeout=10).read()
-            lib.formatter.info(
-                "this firewalls fingerprint has successfully been submitted with the title '{}', "
-                "URL '{}'".format(
-                    issue_title, find_url(identifier)
+            try:
+                urlopen(req, timeout=10).read()
+                lib.formatter.info(
+                    "this firewalls fingerprint has successfully been submitted with the title '{}', "
+                    "URL '{}'".format(
+                        issue_title, find_url(identifier)
+                    )
                 )
-            )
+            except Exception as e:
+                unprocessed_file_path = lib.settings.save_temp_issue(issue_data)
+                lib.formatter.fatal(
+                    "caught an exception while trying to process request: {}, you can either create "
+                    "this issue manually, or try again. if you have decided to create the issue "
+                    "manually you can find the issue information in the following file: {}".format(
+                        str(e), unprocessed_file_path
+                    )
+                )
         else:
             lib.formatter.error(
                 "someone has already sent in this firewalls fingerprint here: {}".format(find_url(identifier))
