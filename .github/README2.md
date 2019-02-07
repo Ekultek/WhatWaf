@@ -1,8 +1,8 @@
 # Features
  - Ability to run on a single URL with the `-u/--url` flag
  - Ability to run through a list of URL's with the `-l/--list` flag
- - Ability to detect over 40 different firewalls
- - Ability to try over 20 different tampering techniques
+ - Ability to detect over 60+ different firewalls
+ - Ability to try over 30+ different tampering techniques
  - Ability to pass your own payloads either from a file, from the terminal, or use the default payloads
  - Default payloads that _should_ produce at least one WAF triggering
  - Ability to bypass firewalls using both SQLi techniques and cross site scripting techniques
@@ -12,6 +12,13 @@
  - A built in encoder so you can encode your payloads into the discovered bypasses
  - Automatic issue creation if an unknown firewall is discovered
  - Ability to send output to a JSON, CSV, or YAML file
+ - Ability to encode provided payloads using builtin tamper scripts
+ - Encoded payloads are then saved into a database file for future use
+ - Ability to export cached payloads from the database to a YAML, JSON, CSV, or textual file
+ - Ability to save all traffic into files for further analysis by passing the `--traffic` flag
+ - Ability to try and determine the backend webserver hosting the web application using `-W`
+ - Ability to send POST or GET requests
+ - Ability to pass in your own custom headers
  - More to come...
 
 # Installation
