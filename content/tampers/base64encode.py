@@ -2,7 +2,7 @@ import base64
 
 
 __example_payload__ = "<script>alert("");</script>"
-__type__ = "encoding the payload into it's base64 equivalent"
+__type__ = "encoding the payload into its base64 equivalent"
 
 
 def tamper(payload, **kwargs):
