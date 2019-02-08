@@ -1,5 +1,5 @@
 __example_payload__ = '<script>alert("test");</script>'
-__type__ = "changing the payload into it's uppercase equivalent"
+__type__ = "changing the payload into its uppercase equivalent"
 
 
 def tamper(payload, **kwargs):
