@@ -45,9 +45,9 @@ class WhatWafParser(ArgumentParser):
                                               "arguments that have to be passed for the program to run")
         mandatory.add_argument("-u", "--url", dest="runSingleWebsite", metavar="URL",
                                help="Pass a single URL to detect the protection")
-        mandatory.add_argument("-l", "--list", "-f", "--file", dest="runMultipleWebsites", metavar="PATH",
+        mandatory.add_argument("-l", "--list", "-f", "--file", dest="runMultipleWebsites", metavar="PATH", default=None,
                                help="Pass a file containing URL's (one per line) to detect the protection")
-        mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH",
+        mandatory.add_argument("-b", "--burp", dest="burpRequestFile", metavar="FILE-PATH", default=None,
                                help="Pass a Burp Suite request file to perform WAF evaluation")
         # apparently Python 3.x doesn't like it when there's a '%' in the string
         # this will cause some issues, more specifically a `TypeError` because it's trying

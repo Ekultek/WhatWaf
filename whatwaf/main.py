@@ -305,84 +305,60 @@ def main():
                 threaded=opt.threaded, force_file_creation=opt.forceFileCreation
             )
             request_count = request_count + requests if requests is not None else request_count
-        elif opt.runMultipleWebsites:
-            info("reading from '{}'".format(opt.runMultipleWebsites))
+        elif any(o is not None for o in [opt.runMultipleWebsites, opt.burpRequestFile]):
+            info("reading from '{}'".format(opt.runMultipleWebsites or opt.burpRequestFile))
             try:
-                open(opt.runMultipleWebsites)
+                open(opt.runMultipleWebsites or opt.burpRequestFile)
             except IOError:
                 fatal("file: '{}' did not open, does it exist?".format(opt.runMultipleWebsites))
                 exit(-1)
-            with open(opt.runMultipleWebsites) as urls:
-                for i, url in enumerate(urls, start=1):
-                    url = auto_assign(url.strip(), ssl=opt.forceSSL)
+            if opt.runMultipleWebsites is not None:
+                site_runners = []
+                with open(opt.runMultipleWebsites) as urls:
+                    for url in urls:
+                        site_runners.append(auto_assign(url.strip(), ssl=opt.forceSSL))
+            elif opt.burpRequestFile is not None:
+                site_runners = parse_burp_request(opt.burpRequestFile)
+            else:
+                site_runners = []
 
-                    if opt.testTargetConnection:
-                        info("testing connection to target URL before starting attack")
-                        results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
-                        if results == "nogo":
-                            fatal("connection to target URL failed multiple times, check connection and try again")
-                            exit(1)
-                        elif results == "acceptable":
-                            warn(
-                                "there appears to be some latency on the connection, this may interfere with results",
-                                minor=False
-                            )
-                        else:
-                            success("connection succeeded, continuing")
-
-                    info("currently running on site #{} ('{}')".format(i, url))
-                    requests = detection_main(
-                        url, payload_list, agent=agent, proxy=proxy,
-                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                        verification_number=opt.verifyNumber, formatted=opt.formatOutput,
-                        tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
-                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
-                        traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
-                        req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
-                        request_type=request_type, check_server=opt.determineWebServer,
-                        threaded=opt.threaded, force_file_creation=opt.forceFileCreation
-                    )
-                    request_count = request_count + requests if requests is not None else request_count
-                    print("\n\b")
-                    time.sleep(0.5)
-
-        elif opt.burpRequestFile:
-            request_data = parse_burp_request(opt.burpRequestFile)
-            if request_data is None:
-                fatal("seems that the file doesn't exist, check the path and try again")
+            if len(site_runners) == 0:
+                fatal("no targets parsed from file, exiting")
                 exit(1)
-            info("URL parsed from request file: '{}'".format(request_data["base_url"]))
+            else:
+                info("parsed a total of {} target(s) from file".format(len(site_runners)))
 
-            if opt.testTargetConnection:
-                info("testing connection to target URL before starting attack")
-                results = test_target_connection(
-                    request_data["base_url"], proxy=proxy, agent=agent, headers=request_data["request_headers"]
+            for i, url in enumerate(site_runners, start=1):
+                if opt.testTargetConnection:
+                    info("testing connection to target URL before starting attack")
+                    results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
+                    if results == "nogo":
+                        fatal("connection to target URL failed multiple times, check connection and try again")
+                        exit(1)
+                    elif results == "acceptable":
+                        warn(
+                            "there appears to be some latency on the connection, this may interfere with results",
+                            minor=False
+                        )
+                    else:
+                        success("connection succeeded, continuing")
+
+                info("currently running on site #{} ('{}')".format(i, url))
+                requests = detection_main(
+                    url, payload_list, agent=agent, proxy=proxy,
+                    verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                    verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                    tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                    use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                    fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
+                    traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                    req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
+                    request_type=request_type, check_server=opt.determineWebServer,
+                    threaded=opt.threaded, force_file_creation=opt.forceFileCreation
                 )
-                if results == "nogo":
-                    fatal("connection to target URL failed multiple times, check connection and try again")
-                    exit(1)
-                elif results == "acceptable":
-                    warn(
-                        "there appears to be some latency on the connection, this may interfere with results",
-                        minor=False
-                    )
-                else:
-                    success("connection succeeded, continuing")
-
-            requests = detection_main(
-                request_data["base_url"], payload_list,
-                verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                verification_number=opt.verifyNumber, formatted=opt.formatOutput,
-                tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
-                use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                fingerprint_waf=opt.saveFingerprints, provided_headers=request_data["request_headers"],
-                traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
-                req_timeout=opt.requestTimeout, post_data=request_data["post_data"],
-                request_type=request_data["request_method"], check_server=opt.determineWebServer,
-                threaded=opt.threaded, force_file_creation=opt.forceFileCreation
-            )
-            request_count = request_count + requests if requests is not None else request_count
+                request_count = request_count + requests if requests is not None else request_count
+                print("\n\b")
+                time.sleep(0.5)
 
         elif opt.googlerFile is not None:
             urls = parse_googler_file(opt.googlerFile)

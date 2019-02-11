@@ -5,7 +5,6 @@ import json
 import time
 import random
 import string
-import base64
 import platform
 try:
     import urlparse
@@ -19,7 +18,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.1"
+VERSION = "1.1.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -489,68 +488,24 @@ def write_to_file(filename, path, data, **kwargs):
     return full_path
 
 
-def is_64(_string):
-    """
-    will allow you to tell if a string is base64 or not
-    """
-    if len(_string) != 4 and len(_string) % 4 == 0:
-        try:
-            data = base64.b64decode(string)
-            if all(c in string.printable for c in _string):
-                return data
-            else:
-                return _string
-        except Exception:
-            # assume the string is not base64 and return the string
-            return _string
-    else:
-        return _string
-
-
 def parse_burp_request(filename):
     """
     parse an XML file from Burp Suite and make a request based on what is parsed
     """
-    import xml.etree.ElementTree as Parser
+    burp_request_regex = re.compile("<url><\S.cdata.", re.I)
+    tmp = set()
+    retval = []
 
-    try:
-        open(filename).close()
-    except IOError:
-        return None
-
-    retval = {}
-    tmp = {}
-
-    tree = Parser.parse(filename)
-    root = tree.getroot()
-    burp_attributes = root.attrib
-
-    lib.formatter.info("parsing XML file from Burp version: {}; creation time: {}".format(
-        burp_attributes["burpVersion"], burp_attributes["exportTime"]
-    ))
-
-    try:
-        retval["base_url"] = is_64(root[0][1].text.strip())
-        retval["protocol"] = is_64(root[0][4].text.strip())
-        retval["request_method"] = is_64(root[0][5].text.split(" ")[-1])
-        retval["request_headers"] = is_64(root[0][8].text.strip())
-
-        for header in retval["request_headers"].split("\n"):
-            if retval["request_method"] not in header and retval["base_url"] not in header and "Host" not in header:
-                data = header.split(":")
-                try:
-                    tmp[data[0]] = data[1].strip()
-                except IndexError:
-                    retval["post_data"] = ''.join(data)
-        retval["request_headers"] = {}
-        if "post_data" not in retval:
-            retval["post_data"] = None
-        retval["request_headers"] = tmp
-
-        return retval
-    except IndexError:
-        lib.formatter.fatal("it appears the burp request file provided has no usable information in it")
-        exit(-1)
+    with open(filename) as xml:
+        for line in xml.readlines():
+            line = line.strip()
+            if burp_request_regex.search(line) is not None:
+                tmp.add(line)
+    tmp = list(tmp)
+    for url in tmp:
+        url = re.split("<(.)?url>", url)[2].split("CDATA")[-1].replace("[", "").replace("]]", "").replace(">", "")
+        retval.append(url)
+    return retval
 
 
 def parse_googler_file(filepath):
