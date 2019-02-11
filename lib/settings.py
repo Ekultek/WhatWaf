@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.1.2"
+VERSION = "1.1.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -530,7 +530,7 @@ def check_version(speak=True):
     version_url = "https://raw.githubusercontent.com/Ekultek/WhatWaf/master/lib/settings.py"
     req = requests.get(version_url)
     content = req.text
-    current_version = content.split("\n")[21].split("=")[-1].split('"')[1]
+    current_version = str(content.split("\n")[20].split("=")[-1]).replace('"', "").strip()
     my_version = VERSION
     if not current_version == my_version:
         if speak:
