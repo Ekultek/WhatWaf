@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__item__ = "Yunsuo Web Application Firewall (Yunsuo)"
+__product__ = "Yunsuo Web Application Firewall (Yunsuo)"
 
 
 def detect(content, **kwargs):

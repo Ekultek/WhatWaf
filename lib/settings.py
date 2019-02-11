@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.1.1"
+VERSION = "1.1.2"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -542,15 +542,19 @@ def check_version(speak=True):
             return True
 
 
-def get_encoding_list():
+def get_encoding_list(directory, is_tampers=True, is_wafs=False):
     """
     get a quick simple list of encodings
     """
     retval = set()
-    items = os.listdir(TAMPERS_DIRECTORY)
+    items = os.listdir(directory)
     for item in items:
         if not any(skip in item for skip in ["__init__", "__pycache__"]):
-            item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
+            if is_tampers:
+                item = TAMPERS_IMPORT_TEMPLATE.format(item.split(".")[0])
+            elif is_wafs:
+                if "unknown" not in item:
+                    item = PLUGINS_IMPORT_TEMPLATE.format(item.split(".")[0])
             retval.add(item)
     return retval
 

@@ -109,8 +109,6 @@ class WhatWafParser(ArgumentParser):
                                    help="Encode a file containing payloads (one per line) "
                                         "by passing the path and load path, files can only "
                                         "encoded using a single tamper script load path")
-        encoding_opts.add_argument("-L", "--list-encodings", action="store_true", dest="listEncodingTechniques",
-                                   help="Output a list of usable tamper script load paths")
 
         output_opts = parser.add_argument_group("output options",
                                                 "arguments that control how WhatWaf handles output")
@@ -155,6 +153,10 @@ class WhatWafParser(ArgumentParser):
                                "(IE Apache, Nginx, etc.. *default=False)")
         misc.add_argument("-vC", "--view-cache", action="store_true", default=False, dest="viewCachedPayloads",
                           help="View all payloads that have been cached inside of the database")
+        misc.add_argument("--wafs", action="store_true", default=False, dest="viewPossibleWafs",
+                          help="Output a list of possible firewalls that can be detected by this program")
+        encoding_opts.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
+                                   help="Output a list of usable tamper script load paths")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)

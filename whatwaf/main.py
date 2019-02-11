@@ -23,7 +23,9 @@ from lib.settings import (
     get_encoding_list,
     test_target_connection,
     parse_help_menu,
-    export_payloads
+    export_payloads,
+    PLUGINS_DIRECTORY,
+    TAMPERS_DIRECTORY
 )
 from lib.formatter import (
     error,
@@ -172,9 +174,23 @@ def main():
 
     if opt.listEncodingTechniques:
         info("gathering available tamper script load paths")
-        tamper_list = get_encoding_list()
+        tamper_list = get_encoding_list(TAMPERS_DIRECTORY, is_tampers=True, is_wafs=False)
         for tamper in sorted(tamper_list):
             print(tamper)
+        exit(0)
+
+    if opt.viewPossibleWafs:
+        import importlib
+
+        info("gathering a list of possible detectable wafs")
+
+        wafs_list = get_encoding_list(PLUGINS_DIRECTORY, is_tampers=False, is_wafs=True)
+        for i, waf in enumerate(wafs_list, start=1):
+            try:
+                imported = importlib.import_module(waf)
+                print("{}".format(imported.__product__))
+            except ImportError:
+                pass
         exit(0)
 
     info("checking for updates")
