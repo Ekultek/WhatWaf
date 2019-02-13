@@ -1,4 +1,8 @@
 import time
+try:
+    raw_input
+except:
+    raw_input = input
 
 
 def set_color(string, level=None):
@@ -66,3 +70,10 @@ def success(string):
     print(
             "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[SUCCESS] {}".format(string), level=15)
     )
+
+
+def prompt(string, opts):
+    choice = raw_input("\033[38m[{}]\033[0m[PROMPT] {}[{}]: ".format(
+        time.strftime("%H:%M:%S"), string, "/".join(list(opts))
+    ))
+    return choice

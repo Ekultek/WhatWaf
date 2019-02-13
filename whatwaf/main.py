@@ -93,7 +93,7 @@ def main():
                 "there appears to be no payloads stored in the database, to create payloads use the following options:"
             )
             proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
-            parsed_help = parse_help_menu(proc, "encoding options:", "output options:")
+            parsed_help = parse_help_menu(str(proc), "encoding options:", "output options:")
             print(parsed_help)
         exit(1)
 

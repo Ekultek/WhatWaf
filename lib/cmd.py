@@ -8,12 +8,13 @@ from argparse import (
 class StoreDictKeyPairs(Action):
 
     """
-    custom action to create a dict from a provided string in the format of key=value
+    custom action to create a dict from a provided string in the format of key=value or vey:value
     """
 
     retval = {}
 
     def __call__(self, parser, namespace, values, option_string=None):
+        # discover what we split by
         for kv in values.split(","):
             if ":" in kv:
                 splitter = ":"
@@ -27,10 +28,17 @@ class StoreDictKeyPairs(Action):
             else:
                 k, v = kv.split(splitter)
                 self.retval[k.strip()] = v.strip()
+        # return the attribute as {'foo': 'bar'}
         setattr(namespace, self.dest, self.retval)
 
 
 class WhatWafParser(ArgumentParser):
+
+    """
+    our cool little class that is a child of argparse where we will
+    take all the data and arguments and return them into a single
+    class instance
+    """
 
     def __init__(self):
         super(WhatWafParser, self).__init__()
@@ -155,8 +163,8 @@ class WhatWafParser(ArgumentParser):
                           help="View all payloads that have been cached inside of the database")
         misc.add_argument("--wafs", action="store_true", default=False, dest="viewPossibleWafs",
                           help="Output a list of possible firewalls that can be detected by this program")
-        encoding_opts.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
-                                   help="Output a list of usable tamper script load paths")
+        misc.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
+                          help="Output a list of usable tamper script load paths")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)

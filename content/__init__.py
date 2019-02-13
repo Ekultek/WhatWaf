@@ -13,11 +13,6 @@ import lib.settings
 import lib.formatter
 import lib.firewall_found
 
-try:
-    raw_input
-except:
-    raw_input = input
-
 
 class ScriptQueue(object):
 
@@ -136,7 +131,8 @@ class DetectionQueue(object):
         return response_retval
 
     def threader(self):
-        while (True):
+        # not sure why this is wrapped in parentheses
+        while True:
             url_thread, waf_vector = self.threading_queue.get()
             self.threaded_get_response_helper(url_thread, waf_vector)
             self.threading_queue.task_done()
@@ -395,7 +391,9 @@ def detection_main(url, payloads, **kwargs):
 
     __check_custom_placement = lambda u: "*" in u
     if __check_custom_placement(url):
-        choice = raw_input("custom placement marker found in URL `*` would you like to use it to place the attacks[y/N]: ")
+        choice = lib.formatter.prompt(
+            "custom placement marker found in URL `*` would you like to use it to place the attacks", "yN"
+        )
         if choice.lower().startswith("y"):
             use_placement = True
         else:

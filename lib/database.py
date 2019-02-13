@@ -32,9 +32,10 @@ def fetch_payloads(cursor):
     """
     try:
         cached_payloads = cursor.execute("SELECT * FROM cached_payloads")
-        return cached_payloads.fetchall()
+        retval = cached_payloads.fetchall()
     except Exception:
-        return []
+        retval = []
+    return retval
 
 
 def insert_payload(payload, cursor):

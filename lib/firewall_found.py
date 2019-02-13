@@ -14,11 +14,6 @@ from bs4 import BeautifulSoup
 import lib.settings
 import lib.formatter
 
-try:
-    raw_input
-except NameError:
-    raw_input = input
-
 
 def create_identifier(data):
     obj = hashlib.sha1()
@@ -109,8 +104,8 @@ def request_issue_creation(exception_details):
     """
     import platform
 
-    question = raw_input(
-        "do you want to create an anonymized issue for the caught exception[y/N]: "
+    question = lib.formatter.prompt(
+        "do you want to create an anonymized issue for the caught exception", "yN"
     )
     if question.lower().startswith("y"):
         is_newest = lib.settings.check_version(speak=False)
@@ -122,9 +117,8 @@ def request_issue_creation(exception_details):
 
         identifier = create_identifier(exception_details)
 
-        sensitive = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
         for item in sys.argv:
-            if item in sensitive:
+            if item in lib.settings.SENSITIVE_ARGUMENTS:
                 argv_data = hide_sensitive(sys.argv, item)
         title = "Whatwaf Unhandled Exception ({})".format(identifier)
 
@@ -172,8 +166,8 @@ def request_firewall_issue_creation(path):
     """
     request the creation and create the issue
     """
-    question = raw_input(
-        "do you want to create an issue with the unknown firewall to possibly get it implemented[y/N]: "
+    question = lib.formatter.prompt(
+        "do you want to create an issue with the unknown firewall to possibly get it implemented", "yN"
     )
     if question.lower().startswith("y"):
         is_newest = lib.settings.check_version(speak=False)
@@ -192,9 +186,8 @@ def request_firewall_issue_creation(path):
             full_fingerprint = data.read()
             issue_title = "Unknown Firewall ({})".format(identifier)
 
-        sensitive = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
         for item in sys.argv:
-            if item in sensitive:
+            if item in lib.settings.SENSITIVE_ARGUMENTS:
                 data = hide_sensitive(sys.argv, item)
 
         issue_data = {

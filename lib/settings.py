@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 import lib.formatter
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.1.3"
+VERSION = "1.1.4"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -101,6 +101,9 @@ DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
 DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
     VERSION, sys.version.split(" ")[0], platform.platform().split("-")[0]
 )
+
+# arguments that need to be blocked from issue creations and waf creations
+SENSITIVE_ARGUMENTS = ("--proxy", "-u", "--url", "-D", "--data", "--pa", "-b", "--burp")
 
 # payloads for detecting the WAF, at least one of
 # these payloads `should` trigger the WAF and provide
@@ -583,9 +586,26 @@ def parse_help_menu(data, start, end):
     parse the help menu from a certain string to a certain string
     and return the parsed help
     """
-    start_index = data.index(start)
-    end_index = data.index(end)
-    return data[start_index:end_index].strip()
+    try:
+        start_index = data.index(start)
+        end_index = data.index(end)
+        retval = data[start_index:end_index].strip()
+    except TypeError:
+        # python3 is stupid and likes `bytes` because why tf not?
+        plus = 60
+        # so now we gotta dd 60 in order to get the last line from the last command
+        # out of the way
+        start_index = data.decode().index(start) + plus
+        end_index = data.decode().index(end)
+        # and then we gotta convert back
+        data = str(data)
+        # and then we gotta store into a temporary list
+        tmp = data[start_index:end_index]
+        # split the list into another list because of escapes
+        # join that list with a new line and finally get the
+        # retval out of it. Because that makes PERFECT sense
+        retval = "\n".join(tmp.split("\\n"))
+    return retval
 
 
 def save_temp_issue(data):
