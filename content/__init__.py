@@ -4,6 +4,7 @@ import json
 import importlib
 import random
 import threading
+import urlparse
 try:
     import queue
 except ImportError:
@@ -11,6 +12,7 @@ except ImportError:
     
 import lib.settings
 import lib.formatter
+import lib.database
 import lib.firewall_found
 
 
@@ -358,7 +360,7 @@ def dictify_output(url, firewalls, tampers):
     return jsonified
 
 
-def detection_main(url, payloads, **kwargs):
+def detection_main(url, payloads, cursor, **kwargs):
     """
     main detection function
     """
@@ -382,6 +384,8 @@ def detection_main(url, payloads, **kwargs):
     check_server = kwargs.get("check_server", False)
     threaded = kwargs.get("threaded", None)
     force_file_creation = kwargs.get("force_file_creation", False)
+
+    current_url_netloc = urlparse.urlparse(url).netloc
 
     if lib.settings.URL_QUERY_REGEX.search(str(url)) is None:
         lib.formatter.warn(
@@ -484,6 +488,9 @@ def detection_main(url, payloads, **kwargs):
             lib.formatter.warn("unable to determine web server")
         else:
             lib.formatter.success("web server determined as: {}".format(found))
+        found_webserver = found
+    else:
+        found_webserver = None
 
     # plus one for lib.settings.get_page call
     request_count = len(responses) + 1
@@ -536,6 +543,9 @@ def detection_main(url, payloads, **kwargs):
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, found_working_tampers, detected_protections, cursor, webserver=found_webserver
+            )
         else:
             lib.formatter.warn("skipping bypass checks")
             if formatted:
@@ -546,6 +556,11 @@ def detection_main(url, payloads, **kwargs):
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+            if isinstance(detected_protections, str):
+                detected_protections = [detected_protections]
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, [], detected_protections, cursor, webserver=found_webserver
+            )
 
     elif amount_of_products == 0:
         lib.formatter.warn("no protection identified on target, verifying", minor=True)
@@ -580,6 +595,9 @@ def detection_main(url, payloads, **kwargs):
                     "status code returned as `0` meaning that there is no content in the webpage, "
                     "issue will not be created", minor=True
                 )
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, [], [], cursor, webserver=found_webserver
+            )
         else:
             lib.formatter.success("no protection identified on target")
             if formatted:
@@ -601,6 +619,9 @@ def detection_main(url, payloads, **kwargs):
                     )
                     if written_file_path is not None:
                         lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, [], [], cursor, webserver=found_webserver
+            )
 
     else:
         lib.formatter.success("multiple protections identified on target{}:".format(
@@ -627,6 +648,9 @@ def detection_main(url, payloads, **kwargs):
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, found_working_tampers, detected_protections, cursor, webserver=found_webserver
+            )
         else:
             lib.formatter.warn("skipping bypass tests")
             if formatted:
@@ -637,5 +661,10 @@ def detection_main(url, payloads, **kwargs):
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
+            inserted_into_database_results = lib.database.insert_url(
+                current_url_netloc, [], detected_protections, cursor, webserver=found_webserver
+            )
+    if inserted_into_database_results:
+        lib.formatter.info("URL has been cached for future use")
 
     return request_count

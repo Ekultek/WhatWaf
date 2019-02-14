@@ -72,8 +72,11 @@ def success(string):
     )
 
 
-def prompt(string, opts):
+def prompt(string, opts, default="n"):
+    opts = list(opts)
     choice = raw_input("\033[38m[{}]\033[0m[PROMPT] {}[{}]: ".format(
-        time.strftime("%H:%M:%S"), string, "/".join(list(opts))
+        time.strftime("%H:%M:%S"), string, "/".join(opts)
     ))
+    if choice not in [o.lower() for o in opts]:
+        choice = default
     return choice

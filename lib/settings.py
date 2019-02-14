@@ -16,9 +16,10 @@ import requests
 from bs4 import BeautifulSoup
 
 import lib.formatter
+import lib.database
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.1.4"
+VERSION = "1.2"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -36,6 +37,9 @@ BANNER = """\b\033[1m
 \t'--'   '--'   '--'   '--'   '---'  
 "/><script>alert("\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m");</script>
 \033[0m""".format(VERSION, VERSION_TYPE)
+
+# template for the results if needed
+RESULTS_TEMPLATE = "{}\nSite: {}\nIdentified Protections: {}\nIdentified Tampers: {}\nIdentified Webserver: {}\n{}"
 
 # directory to do the importing for the WAF scripts
 PLUGINS_IMPORT_TEMPLATE = "content.plugins.{}"
@@ -666,4 +670,30 @@ def export_payloads(payloads, file_type):
             for item in payloads:
                 dump_file.write("{}\n".format(str(item[-1])))
     return file_path
+
+
+def check_url_against_cached(given, cursor):
+    """
+    check the netlock of the provided URL against the netlock of the
+    cached URL
+    """
+    is_cached = False
+    cached_data = None
+    cached = lib.database.fetch_data(cursor, is_payload=False)
+    current_netlock_running = urlparse.urlparse(given).netloc
+    for item in cached:
+        _, cached_netlock, _, _, _ = item
+        if str(cached_netlock) == str(current_netlock_running):
+            is_cached = True
+            cached_data = item
+    if is_cached:
+        display_only = lib.formatter.prompt(
+            "this URL has already been ran, would you like to just display the cached data and skip",
+            opts="yN",
+            default="y"
+        )
+        if display_only.lower() == "y":
+            return cached_data
+        else:
+            return None
 

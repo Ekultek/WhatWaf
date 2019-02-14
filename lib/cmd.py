@@ -136,10 +136,28 @@ class WhatWafParser(ArgumentParser):
                                  help="store all HTTP traffic headers into a file of your choice")
         output_opts.add_argument("--force-file", action="store_true", default=False, dest="forceFileCreation",
                                  help="Force the creation of a file even if there is no protection identified")
-        output_opts.add_argument("--export", metavar="FILE-TYPE", default=None, dest="exportEncodedToFile",
-                                 choices=["text", "json", "csv", "yaml"],
-                                 help="Export the already encoded payloads to a specified file type and save them "
-                                      "under the home directory")
+
+        database_arguments = parser.add_argument_group("database arguments",
+                                                       "arguments that pertain to Whatwafs database")
+        database_arguments.add_argument(
+            "-c", "--url-cache", default=False, action="store_true", dest="checkCachedUrls",
+            help="Check against URL's that have already been cached into the database before running them "
+                 "saves some time on scanning multiple (*default=False)"
+        )
+        database_arguments.add_argument(
+            "-pC", "--payload-cache", action="store_true", default=False, dest="viewCachedPayloads",
+            help="View all payloads that have been cached inside of the database"
+        )
+        database_arguments.add_argument(
+            "-vC", "--view-cache", action="store_true", default=False, dest="viewAllCache",
+            help="View all the cache in the database, everything from URL's to payloads"
+        )
+        database_arguments.add_argument(
+            "--export", metavar="FILE-TYPE", default=None, dest="exportEncodedToFile",
+            choices=["text", "json", "csv", "yaml"],
+            help="Export the already encoded payloads to a specified file type and save them "
+                 "under the home directory"
+        )
 
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
@@ -159,8 +177,6 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("-W", "--determine-webserver", action="store_true", default=False, dest="determineWebServer",
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc.. *default=False)")
-        misc.add_argument("-vC", "--view-cache", action="store_true", default=False, dest="viewCachedPayloads",
-                          help="View all payloads that have been cached inside of the database")
         misc.add_argument("--wafs", action="store_true", default=False, dest="viewPossibleWafs",
                           help="Output a list of possible firewalls that can be detected by this program")
         misc.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",

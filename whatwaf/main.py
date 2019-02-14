@@ -25,7 +25,9 @@ from lib.settings import (
     parse_help_menu,
     export_payloads,
     PLUGINS_DIRECTORY,
-    TAMPERS_DIRECTORY
+    TAMPERS_DIRECTORY,
+    check_url_against_cached,
+    RESULTS_TEMPLATE
 )
 from lib.formatter import (
     error,
@@ -37,7 +39,7 @@ from lib.formatter import (
 from lib.database import (
     initialize,
     insert_payload,
-    fetch_payloads
+    fetch_data
 )
 
 
@@ -84,7 +86,7 @@ def main():
     cursor = initialize()
 
     if opt.exportEncodedToFile is not None:
-        payloads = fetch_payloads(cursor)
+        payloads = fetch_data(cursor)
         if len(payloads) != 0:
             exported_payloads_path = export_payloads(payloads, opt.exportEncodedToFile)
             info("payloads exported to: {}".format(exported_payloads_path))
@@ -97,8 +99,34 @@ def main():
             print(parsed_help)
         exit(1)
 
+    if opt.viewAllCache:
+        cached_payloads = fetch_data(cursor)
+        cached_urls = fetch_data(cursor, is_payload=False)
+        if len(cached_urls) != 0:
+            info("total of {} URL(s) currently cached".format(len(cached_urls)))
+            for i, item in enumerate(cached_urls, start=1):
+                id_num, netlock, prots, tamps, server = item
+                print(
+                    "URL #{} '{}':\nProtections: {}\nTampers: {}\nWebserver: {}\n{}".format(
+                        id_num, netlock, prots, tamps, server, "-" * 20
+                    )
+                )
+                if i % 200 == 0:
+                    raw_input("\npress enter to continue...\n")
+        else:
+            warn("no URLs have been cached yet")
+        if len(cached_payloads) != 0:
+            info("total of {} payload(s) cached".format(len(cached_payloads)))
+            for i, payload in enumerate(cached_payloads, start=1):
+                if i % 200 == 0:
+                    raw_input("\npress enter to continue...\n")
+                print("#{}  {}".format(payload[0], payload[1]))
+        else:
+            warn("no payloads have been cached yet")
+        exit(0)
+
     if opt.viewCachedPayloads:
-        payloads = fetch_payloads(cursor)
+        payloads = fetch_data(cursor)
         if len(payloads) != 0:
             info("total of {} payload(s) cached".format(len(payloads)))
             for i, payload in enumerate(payloads, start=1):
@@ -291,6 +319,20 @@ def main():
 
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
+            if opt.checkCachedUrls:
+                checked_results = check_url_against_cached(url_to_use, cursor)
+                if checked_results is not None:
+                    print(
+                        RESULTS_TEMPLATE.format(
+                            "-" * 20,
+                            str(checked_results[1]),
+                            str(checked_results[2]),
+                            str(checked_results[3]),
+                            str(checked_results[4]),
+                            "-" * 20
+                        )
+                    )
+                    exit(0)
 
             if opt.testTargetConnection:
                 info("testing connection to target URL before starting attack")
@@ -308,7 +350,7 @@ def main():
 
             info("running single web application '{}'".format(url_to_use))
             requests = detection_main(
-                url_to_use, payload_list, agent=agent, proxy=proxy,
+                url_to_use, payload_list, cursor, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                 tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
@@ -331,7 +373,24 @@ def main():
                 site_runners = []
                 with open(opt.runMultipleWebsites) as urls:
                     for url in urls:
-                        site_runners.append(auto_assign(url.strip(), ssl=opt.forceSSL))
+                        possible_url = auto_assign(url.strip(), ssl=opt.forceSSL)
+                        if opt.checkCachedUrls:
+                            url_is_cached = check_url_against_cached(possible_url, cursor)
+                            if url_is_cached is not None:
+                                print(
+                                    RESULTS_TEMPLATE.format(
+                                        "-" * 20,
+                                        str(url_is_cached[1]),
+                                        str(url_is_cached[2]),
+                                        str(url_is_cached[3]),
+                                        str(url_is_cached[4]),
+                                        "-" * 20
+                                    )
+                                )
+                            else:
+                                site_runners.append(possible_url)
+                        else:
+                            site_runners.append(possible_url)
             elif opt.burpRequestFile is not None:
                 site_runners = parse_burp_request(opt.burpRequestFile)
             else:
@@ -360,7 +419,7 @@ def main():
 
                 info("currently running on site #{} ('{}')".format(i, url))
                 requests = detection_main(
-                    url, payload_list, agent=agent, proxy=proxy,
+                    url, payload_list, cursor, agent=agent, proxy=proxy,
                     verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                     verification_number=opt.verifyNumber, formatted=opt.formatOutput,
                     tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
@@ -380,37 +439,53 @@ def main():
             if urls is not None:
                 info("parsed a total of {} URLS from Googler JSON file".format(len(urls)))
                 for i, url in enumerate(urls, start=1):
-
-                    if opt.testTargetConnection:
-                        info("testing connection to target URL before starting attack")
-                        results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
-                        if results == "nogo":
-                            fatal("connection to target URL failed multiple times, check connection and try again")
-                            exit(1)
-                        elif results == "acceptable":
-                            warn(
-                                "there appears to be some latency on the connection, this may interfere with results",
-                                minor=False
+                    do_url_run = True
+                    if opt.checkCachedUrls:
+                        url_is_cached = check_url_against_cached(url, cursor)
+                        if url_is_cached is not None:
+                            print(
+                                RESULTS_TEMPLATE.format(
+                                    "-" * 20,
+                                    str(url_is_cached[1]),
+                                    str(url_is_cached[2]),
+                                    str(url_is_cached[3]),
+                                    str(url_is_cached[4]),
+                                    "-" * 20
+                                )
                             )
-                        else:
-                            success("connection succeeded, continuing")
+                            do_url_run = False
 
-                    info("currently running on '{}' (site #{})".format(url, i))
-                    requests = detection_main(
-                        url, payload_list, agent=agent, proxy=proxy,
-                        verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
-                        verification_number=opt.verifyNumber, formatted=opt.formatOutput,
-                        tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
-                        use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
-                        fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
-                        traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
-                        req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
-                        request_type=request_type, check_server=opt.determineWebServer,
-                        threaded=opt.threaded, force_file_creation=opt.forceFileCreation
-                    )
-                    request_count = request_count + requests if requests is not None else request_count
-                    print("\n\b")
-                    time.sleep(0.5)
+                    if do_url_run:
+                        if opt.testTargetConnection:
+                            info("testing connection to target URL before starting attack")
+                            results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
+                            if results == "nogo":
+                                fatal("connection to target URL failed multiple times, check connection and try again")
+                                exit(1)
+                            elif results == "acceptable":
+                                warn(
+                                    "there appears to be some latency on the connection, this may interfere with results",
+                                    minor=False
+                                )
+                            else:
+                                success("connection succeeded, continuing")
+
+                        info("currently running on '{}' (site #{})".format(url, i))
+                        requests = detection_main(
+                            url, payload_list, cursor, agent=agent, proxy=proxy,
+                            verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
+                            verification_number=opt.verifyNumber, formatted=opt.formatOutput,
+                            tamper_int=opt.amountOfTampersToDisplay, use_json=opt.sendToJSON,
+                            use_yaml=opt.sendToYAML, use_csv=opt.sendToCSV,
+                            fingerprint_waf=opt.saveFingerprints, provided_headers=opt.extraHeaders,
+                            traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
+                            req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
+                            request_type=request_type, check_server=opt.determineWebServer,
+                            threaded=opt.threaded, force_file_creation=opt.forceFileCreation
+                        )
+                        request_count = request_count + requests if requests is not None else request_count
+                        print("\n\b")
+                        time.sleep(0.5)
             else:
                 fatal("file failed to load, does it exist?")
 
