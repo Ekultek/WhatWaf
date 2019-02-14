@@ -538,7 +538,6 @@ def check_version(speak=True):
     req = requests.get(version_url)
     content = req.text
     current_version = str(content.split("\n")[20+1].split("=")[-1]).replace('"', "").strip()
-    print current_version
     my_version = VERSION
     if not current_version == my_version:
         if speak:
