@@ -8,7 +8,7 @@ import string
 import platform
 try:
     import urlparse
-except Exception:
+except ImportError:
     # python 2.x doesn't have a ModuleNotFoundError so we'll just catch the exception I guess
     import urllib.parse as urlparse
 
