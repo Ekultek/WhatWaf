@@ -4,7 +4,11 @@ import json
 import importlib
 import random
 import threading
-import urlparse
+try:
+    import urlparse
+except ImportError:
+    # python 2.x doesn't have a ModuleNotFoundError so we'll just catch the exception I guess
+    import urllib.parse as urlparse
 try:
     import queue
 except ImportError:
