@@ -512,14 +512,17 @@ def detection_main(url, payloads, cursor, **kwargs):
         item = item if item is not None else normal_response
         _, status, html, headers = item
         for detection in loaded_plugins:
-            if detection.detect(str(html), status=status, headers=headers) is True:
-                temp.append(detection.__product__)
-                if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1:
-                    lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
-                    path = lib.settings.create_fingerprint(url, html, status, headers)
-                    return lib.firewall_found.request_firewall_issue_creation(path)
-                else:
-                    detected_protections.add(detection.__product__)
+            try:
+                if detection.detect(str(html), status=status, headers=headers) is True:
+                    temp.append(detection.__product__)
+                    if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1 and status != 0:
+                        lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
+                        path = lib.settings.create_fingerprint(url, html, status, headers)
+                        return lib.firewall_found.request_firewall_issue_creation(path)
+                    else:
+                        detected_protections.add(detection.__product__)
+            except Exception:
+                pass
     if len(detected_protections) > 0:
         if lib.settings.UNKNOWN_FIREWALL_NAME not in detected_protections:
             amount_of_products += 1
