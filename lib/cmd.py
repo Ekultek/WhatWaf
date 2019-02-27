@@ -136,8 +136,8 @@ class WhatWafParser(ArgumentParser):
                                  help="store all HTTP traffic headers into a file of your choice")
         output_opts.add_argument("--force-file", action="store_true", default=False, dest="forceFileCreation",
                                  help="Force the creation of a file even if there is no protection identified")
-        output_opts.add_argument("--output", metavar="DIR", dest="outputDirectory", default=None,
-                                 help=SUPPRESS)
+        output_opts.add_argument("-o", "--output", metavar="DIR", dest="outputDirectory", default=None,
+                                 help="Save a copy of the file to an arbitrary directory")
 
         database_arguments = parser.add_argument_group("database arguments",
                                                        "arguments that pertain to Whatwafs database")

@@ -359,7 +359,8 @@ def main():
                 traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                 req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                 request_type=request_type, check_server=opt.determineWebServer,
-                threaded=opt.threaded, force_file_creation=opt.forceFileCreation
+                threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
+                save_copy_of_file=opt.outputDirectory
             )
             request_count = request_count + requests if requests is not None else request_count
         elif any(o is not None for o in [opt.runMultipleWebsites, opt.burpRequestFile]):
@@ -428,7 +429,8 @@ def main():
                     traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                     req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                     request_type=request_type, check_server=opt.determineWebServer,
-                    threaded=opt.threaded, force_file_creation=opt.forceFileCreation
+                    threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
+                    save_copy_of_file=opt.outputDirectory
                 )
                 request_count = request_count + requests if requests is not None else request_count
                 print("\n\b")
@@ -481,7 +483,8 @@ def main():
                             traffic_file=opt.trafficFile, throttle=opt.sleepTimeThrottle,
                             req_timeout=opt.requestTimeout, post_data=opt.postRequestData,
                             request_type=request_type, check_server=opt.determineWebServer,
-                            threaded=opt.threaded, force_file_creation=opt.forceFileCreation
+                            threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
+                            save_copy_of_file=opt.outputDirectory
                         )
                         request_count = request_count + requests if requests is not None else request_count
                         print("\n\b")

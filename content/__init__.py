@@ -388,6 +388,7 @@ def detection_main(url, payloads, cursor, **kwargs):
     check_server = kwargs.get("check_server", False)
     threaded = kwargs.get("threaded", None)
     force_file_creation = kwargs.get("force_file_creation", False)
+    save_file_copy_path = kwargs.get("save_copy_of_file", None)
 
     current_url_netloc = urlparse.urlparse(url).netloc
 
@@ -546,7 +547,8 @@ def detection_main(url, payloads, cursor, **kwargs):
                 dict_data_output = dictify_output(url, detected_protections, found_working_tampers)
                 written_file_path = lib.settings.write_to_file(
                     filename, filepath, dict_data_output,
-                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json,
+                    save_copy_to=save_file_copy_path
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
@@ -559,7 +561,8 @@ def detection_main(url, payloads, cursor, **kwargs):
                 dict_data_output = dictify_output(url, detected_protections, [])
                 written_file_path = lib.settings.write_to_file(
                     filename, filepath, dict_data_output,
-                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json,
+                    save_copy_to=save_file_copy_path
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
@@ -622,7 +625,8 @@ def detection_main(url, payloads, cursor, **kwargs):
                     dict_data_output = dictify_output(url, None, [])
                     written_file_path = lib.settings.write_to_file(
                         filename, filepath, dict_data_output,
-                        write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                        write_csv=use_csv, write_yaml=use_yaml, write_json=use_json,
+                        save_copy_to=save_file_copy_path
                     )
                     if written_file_path is not None:
                         lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
@@ -651,7 +655,8 @@ def detection_main(url, payloads, cursor, **kwargs):
                 dict_data_output = dictify_output(url, detected_protections, found_working_tampers)
                 written_file_path = lib.settings.write_to_file(
                     filename, filepath, dict_data_output,
-                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json,
+                    save_copy_to=save_file_copy_path
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))
@@ -664,7 +669,8 @@ def detection_main(url, payloads, cursor, **kwargs):
                 dict_data_output = dictify_output(url, detected_protections, [])
                 written_file_path = lib.settings.write_to_file(
                     filename, filepath, dict_data_output,
-                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json
+                    write_csv=use_csv, write_yaml=use_yaml, write_json=use_json,
+                    save_copy_to=save_file_copy_path
                 )
                 if written_file_path is not None:
                     lib.formatter.info("data has been written to file: '{}'".format(written_file_path))

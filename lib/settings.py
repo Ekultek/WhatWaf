@@ -19,7 +19,7 @@ import lib.formatter
 import lib.database
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.2.4"
+VERSION = "1.2.5"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -445,6 +445,7 @@ def write_to_file(filename, path, data, **kwargs):
     write_yaml = kwargs.get("write_yaml", False)
     write_json = kwargs.get("write_json", False)
     write_csv = kwargs.get("write_csv", False)
+    save_copy = kwargs.get("save_copy_to", None)
 
     full_path = "{}/{}".format(path, filename)
 
@@ -492,6 +493,14 @@ def write_to_file(filename, path, data, **kwargs):
         with open(full_path, "a+") as _csv:
             writer = csv.writer(_csv)
             writer.writerows(csv_data)
+    if save_copy is not None:
+        import shutil
+        try:
+            shutil.copy(full_path, save_copy)
+            lib.formatter.info("copy of file saved to {}".format(save_copy))
+        except Exception:
+            lib.formatter.error("failed to save copy of file, do you have permissions?")
+
     return full_path
 
 
