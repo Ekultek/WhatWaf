@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__product__ = "EdgeCast WAF (Verizon)"
+__product__ = "EdgeCast Web Application Firewall (Verizon)"
 
 
 def detect(content, **kwargs):
