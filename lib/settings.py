@@ -6,6 +6,7 @@ import time
 import random
 import string
 import platform
+import warnings
 try:
     import urlparse
 except ImportError:
@@ -14,12 +15,15 @@ except ImportError:
 
 import requests
 from bs4 import BeautifulSoup
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 import lib.formatter
 import lib.database
 
+warnings.simplefilter('ignore', InsecureRequestWarning)
+
 # version number <major>.<minor>.<commit>
-VERSION = "1.2.6"
+VERSION = "1.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -249,7 +253,7 @@ def get_page(url, **kwargs):
     time.sleep(throttle)
 
     try:
-        req = req(url, headers=headers, proxies=proxies, timeout=req_timeout, data=post_data)
+        req = req(url, headers=headers, proxies=proxies, timeout=req_timeout, data=post_data, verify=False)
         soup = BeautifulSoup(req.content, "html.parser")
         return "{} {}".format(request_method, get_query(url)), req.status_code, soup, req.headers
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.TooManyRedirects):
