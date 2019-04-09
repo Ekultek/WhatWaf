@@ -27,7 +27,8 @@ from lib.settings import (
     PLUGINS_DIRECTORY,
     TAMPERS_DIRECTORY,
     check_url_against_cached,
-    RESULTS_TEMPLATE
+    RESULTS_TEMPLATE,
+    display_cached
 )
 from lib.formatter import (
     error,
@@ -102,37 +103,13 @@ def main():
     if opt.viewAllCache:
         cached_payloads = fetch_data(cursor)
         cached_urls = fetch_data(cursor, is_payload=False)
-        if len(cached_urls) != 0:
-            info("total of {} URL(s) currently cached".format(len(cached_urls)))
-            for i, item in enumerate(cached_urls, start=1):
-                id_num, netlock, prots, tamps, server = item
-                print(
-                    "URL #{} '{}':\nProtections: {}\nTampers: {}\nWebserver: {}\n{}".format(
-                        id_num, netlock, prots, tamps, server, "-" * 20
-                    )
-                )
-                if i % 200 == 0:
-                    raw_input("\npress enter to continue...\n")
-        else:
-            warn("no URLs have been cached yet")
-        if len(cached_payloads) != 0:
-            info("total of {} payload(s) cached".format(len(cached_payloads)))
-            for i, payload in enumerate(cached_payloads, start=1):
-                if i % 200 == 0:
-                    raw_input("\npress enter to continue...\n")
-                print("#{}  {}".format(payload[0], payload[1]))
-        else:
-            warn("no payloads have been cached yet")
+        display_cached(cached_urls, cached_payloads)
         exit(0)
 
     if opt.viewCachedPayloads:
         payloads = fetch_data(cursor)
         if len(payloads) != 0:
-            info("total of {} payload(s) cached".format(len(payloads)))
-            for i, payload in enumerate(payloads, start=1):
-                if i % 200 == 0:
-                    raw_input("\npress enter to continue...\n")
-                print("#{}  {}".format(payload[0], payload[1]))
+            display_cached(None, payloads)
         else:
             warn(
                 "there appears to be no payloads stored in the database, to create payloads use the following options:"
@@ -140,6 +117,11 @@ def main():
             proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
             parsed_help = parse_help_menu(proc, "encoding options:", "output options:")
             print(parsed_help)
+        exit(0)
+
+    if opt.viewUrlCache:
+        cached_urls = fetch_data(cursor, is_payload=False)
+        display_cached(cached_urls, None)
         exit(0)
 
     if opt.encodePayload is not None:
