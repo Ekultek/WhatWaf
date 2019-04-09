@@ -147,16 +147,21 @@ class WhatWafParser(ArgumentParser):
                  "saves some time on scanning multiple (*default=False)"
         )
         database_arguments.add_argument(
+            "-uC", "--view-url-cache", default=False, action="store_true", dest="viewUrlCache",
+            help="Display all the URL cache inside of the database, this includes the netlock, "
+                 "tamper scipts, webserver, and identified protections"
+        )
+        database_arguments.add_argument(
             "-pC", "--payload-cache", action="store_true", default=False, dest="viewCachedPayloads",
             help="View all payloads that have been cached inside of the database"
         )
         database_arguments.add_argument(
             "-vC", "--view-cache", action="store_true", default=False, dest="viewAllCache",
-            help="View all the cache in the database, everything from URL's to payloads"
+            help="View all the cache in the database, everything from URLs to payloads"
         )
         database_arguments.add_argument(
             "--export", metavar="FILE-TYPE", default=None, dest="exportEncodedToFile",
-            choices=["text", "json", "csv", "yaml"],
+            choices=["txt", "text", "json", "csv", "yaml", "yml"],
             help="Export the already encoded payloads to a specified file type and save them "
                  "under the home directory"
         )
