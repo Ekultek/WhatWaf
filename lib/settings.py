@@ -23,7 +23,7 @@ import lib.database
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.4"
+VERSION = "1.4.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -709,3 +709,33 @@ def check_url_against_cached(given, cursor):
             return cached_data
         else:
             return None
+
+
+def display_cached(urls, payloads):
+    """
+    display the database information in a neat format
+    """
+    if urls is not None:
+        if len(urls) != 0:
+            lib.formatter.info("cached URLs:")
+            for i, cached in enumerate(urls):
+                _, netlock, prots, tamps, server = cached
+                print(" {}".format("-" * 15))
+                print(
+                    "{sep} URL: {url}\n{sep} Identified Protections: {protect}\n"
+                    "{sep} Working tampers: {tamp}\n{sep} Web server: {server}".format(
+                        sep="|", url=netlock, protect=prots, tamp=tamps, server=server
+                    )
+                )
+            print(" {}".format("-" * 15))
+        else:
+            lib.formatter.warn("there are no cached URLs in the database")
+    if payloads is not None:
+        if len(payloads) != 0:
+            lib.formatter.info("cached payloads:")
+            print("{}".format("-" * 20))
+            for i, payload in enumerate(payloads, start=1):
+                print("#{} ~~> {}".format(i, payload[-1]))
+            print("{}".format("-" * 20))
+        else:
+            lib.formatter.warn("no payloads have been cached into the database")
