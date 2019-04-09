@@ -104,8 +104,8 @@ class WhatWafParser(ArgumentParser):
                               help="Send requests in parallel (specify number of threads *default=1)")
         req_args.add_argument("-tP", "--tor-port", type=int, default=9050, dest="configTorPort",
                               help="Change the port that Tor runs on (*default=9050)")
-        req_args.add_argument("-T", "--test", dest="testTargetConnection", default=False, action="store_true",
-                              help="Test the connection to the website before starting")
+        req_args.add_argument("-T", "--test", dest="testTargetConnection", default=True, action="store_false",
+                              help="Test the connection to the website before starting (default is True)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
