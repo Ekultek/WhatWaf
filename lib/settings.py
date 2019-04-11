@@ -23,7 +23,7 @@ import lib.database
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.4.2"
+VERSION = "1.4.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"

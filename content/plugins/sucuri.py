@@ -18,3 +18,5 @@ def detect(content, **kwargs):
             return True
         if re.compile(r"X-Sucuri-ID", re.I).search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
             return True
+        if re.compile(r"Sucuri/Cloudproxy", re.I).search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
+            return True

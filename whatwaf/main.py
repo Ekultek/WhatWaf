@@ -202,8 +202,9 @@ def main():
                 pass
         exit(0)
 
-    info("checking for updates")
-    check_version()
+    # gotta find a better way to check for updates so ima hotfix it
+    #info("checking for updates")
+    #check_version()
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
