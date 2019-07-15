@@ -11,7 +11,7 @@ def tamper(payload, **kwargs):
     def glyph(n=6):
         res = u""
         for i in range(n):
-            res = u"\\u%04x" % random.randrange(0xD7FF)
+            res = u"%%u%04x" % random.randrange(0xD7FF)
         return res
 
     identifiers = range(10)
