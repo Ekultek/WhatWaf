@@ -172,14 +172,17 @@ class DetectionQueue(object):
                 self.response_retval.append(None)
 
                 if self.save_fingerprint:
-                    lib.settings.create_fingerprint(
-                        self.url,
-                        self.response_retval[0][2],
-                        self.response_retval[0][1],
-                        self.response_retval[0][3],
-                        req_data=self.response_retval[0][0],
-                        speak=True
-                    )
+                    try:
+                        lib.settings.create_fingerprint(
+                            self.url,
+                            self.response_retval[0][2],
+                            self.response_retval[0][1],
+                            self.response_retval[0][3],
+                            req_data=self.response_retval[0][0],
+                            speak=True
+                        )
+                    except Exception:
+                        lib.formatter.error("unable to save fingerprint something went wrong")
 
     def threaded_get_response(self):
         strip_url = lambda x: (x.split("/")[0], x.split("/")[2])
