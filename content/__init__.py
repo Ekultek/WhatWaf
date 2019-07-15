@@ -13,7 +13,7 @@ try:
     import queue
 except ImportError:
     import Queue as queue
-    
+
 import lib.settings
 import lib.formatter
 import lib.database
@@ -517,14 +517,15 @@ def detection_main(url, payloads, cursor, **kwargs):
         _, status, html, headers = item
         for detection in loaded_plugins:
             try:
-                if detection.detect(str(html), status=status, headers=headers) is True:
-                    temp.append(detection.__product__)
-                    if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1 and status != 0:
-                        lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
-                        path = lib.settings.create_fingerprint(url, html, status, headers)
-                        return lib.firewall_found.request_firewall_issue_creation(path)
-                    else:
-                        detected_protections.add(detection.__product__)
+                if status is not None or headers is not None or html is not None:
+                    if detection.detect(str(html), status=status, headers=headers) is True:
+                        temp.append(detection.__product__)
+                        if detection.__product__ == lib.settings.UNKNOWN_FIREWALL_NAME and len(temp) == 1 and status != 0:
+                            lib.formatter.warn("unknown firewall detected saving fingerprint to log file")
+                            path = lib.settings.create_fingerprint(url, html, status, headers)
+                            return lib.firewall_found.request_firewall_issue_creation(path)
+                        else:
+                            detected_protections.add(detection.__product__)
             except Exception:
                 pass
     if len(detected_protections) > 0:
