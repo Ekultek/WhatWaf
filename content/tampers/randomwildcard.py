@@ -20,5 +20,3 @@ def tamper(payload, **kwargs):
         else:
             retval += char
     return retval
-
-print tamper(__example_payload__)
