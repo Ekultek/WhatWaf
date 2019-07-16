@@ -16,8 +16,8 @@ def detect(content, **kwargs):
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
-        gw_server = headers.get(HTTP_HEADER.GW_SERVER, None)
-        server = headers.get(HTTP_HEADER.SERVER, None)
+        gw_server = headers.get(HTTP_HEADER.GW_SERVER, "")
+        server = headers.get(HTTP_HEADER.SERVER, "")
         if gw_server is not None:
             if detection.search(server) is not None:
                 return True
