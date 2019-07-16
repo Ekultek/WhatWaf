@@ -1,5 +1,4 @@
 import random
-import string
 
 
 __example_payload__ = "AND 1=1,<script>alert(\"test\");</script>"
