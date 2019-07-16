@@ -23,7 +23,7 @@ import lib.database
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.5"
+VERSION = "1.5.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -551,7 +551,9 @@ def check_version(speak=True):
     version_url = "https://raw.githubusercontent.com/Ekultek/WhatWaf/master/lib/settings.py"
     req = requests.get(version_url)
     content = req.text
-    current_version = re.search("VERSION.=.(.......)?", content).group().split("=")[-1].strip().strip('"')
+    version_identification = content.find("VERSION = ")
+    current_version = content[version_identification:version_identification + 17]
+    current_version = str(current_version.strip().split('"')[1])
     my_version = VERSION
     if not current_version == my_version:
         if speak:

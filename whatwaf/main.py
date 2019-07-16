@@ -194,7 +194,7 @@ def main():
 
         info("gathering a list of possible detectable wafs")
         wafs_list = get_encoding_list(PLUGINS_DIRECTORY, is_tampers=False, is_wafs=True)
-        for i, waf in enumerate(wafs_list, start=1):
+        for i, waf in enumerate(sorted(wafs_list), start=1):
             try:
                 imported = importlib.import_module(waf)
                 print("{}".format(imported.__product__))

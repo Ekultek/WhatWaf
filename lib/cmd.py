@@ -105,7 +105,7 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("-tP", "--tor-port", type=int, default=9050, dest="configTorPort",
                               help="Change the port that Tor runs on (*default=9050)")
         req_args.add_argument("-T", "--test", dest="testTargetConnection", default=True, action="store_false",
-                              help="Test the connection to the website before starting (default is True)")
+                              help="Test the connection to the website before starting (*default=True)")
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
