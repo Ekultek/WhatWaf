@@ -8,7 +8,7 @@ def tamper(payload, **kwargs):
     danger_characters = "%&<>/\\;'\""
     for char in payload:
         if char in danger_characters:
-            retval += "%{}".format(ord(char) * 10 / 7)
+            retval += "%{}".format(ord(char))
         else:
             retval += char
     return retval

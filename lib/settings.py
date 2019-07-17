@@ -20,10 +20,15 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import lib.formatter
 import lib.database
 
+try:
+    import yaml
+    warnings.simplefilter("ignore", yaml.YAMLLoadWarning)
+except:
+    pass
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.5.2"
+VERSION = "1.5.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -742,3 +747,25 @@ def display_cached(urls, payloads):
             print("{}".format("-" * 20))
         else:
             lib.formatter.warn("no payloads have been cached into the database")
+
+
+def shuffle_list(l):
+    """
+    shuffle a list in a cryptographically secure manner
+    """
+    try:
+        import secrets
+        secrets_imported = True
+    except ImportError:
+        secrets_imported = False
+
+    for x in range(1, len(l)):
+        if secrets_imported:
+            y = secrets.SystemRandom().randint(0, len(l))
+        else:
+            y = random.SystemRandom().randint(0, len(l))
+        try:
+            l[x], l[y] = l[y], l[x]
+        except IndexError:
+            l[x-1], l[y-1] = l[y-1], l[x-1]
+    return l

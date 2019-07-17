@@ -475,11 +475,6 @@ def main():
             else:
                 fatal("file failed to load, does it exist?")
 
-        if request_count != 0:
-            info("total requests sent: {}".format(request_count))
-        else:
-            warn("request counter failed to count correctly, deactivating", minor=True)
-
     except KeyboardInterrupt:
         fatal("user aborted scanning")
     except InvalidURLProvided:

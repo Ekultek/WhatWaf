@@ -27,17 +27,23 @@ class ScriptQueue(object):
     or to identify the possible bypass
     """
 
-    def __init__(self, files_path, import_path, verbose=False):
+    def __init__(self, files_path, import_path, verbose=False, is_tamper=False):
         self.files = files_path
         self.path = import_path
         self.verbose = verbose
         self.skip_schema = ("__init__.py", ".pyc", "__")
         self.script_type = ''.join(self.path.split(".")[1].split())[:-1]
+        self.is_tamper = is_tamper
 
     def load_scripts(self):
         retval = []
-        file_list = [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
-        for script in sorted(file_list):
+        if self.is_tamper:
+            file_list = lib.settings.shuffle_list(
+                [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
+            )
+        else:
+            file_list = [f for f in os.listdir(self.files) if not any(s in f for s in self.skip_schema)]
+        for script in file_list:
             script = script[:-3]
             if self.verbose:
                 lib.formatter.debug("loading {} script '{}'".format(self.script_type, script))
@@ -241,6 +247,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     max_successful_payloads = kwargs.get("tamper_int", 5)
     throttle = kwargs.get("throttle", 0)
     req_timeout = kwargs.get("timeout", 15)
+
     if req_timeout is None:
         lib.formatter.warn(
             "issue occured and the timeout resolved to None, defaulting to 15", minor=True
@@ -256,7 +263,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
     )
     lib.formatter.info("loading payload tampering scripts")
     tampers = ScriptQueue(
-        lib.settings.TAMPERS_DIRECTORY, lib.settings.TAMPERS_IMPORT_TEMPLATE, verbose=verbose
+        lib.settings.TAMPERS_DIRECTORY, lib.settings.TAMPERS_IMPORT_TEMPLATE, verbose=verbose, is_tamper=True
     ).load_scripts()
 
     if max_successful_payloads > len(tampers):
@@ -268,6 +275,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
 
     working_tampers = set()
     _, normal_status, _, _ = norm_response
+    good_tamper_paths = []
     lib.formatter.info("running tampering bypass checks")
     for tamper in tampers:
         load = tamper
@@ -294,7 +302,9 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                 if status != 404:
                     if status == 200:
                         try:
-                            working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
+                            if load not in good_tamper_paths:
+                                working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
+                                good_tamper_paths.append(load)
                         except:
                             pass
             else:
@@ -501,7 +511,6 @@ def detection_main(url, payloads, cursor, **kwargs):
         found_webserver = None
 
     # plus one for lib.settings.get_page call
-    request_count = len(responses) + 1
     amount_of_products = 0
     detected_protections = set()
 
@@ -683,5 +692,3 @@ def detection_main(url, payloads, cursor, **kwargs):
             )
     if inserted_into_database_results:
         lib.formatter.info("URL has been cached for future use")
-
-    return request_count

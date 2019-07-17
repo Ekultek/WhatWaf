@@ -9,10 +9,10 @@ def tamper(payload, **kwargs):
     junk_chars = "!#$%&()*~+-_.,:;?@[/|\]^`"
     retval = ""
     # we'll just return a payload if it's not worth tampering with this
-    if "<" not in payload:
+    if "<" not in payload or " " not in payload:
         return payload
     for i, char in enumerate(payload, start=1):
-        if char == ">" and i < len(payload):
+        if char == ">" or char == " " and i < len(payload):
             amount = random.randint(10, 15)
             retval += ">"
             for _ in range(amount):
