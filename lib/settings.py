@@ -28,7 +28,7 @@ except:
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.5.3"
+VERSION = "1.5.4"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -171,7 +171,10 @@ class HTTP_HEADER:
     CONTENT_RANGE = "Content-Range"
     CONTENT_TYPE = "Content-Type"
     COOKIE = "Cookie"
+    CF_RAY = "CF-RAY"
     EXPIRES = "Expires"
+    EXPECT_CT = "Expect-CT"
+    GW_SERVER = "GW-Server"
     HOST = "Host"
     IF_MODIFIED_SINCE = "If-Modified-Since"
     LAST_MODIFIED = "Last-Modified"
@@ -195,7 +198,6 @@ class HTTP_HEADER:
     X_FORWARDED_FOR = "X-Forwarded-For"
     X_SERVER = "X-Server"
     X_BACKSIDE_TRANS = "X-Backside-Transport"
-    GW_SERVER = "GW-Server"
 
 
 def validate_url(url):

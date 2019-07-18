@@ -12,9 +12,10 @@ def detect(content, **kwargs):
     detection_schemas = (
         re.compile(r"cloudflare.ray.id.|var.cloudflare.", re.I),
         re.compile(r"cloudflare.nginx", re.I),
-        re.compile(r"\A(__)?cfduid.", re.I),
-        re.compile(r"cf[-|_]ray(..)?([0-9a-f]{16})?[-|_]?(dfw)?", re.I),
-        re.compile(r"<.+>attention.required\S.\S.cloudflare<.+.>", re.I)
+        re.compile(r"..cfduid=([a-z0-9]{43})?", re.I),
+        re.compile(r"cf[-|_]ray(..)?([0-9a-f]{16})?[-|_]?(dfw|iad)?", re.I),
+        re.compile(r"<.+>attention.required\S.\S.cloudflare<.+.>", re.I),
+        re.compile(r"http(s)?.//report.uri.cloudflare.com(/cdn.cgi(.beacon/expect.ct)?)?", re.I)
     )
     for detection in detection_schemas:
         if detection.search(content) is not None:
@@ -25,8 +26,7 @@ def detect(content, **kwargs):
             return True
         if detection.search(headers.get(HTTP_HEADER.SET_COOKIE, "")) is not None:
             return True
-        for header in headers.keys():
-            if detection.search(headers[header]) is not None:
-                return True
-            if detection.search(header) is not None:
-                return True
+        if detection.search(headers.get(HTTP_HEADER.CF_RAY, "")) is not None:
+            return True
+        if detection.search(headers.get(HTTP_HEADER.EXPECT_CT, "")) is not None:
+            return True
