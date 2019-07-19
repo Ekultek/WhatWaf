@@ -345,7 +345,6 @@ def main():
                 threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
                 save_copy_of_file=opt.outputDirectory
             )
-            request_count = request_count + requests if requests is not None else request_count
         elif any(o is not None for o in [opt.runMultipleWebsites, opt.burpRequestFile]):
             info("reading from '{}'".format(opt.runMultipleWebsites or opt.burpRequestFile))
             try:
@@ -391,8 +390,8 @@ def main():
                     info("testing connection to target URL before starting attack")
                     results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
                     if results == "nogo":
-                        fatal("connection to target URL failed multiple times, check connection and try again")
-                        exit(1)
+                        fatal("connection to target URL failed multiple times, check connection and try again, skipping")
+                        continue
                     elif results == "acceptable":
                         warn(
                             "there appears to be some latency on the connection, this may interfere with results",
@@ -402,7 +401,7 @@ def main():
                         success("connection succeeded, continuing")
 
                 info("currently running on site #{} ('{}')".format(i, url))
-                requests = detection_main(
+                detection_main(
                     url, payload_list, cursor, agent=agent, proxy=proxy,
                     verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                     verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -415,7 +414,6 @@ def main():
                     threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
                     save_copy_of_file=opt.outputDirectory
                 )
-                request_count = request_count + requests if requests is not None else request_count
                 print("\n\b")
                 time.sleep(0.5)
 
@@ -446,7 +444,7 @@ def main():
                             results = test_target_connection(url, proxy=proxy, agent=agent, headers=opt.extraHeaders)
                             if results == "nogo":
                                 fatal("connection to target URL failed multiple times, check connection and try again")
-                                exit(1)
+                                continue
                             elif results == "acceptable":
                                 warn(
                                     "there appears to be some latency on the connection, this may interfere with results",
