@@ -11,7 +11,8 @@ def detect(content, **kwargs):
     detection_schema = (
         re.compile(r"access.denied.-.sucuri.website.firewall", re.I),
         re.compile(r"sucuri.webSite.firewall.-.cloudProxy.-.access.denied", re.I),
-        re.compile(r"questions\?.+cloudproxy@sucuri\.net", re.I)
+        re.compile(r"questions\?.+cloudproxy@sucuri\.net", re.I),
+        re.compile(r"http(s)?.\/\/(cdn.)?sucuri(.net|com)?", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
