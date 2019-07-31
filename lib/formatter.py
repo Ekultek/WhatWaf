@@ -16,6 +16,7 @@ def set_color(string, level=None):
         30: "\033[1m\033[33m{}\033[0m",
         35: "\033[33m{}\033[0m",
         40: "\033[1m\033[31m{}\033[0m",
+        45: "\033[1m\033[96m{}\033[0m",
         50: "\033[1m\033[30m{}\033[0m",
         60: "\033[7;31;31m{}\033[0m"
     }
@@ -80,3 +81,9 @@ def prompt(string, opts, default="n"):
     if choice not in [o.lower() for o in opts]:
         choice = default
     return choice
+
+
+def discover(string):
+    print(
+        "\033[38m[{}]\033[0m".format(time.strftime("%H:%M:%S")) + set_color("[FIREWALL] {}".format(string), level=45)
+    )

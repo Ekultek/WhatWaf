@@ -619,19 +619,19 @@ def parse_help_menu(data, start, end):
         retval = data[start_index:end_index].strip()
     except TypeError:
         # python3 is stupid and likes `bytes` because why tf not?
-        plus = 60
-        # so now we gotta dd 60 in order to get the last line from the last command
+        plus, plus_another = 60, 8
+        # so now we gotta add 60 in order to get the last line from the last command
         # out of the way
         start_index = data.decode().index(start) + plus
         end_index = data.decode().index(end)
         # and then we gotta convert back
         data = str(data)
         # and then we gotta store into a temporary list
-        tmp = data[start_index:end_index]
+        tmp = data[start_index:end_index + plus_another]
         # split the list into another list because of escapes
         # join that list with a new line and finally get the
         # retval out of it. Because that makes PERFECT sense
-        retval = "\n".join(tmp.split("\\n"))
+        retval = "\n".join(tmp.split("\\n")).replace("n\n", "")
     return retval
 
 

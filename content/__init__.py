@@ -496,12 +496,15 @@ def detection_main(url, payloads, cursor, **kwargs):
 
     if check_server:
         found = None
-        for resp in responses:
-            headers = resp[-1]
-        for k in headers.keys():
-            if k.lower() == "server":
-                found = headers[k]
-                break
+        try:
+            for resp in responses:
+                headers = resp[-1]
+            for k in headers.keys():
+                if k.lower() == "server":
+                    found = headers[k]
+                    break
+        except Exception:
+            found = None
         if found is None:
             lib.formatter.warn("unable to determine web server")
         else:
@@ -545,10 +548,11 @@ def detection_main(url, payloads, cursor, **kwargs):
                 amount_of_products += 1
     if amount_of_products == 1:
         detected_protections = list(detected_protections)[0]
-        lib.formatter.success(
-            "detected website protection identified as '{}', searching for bypasses".format(detected_protections)
+        lib.formatter.discover(
+            "detected website protection identified as '{}'".format(detected_protections)
         )
         if not skip_bypass_check:
+            lib.formatter.info("performing bypass analysis")
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
                 tamper_int=tamper_int, provided_headers=provided_headers, throttle=throttle,
@@ -569,7 +573,7 @@ def detection_main(url, payloads, cursor, **kwargs):
                 current_url_netloc, found_working_tampers, detected_protections, cursor, webserver=found_webserver
             )
         else:
-            lib.formatter.warn("skipping bypass checks")
+            lib.formatter.warn("skipping bypass analysis", minor=True)
             if formatted:
                 dict_data_output = dictify_output(url, detected_protections, [])
                 written_file_path = lib.settings.write_to_file(
@@ -648,13 +652,11 @@ def detection_main(url, payloads, cursor, **kwargs):
             )
 
     else:
-        lib.formatter.success("multiple protections identified on target{}:".format(
-            " (unknown firewall will not be displayed)" if lib.settings.UNKNOWN_FIREWALL_NAME in detected_protections else ""
-        ))
+        lib.formatter.success("multiple protections identified on target:")
         detected_protections = [item for item in list(detected_protections)]
-        for i, protection in enumerate(detected_protections, start=1):
+        for protection in sorted(detected_protections):
             if not protection == lib.settings.UNKNOWN_FIREWALL_NAME:
-                lib.formatter.success("#{} '{}'".format(i, protection))
+                lib.formatter.discover("{}".format(protection))
 
         if not skip_bypass_check:
             lib.formatter.info("searching for bypasses")
@@ -677,7 +679,7 @@ def detection_main(url, payloads, cursor, **kwargs):
                 current_url_netloc, found_working_tampers, detected_protections, cursor, webserver=found_webserver
             )
         else:
-            lib.formatter.warn("skipping bypass tests")
+            lib.formatter.warn("skipping bypass analysis", minor=True)
             if formatted:
                 dict_data_output = dictify_output(url, detected_protections, [])
                 written_file_path = lib.settings.write_to_file(
