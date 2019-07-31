@@ -4,6 +4,8 @@ from argparse import (
     SUPPRESS
 )
 
+import lib.settings
+
 
 class StoreDictKeyPairs(Action):
 
@@ -71,19 +73,21 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("--pa", dest="usePersonalAgent", metavar="USER-AGENT",
                               help="Provide your own personal agent to use it for the HTTP requests")
         req_args.add_argument("--ra", dest="useRandomAgent", action="store_true",
-                              help="Use a random user-agent for the HTTP requests")
+                              help="Use a random user-agent for the HTTP requests (*default={})".format(
+                                  lib.settings.DEFAULT_USER_AGENT)
+                              )
         req_args.add_argument("-H", "--headers", dest="extraHeaders", action=StoreDictKeyPairs,
                               metavar="HEADER=VALUE,HEADER:VALUE..",
                               help="Add your own custom headers to the request. To use multiple "
                                    "separate headers by comma. Your headers need to be exact"
-                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For:127.0.0.1)")
+                                   "(IE: Set-Cookie=a345ddsswe,X-Forwarded-For:127.0.0.1) (*default=None)")
         req_args.add_argument("--proxy", dest="runBehindProxy", metavar="PROXY",
                               help="Provide a proxy to run behind in the format "
-                                   "type://address:port (IE socks5://10.54.127.4:1080")
+                                   "type://address:port (IE socks5://10.54.127.4:1080) (*default=None)")
         req_args.add_argument("--tor", dest="runBehindTor", action="store_true",
-                              help="Use Tor as the proxy to run behind, must have Tor installed")
+                              help="Use Tor as the proxy to run behind, must have Tor installed (*default=False)")
         req_args.add_argument("--check-tor", dest="checkTorConnection", action="store_true",
-                              help="Check your Tor connection")
+                              help="Check your Tor connection (default=False)")
         req_args.add_argument("-p", "--payloads", dest="providedPayloads", metavar="PAYLOADS",
                               help="Provide your own payloads separated by a comma IE AND 1=1,AND 2=2")
         req_args.add_argument("--pl", dest="payloadList", metavar="PAYLOAD-LIST-PATH",
@@ -98,10 +102,9 @@ class WhatWafParser(ArgumentParser):
         req_args.add_argument("-P", "--post", dest="postRequest", action="store_true",
                               help="Send a POST request (*default=GET)")
         req_args.add_argument("-D", "--data", dest="postRequestData", metavar="POST-STRING",
-                              help="Send this data with the POST request "
-                                   "(IE password=123&name=Josh *default=random)")
-        req_args.add_argument("-t", "--threaded", dest="threaded", metavar="threaded", type=int,
-                              help="Send requests in parallel (specify number of threads *default=1)")
+                              help="Send this data with the POST request (*default=random)")
+        req_args.add_argument("-t", "--threads", dest="threaded", metavar="threaded", type=int,
+                              help="Send requests in parallel (specify number of threads (*default=1)")
         req_args.add_argument("-tP", "--tor-port", type=int, default=9050, dest="configTorPort",
                               help="Change the port that Tor runs on (*default=9050)")
         req_args.add_argument("-T", "--test", dest="testTargetConnection", default=True, action="store_false",
@@ -109,11 +112,13 @@ class WhatWafParser(ArgumentParser):
 
         encoding_opts = parser.add_argument_group("encoding options",
                                                   "arguments that control the encoding of payloads")
-        encoding_opts.add_argument("-e", "--encode", dest="encodePayload", nargs="+", metavar=("PAYLOAD", "TAMPER-SCRIPT-LOAD-PATH"),
+        encoding_opts.add_argument("-e", "--encode", dest="encodePayload", nargs="+",
+                                   metavar=("PAYLOAD", "TAMPER-SCRIPT-LOAD-PATH"),
                                    help="Encode a provided payload using provided tamper script(s) "
                                         "you are able to payy multiple tamper script load paths to "
                                         "this argument and the payload will be tampered as requested")
-        encoding_opts.add_argument("-el", "--encode-list", dest="encodePayloadList", nargs=2, metavar=("PATH", "TAMPER-SCRIPT-LOAD-PATH"),
+        encoding_opts.add_argument("-el", "--encode-list", dest="encodePayloadList", nargs=2,
+                                   metavar=("PATH", "TAMPER-SCRIPT-LOAD-PATH"),
                                    help="Encode a file containing payloads (one per line) "
                                         "by passing the path and load path, files can only "
                                         "encoded using a single tamper script load path")
