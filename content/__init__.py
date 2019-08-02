@@ -329,6 +329,8 @@ def check_if_matched(normal_resp, payload_resp, step=1, verified=5):
     """
     # five seems like a good number for verification status, you can change it
     # by using the `--verify-num` flag
+    if verified is None:
+        verified = 5
     matched = 0
     response = set()
     _, norm_status, norm_html, norm_headers = normal_resp
