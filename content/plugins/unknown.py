@@ -1,5 +1,7 @@
 import re
 
+from lib.settings import HTTP_HEADER
+
 
 __product__ = "Unknown Firewall"
 
@@ -20,9 +22,8 @@ def detect(content, **kwargs):
         re.compile(r"waf", re.I), re.compile(r"ids", re.I), re.compile(r"ips", re.I),
         re.compile(r"automated", re.I), re.compile(r"suspicious", re.I),
         re.compile(r"denied", re.I), re.compile("attack(ed)?", re.I),
-        re.compile(r"rejected", re.I), re.compile(r"suspicious", re.I),
-        re.compile(r"security", re.I), re.compile("detected", re.I),
-        re.compile(r"protected(.\w+)?", re.I)
+        re.compile(r"rejected", re.I), re.compile(r"security", re.I),
+        re.compile("detected", re.I), re.compile(r"protected(.\w+)?", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
@@ -31,7 +32,8 @@ def detect(content, **kwargs):
             if detection.search(headers[head]) is not None:
                 return True
             if detection.search(head) is not None:
-                return True
+                if not any(head == c for c in [HTTP_HEADER.CONTENT_SECURITY, HTTP_HEADER.STRICT_TRANSPORT]):
+                    return True
         unknown_verification_regex = re.compile(r"(\b)?<.+>*({})(\S+|\d+|\w+)?(<.+.>)?".format(detection.pattern), re.I)
         if unknown_verification_regex.search(content) is not None:
             return True
