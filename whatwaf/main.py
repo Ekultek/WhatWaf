@@ -447,7 +447,8 @@ def main():
                                 continue
                             elif results == "acceptable":
                                 warn(
-                                    "there appears to be some latency on the connection, this may interfere with results",
+                                    "there appears to be some latency on the connection, this may interfere with "
+                                    "results",
                                     minor=False
                                 )
                             else:

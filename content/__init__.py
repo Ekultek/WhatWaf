@@ -250,7 +250,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
 
     if req_timeout is None:
         lib.formatter.warn(
-            "issue occured and the timeout resolved to None, defaulting to 15", minor=True
+            "issue occurred and the timeout resolved to None, defaulting to 15", minor=True
         )
         req_timeout = 15
 
@@ -285,33 +285,39 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
             except:
                 pass
         for vector in payloads:
-            vector = tamper.tamper(vector)
-            if verbose:
-                lib.formatter.payload(vector.strip())
-            payloaded_url = "{}{}".format(url, vector)
-            _, status, html, _ = lib.settings.get_page(
-                payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers,
-                throttle=throttle, timeout=req_timeout
-            )
-            if not find_failures(str(html), failed_schema):
+            try:
+                vector = tamper.tamper(vector)
                 if verbose:
-                    if status != 0:
-                        lib.formatter.debug("response code: {}".format(status))
-                    else:
-                        lib.formatter.debug("unknown response detected")
-                if status != 404:
-                    if status == 200:
-                        try:
-                            if load not in good_tamper_paths:
-                                working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
-                                good_tamper_paths.append(load)
-                        except:
-                            pass
-            else:
-                if verbose:
-                    lib.formatter.warn("failure found in response content")
-            if len(working_tampers) == max_successful_payloads:
-                break
+                    lib.formatter.payload(vector.strip())
+                payloaded_url = "{}{}".format(url, vector)
+                _, status, html, _ = lib.settings.get_page(
+                    payloaded_url, agent=agent, proxy=proxy, verbose=verbose, provided_headers=provided_headers,
+                    throttle=throttle, timeout=req_timeout
+                )
+                if not find_failures(str(html), failed_schema):
+                    if verbose:
+                        if status != 0:
+                            lib.formatter.debug("response code: {}".format(status))
+                        else:
+                            lib.formatter.debug("unknown response detected")
+                    if status != 404:
+                        if status == 200:
+                            try:
+                                if load not in good_tamper_paths:
+                                    working_tampers.add((tamper.__type__, tamper.tamper(tamper.__example_payload__), load))
+                                    good_tamper_paths.append(load)
+                            except:
+                                pass
+                else:
+                    if verbose:
+                        lib.formatter.warn("failure found in response content")
+                if len(working_tampers) == max_successful_payloads:
+                    break
+            except Exception as e:
+                if "'NoneType' object is not iterable" in str(e):
+                    pass
+                else:
+                    raise e.__class__("Exception caught: {} ~~> {}".format(e.__class__, e.message))
         if len(working_tampers) == max_successful_payloads:
             break
     return working_tampers
