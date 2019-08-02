@@ -28,7 +28,7 @@ except:
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.5.10"
+VERSION = "1.5.11"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -170,6 +170,7 @@ class HTTP_HEADER:
     CONTENT_LENGTH = "Content-Length"
     CONTENT_RANGE = "Content-Range"
     CONTENT_TYPE = "Content-Type"
+    CONTENT_SECURITY = "Content-Security-Policy"
     COOKIE = "Cookie"
     CF_RAY = "CF-RAY"
     EXPIRES = "Expires"
@@ -187,6 +188,7 @@ class HTTP_HEADER:
     REFRESH = "Refresh"
     SERVER = "Server"
     SET_COOKIE = "Set-Cookie"
+    STRICT_TRANSPORT = "Strict-Transport-Security"
     TRANSFER_ENCODING = "Transfer-Encoding"
     URI = "URI"
     USER_AGENT = "User-Agent"
