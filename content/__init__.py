@@ -660,7 +660,6 @@ def detection_main(url, payloads, cursor, **kwargs):
             )
 
     else:
-        lib.formatter.success("multiple protections identified on target:")
         detected_protections = [item for item in list(detected_protections)]
         for protection in sorted(detected_protections):
             if not protection == lib.settings.UNKNOWN_FIREWALL_NAME:
