@@ -21,3 +21,5 @@ def detect(content, **kwargs):
             return True
         if detection.search(str(headers)) is not None:
             return True
+    if headers.get("eventsquid-id", None) is not None:
+        return True
