@@ -17,7 +17,8 @@ def detect(content, **kwargs):
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
-    if headers.get("X-Sucuri-Block", None) is not None:
-        return True
-    if headers.get(HTTP_HEADER.SERVER, "") == "Sucuri/Cloudproxy":
-        return True
+    if headers is not None:
+        if headers.get("X-Sucuri-Block", None) is not None:
+            return True
+        if headers.get(HTTP_HEADER.SERVER, "n/a") == "Sucuri/Cloudproxy":
+            return True
