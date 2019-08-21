@@ -318,7 +318,11 @@ def main():
                     exit(0)
 
             if opt.testTargetConnection:
-                info("testing connection to target URL before starting attack")
+                info(
+                    "testing connection to target URL before starting attack {}".format(
+                        "\033[1m\033[33m(Tor is initialized which may increase latency)" if opt.runBehindTor else ""
+                    )
+                )
                 results = test_target_connection(url_to_use, proxy=proxy, agent=agent, headers=opt.extraHeaders)
                 if results == "nogo":
                     fatal("connection to target URL failed multiple times, check connection and try again")
