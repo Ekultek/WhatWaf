@@ -600,7 +600,10 @@ def test_target_connection(url, proxy, agent, headers):
     for _ in range(test_times):
         results = get_page(url, proxy=proxy, agent=agent, provided_headers=headers)
         _, status, _, _ = results
-        if status == 0:
+        if status is not None:
+            if status == 0:
+                failed += 1
+        else:
             failed += 1
     if failed == 1:
         return "acceptable"
