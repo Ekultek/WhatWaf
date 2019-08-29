@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__product__ = "Barracuda Web Application Firewall (Barracuda Networks, Inc.)"
+__product__ = "Barracuda Web Application Firewall (Barracuda Networks)"
 
 
 def detect(content, **kwargs):

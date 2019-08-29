@@ -190,14 +190,14 @@ class WhatWafParser(ArgumentParser):
                           help="Attempt to determine what web server is running on the backend "
                                "(IE Apache, Nginx, etc.. *default=False)")
         misc.add_argument("--wafs", action="store_true", default=False, dest="viewPossibleWafs",
-                          help="Output a list of possible firewalls that can be detected by this program")
+                          help="Output a list of possible firewalls that can be detected by WhatWaf")
         misc.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
-                          help="Output a list of usable tamper script load paths")
+                          help="Output a list of tamper script load paths with their description")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
+        hidden.add_argument("--i-am-teapot", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
 
         opts = parser.parse_args()
 
         return opts
-

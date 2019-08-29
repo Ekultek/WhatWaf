@@ -105,7 +105,7 @@ def request_issue_creation(exception_details):
     import platform
 
     question = lib.formatter.prompt(
-        "do you want to create an anonymized issue for the caught exception", "yN"
+        "would you like to create an anonymized issue for the unhandled exception", "yN"
     )
     if question.lower().startswith("y"):
         is_newest = lib.settings.check_version(speak=False)
@@ -167,7 +167,8 @@ def request_firewall_issue_creation(path):
     request the creation and create the issue
     """
     question = lib.formatter.prompt(
-        "do you want to create an issue with the unknown firewall to possibly get it implemented", "yN"
+        "would you like to create an issue with the discovered unknown firewall to possible "
+        "get a detection script created for it", "yN"
     )
     if question.lower().startswith("y"):
         is_newest = lib.settings.check_version(speak=False)

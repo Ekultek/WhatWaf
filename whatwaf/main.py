@@ -180,13 +180,31 @@ def main():
         exit(0)
 
     if not opt.hideBanner:
-        print(BANNER)
+        if opt.iAmTeapot:
+            import base64
+            from lib.settings import CUR_DIR
+            with open("{}/content/files/teapot".format(CUR_DIR)) as data:
+                print("\n" + base64.b64decode(data.read()) + "\n")
+        else:
+            print(BANNER)
 
     if opt.listEncodingTechniques:
+        import importlib
+
         info("gathering available tamper script load paths")
         tamper_list = get_encoding_list(TAMPERS_DIRECTORY, is_tampers=True, is_wafs=False)
+        separator = "-" * 75
+        print("{sep}\n\tLoad path:\t\t\t{whitespace}|\tDescription:\n{sep}".format(
+            whitespace=" " * 2, sep=separator
+        ))
         for tamper in sorted(tamper_list):
-            print(tamper)
+            imported = importlib.import_module(tamper)
+            output_template = "{0:40}  |  {1:30}"
+            print(output_template.format(
+                tamper, imported.__type__
+            ))
+        print(separator)
+        info("total of {} tamper scripts available".format(len(tamper_list)))
         exit(0)
 
     if opt.viewPossibleWafs:
@@ -200,11 +218,14 @@ def main():
                 print("{}".format(imported.__product__))
             except ImportError:
                 pass
+        info("WhatWaf can detect a total of {} web application protection systems".format(len(wafs_list)))
         exit(0)
 
     # gotta find a better way to check for updates so ima hotfix it
-    #info("checking for updates")
-    #check_version()
+    info("checking for updates")
+    is_newest = check_version(speak=False)
+    if not is_newest:
+        warn("there is an update available for whatwaf", minor=True)
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
@@ -214,8 +235,9 @@ def main():
                 amount_used += 1
         if amount_used > 1:
             warn(
-                "multiple file formats have been detected, there is a high probability that this will cause "
-                "issues while saving file information. please use only one format at a time"
+                "multiple file formats have been detected, WhatWaf will attempt to save to both files, however "
+                "there is a high probability that this will cause issues (such as missing information) while "
+                "saving to the files"
             )
         elif amount_used == 0:
             warn(
@@ -224,8 +246,8 @@ def main():
             )
     elif any(format_opts) and not opt.formatOutput:
         warn(
-            "you've chosen to send the output to a file, but have not formatted the output, no file will be saved "
-            "do so by passing the format flag (IE `-F -J` for JSON format)"
+            "you've chosen to send the results output to a file, but have not formatted the output, "
+            "no file will be saved, do so by passing the format flag (IE `-F -J` for JSON format)"
         )
 
     if opt.skipBypassChecks and opt.amountOfTampersToDisplay is not None:
@@ -244,9 +266,9 @@ def main():
             # if you don't we will go ahead and exit the system with an error message
             error(
                 "to run behind socks proxies (like Tor) you need to install pysocks `pip install pysocks`, "
-                "otherwise use a different proxy protocol"
+                "otherwise use a different proxy protocol (IE http,https)"
             )
-            sys.exit(1)
+            exit(1)
 
     proxy, agent = configure_request_headers(
         random_agent=opt.useRandomAgent, agent=opt.usePersonalAgent,
@@ -501,4 +523,3 @@ def main():
             )
         )
         request_issue_creation(exception_data)
-

@@ -250,7 +250,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
 
     if req_timeout is None:
         lib.formatter.warn(
-            "issue occurred and the timeout resolved to None, defaulting to 15", minor=True
+            "something happened and the timeout resolved to `None`, defaulting to 15", minor=True
         )
         req_timeout = 15
 
@@ -313,6 +313,10 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                         lib.formatter.warn("failure found in response content")
                 if len(working_tampers) == max_successful_payloads:
                     break
+            # simple sloppy little fix for issue #376, we'll just continue if we hit the problem
+            # i honestly have no idea if this will cause future issue or not
+            except RuntimeError:
+                pass
             except Exception as e:
                 if "'NoneType' object is not iterable" in str(e):
                     pass
@@ -521,7 +525,7 @@ def detection_main(url, payloads, cursor, **kwargs):
     else:
         found_webserver = None
 
-    # plus one for lib.settings.get_page call
+    # plus one for lib.settings.get_page call (i honestly dont even know wtf this means LOL)
     amount_of_products = 0
     detected_protections = set()
 

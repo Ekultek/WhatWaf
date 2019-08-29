@@ -17,7 +17,8 @@ function banner {
     echo -e "	|  |.'.|  |   |  |.'.|  |   |   .'   ";
     echo -e "	|         |   |         |   |___|    ";
     echo -e "	|   ,'.   |hat|   ,'.   |af .---.    ";
-    echo -e "	'--'   '--'   '--'   '--'   '---'    v($CURRENT_WHATWAF_VERSION)";
+    echo -e "	'--'   '--'   '--'   '--'   '---'    ";
+    echo -e "\"/><sCRIPT>ALeRt(\\\"WhatWaf?<|>v$CURRENT_WHATWAF_VERSION\\\");</scRiPT>";
 }
 
 function install {
@@ -59,9 +60,11 @@ function main {
   if [[ "$1" == "install" ]]; then
     echo -e " Installing:";
     install;
+    echo -e "Successfully installed WhatWaf v$CURRENT_WHATWAF_VERSION";
   elif [[ "$1" == "remove" ]]; then
     echo -e " Uninstalling:";
     uninstall;
+    echo -e "Successfully uninstalled WhatWaf";
   else
     helpPage;
   fi;

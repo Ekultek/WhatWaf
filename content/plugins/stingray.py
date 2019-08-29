@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__product__ = "Stingray Application Firewall (Riverbed / Brocade)"
+__product__ = "Stingray Application Firewall (Riverbed/Brocade)"
 
 
 def detect(content, **kwargs):

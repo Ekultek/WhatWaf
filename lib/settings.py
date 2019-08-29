@@ -20,15 +20,15 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 import lib.formatter
 import lib.database
 
+warnings.simplefilter('ignore', InsecureRequestWarning)
 try:
     import yaml
     warnings.simplefilter("ignore", yaml.YAMLLoadWarning)
 except:
     pass
-warnings.simplefilter('ignore', InsecureRequestWarning)
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.5.15"
+VERSION = "1.6"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -44,7 +44,7 @@ BANNER = """\b\033[1m
 \t|         |   |         |   |___|   
 \t|   ,'.   |hat|   ,'.   |af .---.   
 \t'--'   '--'   '--'   '--'   '---'  
-"/><script>alert("\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m");</script>
+\\"/><sCRIPT>ALeRt(\\"\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m\\");</scRiPT>
 \033[0m""".format(VERSION, VERSION_TYPE)
 
 # template for the results if needed
@@ -269,8 +269,10 @@ def get_page(url, **kwargs):
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, requests.TooManyRedirects):
         return error_retval
     except Exception as e:
-        if "timed out" in str(e):
+        if "timed out" in str(e).lower():
             return error_retval
+        else:
+            raise e.__class__(e.message)
 
 
 def get_random_agent(path="{}/content/files/user_agents.txt"):
@@ -512,7 +514,7 @@ def write_to_file(filename, path, data, **kwargs):
         try:
             shutil.copy(full_path, save_copy)
             lib.formatter.info("copy of file saved to {}".format(save_copy))
-        except Exception:
+        except Exception as e:
             lib.formatter.error("failed to save copy of file, do you have permissions?")
 
     return full_path
@@ -567,6 +569,7 @@ def check_version(speak=True):
     if not current_version == my_version:
         if speak:
             lib.formatter.warn("new version: {} is available".format(current_version))
+            return False
         else:
             return False
     else:
@@ -619,6 +622,8 @@ def parse_help_menu(data, start, end):
     and return the parsed help
     """
     try:
+        # DO YOU SEE HOW MUCH EASIER IT IS WITH
+        # PYTHON2 ?!
         start_index = data.index(start)
         end_index = data.index(end)
         retval = data[start_index:end_index].strip()
@@ -646,7 +651,7 @@ def save_temp_issue(data):
     """
     if not os.path.exists(UNPROCESSED_ISSUES_PATH):
         os.makedirs(UNPROCESSED_ISSUES_PATH)
-    file_path = "{}/{}.json".format(UNPROCESSED_ISSUES_PATH,random_string(length=32))
+    file_path = "{}/{}.json".format(UNPROCESSED_ISSUES_PATH, random_string(length=32))
     with open(file_path, "a+") as outfile:
         json.dump(data, outfile)
     return file_path
