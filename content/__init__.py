@@ -564,7 +564,11 @@ def detection_main(url, payloads, cursor, **kwargs):
             "detected website protection identified as '{}'".format(detected_protections)
         )
         if not skip_bypass_check:
-            lib.formatter.info("performing bypass analysis")
+            lib.formatter.info("starting bypass analysis")
+            if threaded is not None:
+                lib.formatter.warn(
+                    "in order to accurately perform bypass analysis threading will be dropped to a single thread"
+                )
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
                 tamper_int=tamper_int, provided_headers=provided_headers, throttle=throttle,
@@ -670,7 +674,11 @@ def detection_main(url, payloads, cursor, **kwargs):
                 lib.formatter.discover("{}".format(protection))
 
         if not skip_bypass_check:
-            lib.formatter.info("searching for bypasses")
+            lib.formatter.info("starting bypass analysis")
+            if threaded is not None:
+                lib.formatter.warn(
+                    "in order to accurately perform bypass analysis threading will be dropped to a single thread"
+                )
             found_working_tampers = get_working_tampers(
                 url, normal_response, payloads, proxy=proxy, agent=agent, verbose=verbose,
                 tamper_int=tamper_int, throttle=throttle, timeout=req_timeout, provided_headers=provided_headers
