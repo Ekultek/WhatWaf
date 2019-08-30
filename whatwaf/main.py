@@ -440,7 +440,6 @@ def main():
                     threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
                     save_copy_of_file=opt.outputDirectory
                 )
-                print("\n\b")
                 time.sleep(0.5)
 
         elif opt.googlerFile is not None:
@@ -495,7 +494,6 @@ def main():
                             save_copy_of_file=opt.outputDirectory
                         )
                         request_count = request_count + requests if requests is not None else request_count
-                        print("\n\b")
                         time.sleep(0.5)
             else:
                 fatal("file failed to load, does it exist?")
