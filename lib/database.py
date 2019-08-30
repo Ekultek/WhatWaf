@@ -95,7 +95,10 @@ def insert_url(netloc, working_tampers, identified_protections,  cursor, webserv
         if not is_inserted:
             if len(identified_protections) > 1:
                 if lib.settings.UNKNOWN_FIREWALL_NAME in identified_protections:
-                    identified_protections.remove(identified_protections.index(lib.settings.UNKNOWN_FIREWALL_NAME))
+                    try:
+                        identified_protections.remove(identified_protections.index(lib.settings.UNKNOWN_FIREWALL_NAME))
+                    except:
+                        pass
                 identified_protections = ",".join(identified_protections)
             else:
                 try:
