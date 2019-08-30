@@ -167,7 +167,7 @@ def request_firewall_issue_creation(path):
     request the creation and create the issue
     """
     question = lib.formatter.prompt(
-        "would you like to create an issue with the discovered unknown firewall to possible "
+        "would you like to create an issue with the discovered unknown firewall to potentially "
         "get a detection script created for it", "yN"
     )
     if question.lower().startswith("y"):
