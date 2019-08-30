@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.6"
+VERSION = "1.6.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -738,15 +738,15 @@ def display_cached(urls, payloads):
     if urls is not None:
         if len(urls) != 0:
             lib.formatter.info("cached URLs:")
+            print("\tNetloc:{}|\t{}Web Server:\t{}|\t{}Working Tampers:{}\t|\tIdentified Protections:\n{}".format(
+                " " * 13, " " * 2, " " * 5, " " * 3, " " * 10, "-" * 140
+            ))
+            output_template = "{0:27} | {1:22} | {2:40} | {3:50}"
             for i, cached in enumerate(urls):
                 _, netlock, prots, tamps, server = cached
-                print(" {}".format("-" * 15))
-                print(
-                    "{sep} URL: {url}\n{sep} Identified Protections: {protect}\n"
-                    "{sep} Working tampers: {tamp}\n{sep} Web server: {server}".format(
-                        sep="|", url=netlock, protect=prots, tamp=tamps, server=server
-                    )
-                )
+                if len(tamps) < 20:
+                    tamps = tamps[0:15] + "..."
+                print(output_template.format(netlock, server.split(" ")[0], tamps, prots))
             print(" {}".format("-" * 15))
         else:
             lib.formatter.warn("there are no cached URLs in the database")
