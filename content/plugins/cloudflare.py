@@ -40,3 +40,5 @@ def detect(content, **kwargs):
         if expect_ct is not None:
             if detection.search(expect_ct) is not None:
                 return True
+    if "__cfuid" in set_cookie or "cloudflare" in expect_ct:
+        return True

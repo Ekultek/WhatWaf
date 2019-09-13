@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.6.1"
+VERSION = "1.6.2"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -164,6 +164,7 @@ class HTTP_HEADER:
     ACCEPT_ENCODING = "Accept-Encoding"
     ACCEPT_LANGUAGE = "Accept-Language"
     AUTHORIZATION = "Authorization"
+    AESECURE_CODE = "aeSecure-code"
     CACHE_CONTROL = "Cache-Control"
     CONNECTION = "Connection"
     CONTENT_ENCODING = "Content-Encoding"
@@ -560,21 +561,25 @@ def check_version(speak=True):
     check the version number for updates
     """
     version_url = "https://raw.githubusercontent.com/Ekultek/WhatWaf/master/lib/settings.py"
-    req = requests.get(version_url)
-    content = req.text
-    version_identification = content.find("VERSION = ")
-    current_version = content[version_identification:version_identification + 17]
-    current_version = str(current_version.strip().split('"')[1])
-    my_version = VERSION
-    if not current_version == my_version:
-        if speak:
-            lib.formatter.warn("new version: {} is available".format(current_version))
-            return False
+    try:
+        req = requests.get(version_url)
+        content = req.text
+        version_identification = content.find("VERSION = ")
+        current_version = content[version_identification:version_identification + 17]
+        current_version = str(current_version.strip().split('"')[1])
+        my_version = VERSION
+        if not current_version == my_version:
+            if speak:
+                lib.formatter.warn("new version: {} is available".format(current_version))
+                return False
+            else:
+                return False
         else:
-            return False
-    else:
-        if not speak:
-            return True
+            if not speak:
+                return True
+    except Exception:
+        lib.formatter.warn("error checking version, skipping")
+        return True
 
 
 def get_encoding_list(directory, is_tampers=True, is_wafs=False):
