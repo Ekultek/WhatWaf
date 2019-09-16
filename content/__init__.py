@@ -517,7 +517,7 @@ def detection_main(url, payloads, cursor, **kwargs):
                     break
         except Exception:
             found = None
-        if found is None:
+        if found is None and not str(found).isspace() or found != "":
             lib.formatter.warn("unable to determine web server")
         else:
             lib.formatter.success("web server determined as: {}".format(found))

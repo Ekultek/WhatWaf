@@ -171,6 +171,17 @@ class WhatWafParser(ArgumentParser):
                  "under the home directory"
         )
 
+        wizard = parser.add_argument_group("wizard arguments",
+                                           "arguemnts that have to do with building scripts")
+        wizard.add_argument(
+            "--waf-wizard", action="store_true", default=False, dest="buildWafScript",
+            help=SUPPRESS
+        )
+        wizard.add_argument(
+            "--tamper-wizard", action="store_true", default=False, dest="buildTamperScript",
+            help=SUPPRESS
+        )
+
         misc = parser.add_argument_group("misc arguments",
                                          "arguments that don't fit in any other category")
         misc.add_argument("--verbose", dest="runInVerbose", action="store_true",
