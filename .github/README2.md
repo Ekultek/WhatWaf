@@ -1,12 +1,12 @@
 # Features
  - Ability to run on a single URL with the `-u/--url` flag
  - Ability to run through a list of URL's with the `-l/--list` flag
- - Ability to detect over 60+ different firewalls
+ - Ability to detect over 70+ different firewalls
  - Ability to try over 30+ different tampering techniques
  - Ability to pass your own payloads either from a file, from the terminal, or use the default payloads
  - Default payloads that _should_ produce at least one WAF triggering
  - Ability to bypass firewalls using both SQLi techniques and cross site scripting techniques
- - Ability to run behind any proxy type that matches this regex:`(socks\d+)?(http(s)?)?://`
+ - Ability to run behind any proxy type that matches this regex:`(socks\d+)?(http(s)?)?://` (socks5, socks4, http, https)
  - Ability to use a random user agent, personal user agent, or custom default user agent
  - Auto assign protocol to HTTP or ability to force protocol to HTTPS
  - A built in encoder so you can encode your payloads into the discovered bypasses
