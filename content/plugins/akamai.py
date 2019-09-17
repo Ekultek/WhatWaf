@@ -21,5 +21,6 @@ def detect(content, **kwargs):
             return True
         if detection.search(content) is not None:
             return True
-    if headers.get(HTTP_HEADER.SERVER, "") == "AkamaiGHost":
+    header_searcher = re.compile("akamaighost", re.I)
+    if header_searcher.search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
         return True
