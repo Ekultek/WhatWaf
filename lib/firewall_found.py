@@ -122,13 +122,15 @@ def request_issue_creation(exception_details):
                 argv_data = hide_sensitive(sys.argv, item)
         title = "Whatwaf Unhandled Exception ({})".format(identifier)
 
+        python_version = "{}.{}{}".format(sys.version_info.major, sys.version_info.minor, sys.version_info.micro)
         issue_creation_template = {
             "title": title,
             "body": "Whatwaf version: `{}`\n"
                     "Running context: `{}`\n"
+                    "Python version: `{}`\n"
                     "Traceback: \n```\n{}\n```\n"
                     "Running platform: `{}`".format(
-                lib.settings.VERSION, argv_data, exception_details, platform.platform()
+                lib.settings.VERSION, argv_data, python_version, exception_details, platform.platform()
             )
         }
 
