@@ -21,6 +21,8 @@ def detect(content, **kwargs):
     cookie = headers.get(HTTP_HEADER.COOKIE, None)
     set_cookie = headers.get(HTTP_HEADER.SET_COOKIE, None)
     cf_ray = headers.get(HTTP_HEADER.CF_RAY, None)
+    if cf_ray is not None:
+        return True
     expect_ct = headers.get(HTTP_HEADER.EXPECT_CT, None)
     for detection in detection_schemas:
         if detection.search(content) is not None:
