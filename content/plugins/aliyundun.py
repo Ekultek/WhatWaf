@@ -1,0 +1,16 @@
+import re
+
+
+__product__ = "AliYunDun (WAF)"
+
+
+def detect(content, **kwargs):
+    status = kwargs.get("status", None)
+    if status is not None and status == 405:
+        detection_schema = (
+            re.compile("error(s)?.aliyun(dun)?.(com|net)", re.I),
+            re.compile("http(s)?://(www.)?aliyun.(com|net)", re.I)
+        )
+        for detection in detection_schema:
+            if detection.search(content) is not None:
+                return True
