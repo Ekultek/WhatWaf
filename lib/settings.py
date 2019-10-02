@@ -28,10 +28,14 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.6.7"
+VERSION = "1.6.8"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
+
+# the saying that will go inside of the banner
+SAYING = "/><script>alert();</script>"
+INSIDE_SAYING = '"\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m"'.format(VERSION, VERSION_TYPE)
 
 # cool looking banner
 BANNER = """\b\033[1m
@@ -44,8 +48,8 @@ BANNER = """\b\033[1m
 \t|         |   |         |   |___|   
 \t|   ,'.   |hat|   ,'.   |af .---.   
 \t'--'   '--'   '--'   '--'   '---'  
-\\"/><sCRIPT>ALeRt(\\"\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m\\");</scRiPT>
-\033[0m""".format(VERSION, VERSION_TYPE)
+{}
+\033[0m"""
 
 # template for the results if needed
 RESULTS_TEMPLATE = "{}\nSite: {}\nIdentified Protections: {}\nIdentified Tampers: {}\nIdentified Webserver: {}\n{}"
@@ -786,3 +790,34 @@ def shuffle_list(l):
         except IndexError:
             l[x-1], l[y-1] = l[y-1], l[x-1]
     return l
+
+
+def make_saying_pretty(saying_string):
+    """
+    make a random obfuscated saying string
+    """
+    import importlib
+
+    skip_tampers = (
+        "base64encode", "doubleurlencode", "obfuscatebyordinal",
+        "tripleurlencode", "urlencode", "urlencodeall", "__pycach",
+        "__init__.", "__init__", "lowercase", "randomcase", "uppercase",
+        "enclosebrackets", "maskenclosebrackets", "space2null",
+        "tabifyspaceuncommon", "space2doubledash", "randomtabify",
+        "space2hash", "apostrephenullify", "apostrephemask",
+        "space2multicomment", "space2plus", "tabifyspacecommon",
+        "booleanmask", "space2randomblank"
+    )
+    tamper = [f[:-3].strip(".") for f in os.listdir(TAMPERS_DIRECTORY)]
+    new_tampers = []
+    for t in tamper:
+        if t not in skip_tampers:
+            new_tampers.append(t)
+    new_tampers = shuffle_list(list(set(new_tampers)))
+    random_tamper_import = TAMPERS_IMPORT_TEMPLATE.format(random.SystemRandom().choice(new_tampers))
+    tamper = importlib.import_module(random_tamper_import)
+    new_saying_string = tamper.tamper(saying_string)
+    new_saying_string = new_saying_string.split("();")
+    new_saying = "({});".format(INSIDE_SAYING).join(new_saying_string)
+    return new_saying
+

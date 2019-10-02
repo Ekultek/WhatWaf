@@ -28,7 +28,9 @@ from lib.settings import (
     TAMPERS_DIRECTORY,
     check_url_against_cached,
     RESULTS_TEMPLATE,
-    display_cached
+    display_cached,
+    make_saying_pretty,
+    SAYING
 )
 from lib.formatter import (
     error,
@@ -186,7 +188,11 @@ def main():
             with open("{}/content/files/teapot".format(CUR_DIR)) as data:
                 print("\n" + base64.b64decode(data.read()) + "\n")
         else:
-            print(BANNER)
+            print(
+                BANNER.format(
+                    make_saying_pretty(SAYING)
+                )
+            )
 
     if opt.listEncodingTechniques:
         import importlib
