@@ -1,8 +1,5 @@
 import re
 
-from lib.settings import HTTP_HEADER
-
-
 __product__ = "Yunsuo Web Application Firewall (Yunsuo)"
 
 

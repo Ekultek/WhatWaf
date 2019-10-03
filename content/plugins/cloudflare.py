@@ -17,30 +17,23 @@ def detect(content, **kwargs):
         re.compile(r"<title>attention.required.(...)?cloudflare</title>", re.I),
         re.compile(r"http(s)?.//report.uri.cloudflare.com(/cdn.cgi(.beacon/expect.ct)?)?", re.I)
     )
-    server = headers.get(HTTP_HEADER.SERVER, None)
-    cookie = headers.get(HTTP_HEADER.COOKIE, None)
-    set_cookie = headers.get(HTTP_HEADER.SET_COOKIE, None)
-    cf_ray = headers.get(HTTP_HEADER.CF_RAY, None)
-    if cf_ray is not None:
+    server = headers.get(HTTP_HEADER.SERVER, "")
+    cookie = headers.get(HTTP_HEADER.COOKIE, "")
+    set_cookie = headers.get(HTTP_HEADER.SET_COOKIE, "")
+    cf_ray = headers.get(HTTP_HEADER.CF_RAY, "")
+    if cf_ray != "":
         return True
     expect_ct = headers.get(HTTP_HEADER.EXPECT_CT, None)
     for detection in detection_schemas:
         if detection.search(content) is not None:
             return True
-        if server is not None:
-            if detection.search(server) is not None:
-                return True
-        if cookie is not None:
-            if detection.search(cookie) is not None:
-                return True
-        if set_cookie is not None:
-            if detection.search(set_cookie) is not None:
-                return True
-        if cf_ray is not None:
-            if detection.search(cf_ray) is not None:
-                return True
-        if expect_ct is not None:
-            if detection.search(expect_ct) is not None:
-                return True
+        if detection.search(server) is not None:
+            return True
+        if detection.search(cookie) is not None:
+            return True
+        if detection.search(set_cookie) is not None:
+            return True
+        if detection.search(expect_ct) is not None:
+            return True
     if "__cfuid" in set_cookie or "cloudflare" in expect_ct:
         return True

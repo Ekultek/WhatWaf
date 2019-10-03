@@ -17,7 +17,6 @@ def detect(content, **kwargs):
         if detection.search(content) is not None:
             return True
     if headers is not None:
-        server = headers.get(HTTP_HEADER.SERVER, None)
-        if server is not None:
-            if server == "DiDi-SLB":
-                return True
+        server = headers.get(HTTP_HEADER.SERVER, "")
+        if server == "DiDi-SLB":
+            return True
