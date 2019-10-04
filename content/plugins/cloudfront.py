@@ -5,7 +5,7 @@ __product__ = "CloudFront Firewall (Amazon)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"[a-zA-Z0-9]{,60}.cloudfront.net", re.I),
         re.compile(r"cloudfront", re.I),

@@ -8,7 +8,7 @@ __product__ = "Squid Proxy (IDS)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"squid", re.I),
         re.compile(r"Access control configuration prevents", re.I),

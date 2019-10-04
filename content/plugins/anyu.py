@@ -6,7 +6,7 @@ __product__ = "AnYu Web Application Firewall (Anyu Technologies)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"sorry(.)?.your.access.has.been.intercept(ed)?.by.anyu", re.I),
         re.compile(r"anyu", re.I),

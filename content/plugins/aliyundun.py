@@ -5,7 +5,7 @@ __product__ = "AliYunDun (WAF)"
 
 
 def detect(content, **kwargs):
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     if status is not None and status == 405:
         detection_schema = (
             re.compile("error(s)?.aliyun(dun)?.(com|net)", re.I),

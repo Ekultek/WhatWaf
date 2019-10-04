@@ -5,7 +5,7 @@ __product__ = "Anquanbao Web Application Firewall (Anquanbao)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
     detection_scehmas = (
         re.compile(r".aqb_cc.error."),

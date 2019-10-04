@@ -8,7 +8,7 @@ __product__ = "DiDiYun WAF (DiDi)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile("(http(s)?://)(sec-waf.|www.)?didi(static|yun)?.com(/static/cloudwafstatic)?", re.I),
         re.compile("didiyun", re.I)

@@ -7,8 +7,8 @@ __product__ = "360 Web Application Firewall (360)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
-    status = kwargs.get("status", None)
+    headers = kwargs.get("headers", {})
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r".wzws.waf.cgi.", re.I),
         re.compile(r"wangzhan\.360\.cn", re.I),

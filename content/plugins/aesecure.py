@@ -6,18 +6,18 @@ __product__ = "aeSecure (WAF)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
 
     detection_schema = (
         re.compile("aesecure.denied.png", re.I),
     )
     header_check = (
-        headers.get("aeSecure-code", None),
-        headers.get("AeSecure-Code", None),
-        headers.get("aesecure-code", None)
+        headers.get("aeSecure-code", ""),
+        headers.get("AeSecure-Code", ""),
+        headers.get("aesecure-code", "")
     )
     for head in header_check:
-        if head is not None:
+        if head != "":
             return True
     for detection in detection_schema:
         if detection.search(content) is not None:

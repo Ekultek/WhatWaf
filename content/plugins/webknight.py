@@ -7,8 +7,8 @@ __product__ = "WebKnight Application Firewall (AQTRONIX)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
-    status = kwargs.get("status", None)
+    headers = kwargs.get("headers", {})
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"\bwebknight", re.I),
         re.compile(r"webknight", re.I)

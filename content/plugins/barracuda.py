@@ -7,7 +7,7 @@ __product__ = "Barracuda Web Application Firewall (Barracuda Networks)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
 
     detection_schema = (

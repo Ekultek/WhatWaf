@@ -7,7 +7,7 @@ __product__ = "StrictHttpFirewall (WAF)"
 
 def detect(content, **kwargs):
     content = str(content)
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"the.request.was.rejected.because.the.url.contained.a.potentially.malicious.string", re.I),
     )

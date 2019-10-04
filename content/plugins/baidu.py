@@ -8,7 +8,7 @@ __product__ = "Yunjiasu Web Application Firewall (Baidu)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"fh(l)?", re.I),
         re.compile(r"yunjiasu.nginx", re.I)

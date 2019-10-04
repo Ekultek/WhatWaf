@@ -8,7 +8,7 @@ __product__ = "Deny All Web Application Firewall (DenyAll)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\Acondition.intercepted", re.I),
         re.compile(r"\Asessioncookie=", re.I)

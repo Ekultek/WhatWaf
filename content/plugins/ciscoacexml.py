@@ -7,7 +7,7 @@ __product__ = "Cisco ACE XML Firewall (Cisco)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"ace.xml.gateway", re.I),
     )

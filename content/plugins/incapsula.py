@@ -8,7 +8,7 @@ __product__ = "Incapsula Web Application Firewall (Incapsula/Imperva)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"incap_ses|visid_incap", re.I),
         re.compile(r"incapsula", re.I),

@@ -7,7 +7,7 @@ __product__ = "West236 Firewall"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"(.)?wt(\d+)?cdn(.)?", re.I),
     )

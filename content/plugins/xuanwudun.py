@@ -6,7 +6,7 @@ __product__ = "Xuanwudun WAF"
 
 def detect(content, **kwargs):
     content = str(content)
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile("<.+.class=.(db)?waf(.)?(-row.)?>", re.I),
     )

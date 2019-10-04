@@ -8,7 +8,7 @@ __product__ = "Varnish/CacheWall WAF"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\bxid. \d+", re.I),
         re.compile(r"varnish\Z", re.I),

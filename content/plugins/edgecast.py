@@ -7,7 +7,7 @@ __product__ = "EdgeCast Web Application Firewall (Verizon)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\Aecdf", re.I),
     )

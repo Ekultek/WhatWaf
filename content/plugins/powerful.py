@@ -5,7 +5,7 @@ __product__ = "Powerful Firewall (MyBB plugin)"
 
 
 def detect(content, **kwargs):
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"Powerful Firewall", re.I),
         re.compile(r"http(s)?...tiny.cc.powerful.firewall", re.I)

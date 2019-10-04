@@ -8,7 +8,7 @@ __product__ = "Jiasule (WAF)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile("^jsl(_)?tracking", re.I),
         re.compile("(__)?jsluid(=)?", re.I),

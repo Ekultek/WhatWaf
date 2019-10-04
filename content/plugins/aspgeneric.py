@@ -9,7 +9,7 @@ __product__ = "ASP.NET Generic Website Protection (MS)"
 def detect(content, **kwargs):
     detected = 0
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
 
     detection_schema = (
         re.compile("this.generic.403.error.means.that.the.authenticated", re.I),

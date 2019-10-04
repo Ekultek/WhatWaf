@@ -5,7 +5,7 @@ __product__ = "Shadow Daemon Opensource (WAF)"
 
 def detect(content, **kwargs):
     content = str(content)
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"<h\d{1}>\d{3}.forbidden<.h\d{1}>", re.I),
         re.compile(r"request.forbidden.by.administrative.rules.", re.I)

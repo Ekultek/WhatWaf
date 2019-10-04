@@ -7,7 +7,7 @@ __product__ = "Apache Traffic Server (ATS web proxy)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     if headers is not None:
         detection_schema = (
             re.compile("(\()?apachetrafficserver((\/)?\d+(.\d+(.\d+)?)?)", re.I),

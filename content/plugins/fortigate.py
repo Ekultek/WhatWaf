@@ -7,7 +7,7 @@ __product__ = "FortiWeb Web Application Firewall (Fortinet)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
     detection_schema = (
         re.compile(r"<.+>powered.by.fortinet<.+.>", re.I),

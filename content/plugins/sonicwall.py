@@ -8,7 +8,7 @@ __product__ = "SonicWALL Firewall (Dell)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"This.request.is.blocked.by.the.SonicWALL", re.I),
         re.compile(r"Dell.SonicWALL", re.I),

@@ -8,7 +8,7 @@ __product__ = "BinarySEC Web Application Firewall (BinarySEC)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"x.binarysec.via", re.I),
         re.compile(r"x.binarysec.nocache", re.I),

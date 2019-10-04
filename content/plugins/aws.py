@@ -7,7 +7,7 @@ __product__ = "Amazon Web Services Web Application Firewall (Amazon)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
     detection_schema = (
         re.compile(r"<RequestId>[0-9a-zA-Z]{16,25}<.RequestId>", re.I),

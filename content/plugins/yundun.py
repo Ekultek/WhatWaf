@@ -7,8 +7,8 @@ __product__ = "Yundun Web Application Firewall (Yundun)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
-    status = kwargs.get("status", None)
+    headers = kwargs.get("headers", {})
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"YUNDUN", re.I),
         re.compile(r"^yd.cookie=(\w+)?", re.I),

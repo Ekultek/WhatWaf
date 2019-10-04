@@ -7,7 +7,7 @@ __product__ = "CloudFlare Web Application Firewall (CloudFlare)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
     detection_schemas = (
         re.compile(r"cloudflare.ray.id.|var.cloudflare.", re.I),

@@ -7,7 +7,7 @@ __product__ = "Sucuri Firewall (Sucuri Cloudproxy)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"access.denied.-.sucuri.website.firewall", re.I),
         re.compile(r"sucuri.webSite.firewall.-.cloudProxy.-.access.denied", re.I),

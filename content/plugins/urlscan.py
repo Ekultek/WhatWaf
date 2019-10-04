@@ -7,7 +7,7 @@ __product__ = "UrlScan (Microsoft)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"rejected.by.url.scan", re.I),
         re.compile(r"/rejected.by.url.scan", re.I)

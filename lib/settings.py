@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.6.9"
+VERSION = "1.6.10"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -820,4 +820,3 @@ def make_saying_pretty(saying_string):
     new_saying_string = new_saying_string.split("();")
     new_saying = "({});".format(INSIDE_SAYING).join(new_saying_string)
     return new_saying
-

@@ -8,7 +8,7 @@ __product__ = "Grey Wizard Protection"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"greywizard(.\d.\d(.\d)?)?", re.I), re.compile(r"grey.wizard.block", re.I),
         re.compile(r"(http(s)?.//)?(\w+.)?greywizard.com", re.I), re.compile(r"grey.wizard")

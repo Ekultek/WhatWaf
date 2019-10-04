@@ -7,7 +7,7 @@ __product__ = "IBM Websphere DataPower Firewall (IBM)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\A(ok|fail)", re.I),
     )

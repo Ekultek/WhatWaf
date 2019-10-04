@@ -7,7 +7,7 @@ __product__ = "BIG-IP (F5 Networks)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\ATS\w{4,}=", re.I),
         re.compile(r"bigipserver(.i)?|bigipserverinternal", re.I),

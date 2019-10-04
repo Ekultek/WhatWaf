@@ -7,8 +7,8 @@ __product__ = "Stingray Application Firewall (Riverbed/Brocade)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
-    status = kwargs.get("status", None)
+    headers = kwargs.get("headers", {})
+    status = kwargs.get("status", 0)
     status_schema = (403, 500)
     detection_schema = (
         re.compile(r"\AX-Mapping-", re.I),

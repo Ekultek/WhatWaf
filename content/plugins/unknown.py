@@ -8,8 +8,8 @@ __product__ = "Unknown Firewall"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
-    status = kwargs.get("status", None)
+    headers = kwargs.get("headers", {})
+    status = kwargs.get("status", 0)
     # make sure that it's not just a `didn't find what you're looking for` page
     # this will probably help out a lot with random WAF detection
     if status == 200 or "not found" in content.lower():

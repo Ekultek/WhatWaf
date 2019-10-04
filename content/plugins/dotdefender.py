@@ -6,7 +6,7 @@ __product__ = "dotDefender (Applicure Technologies)"
 
 def detect(content, **kwargs):
     content = str(content)
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"dotdefender.blocked.your.request", re.I),
     )

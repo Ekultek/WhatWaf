@@ -7,7 +7,7 @@ __product__ = "Comodo Web Application Firewall (Comodo)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"protected.by.comodo.waf", re.I),
     )

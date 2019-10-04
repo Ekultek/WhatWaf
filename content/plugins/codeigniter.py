@@ -5,7 +5,7 @@ __product__ = "XSS/CSRF Filtering Protection (CodeIgniter)"
 
 
 def detect(content, **kwargs):
-    status = kwargs.get("status", None)
+    status = kwargs.get("status", 0)
     detection_schema = (
         re.compile(r"the.uri.you.submitted.has.disallowed.characters", re.I),
     )

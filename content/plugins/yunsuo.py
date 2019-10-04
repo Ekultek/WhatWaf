@@ -4,7 +4,7 @@ __product__ = "Yunsuo Web Application Firewall (Yunsuo)"
 
 
 def detect(content, **kwargs):
-    headers = kwargs.get("headers", None)
+    headers = kwargs.get("headers", {})
     content = str(content)
     detection_schema = (
         re.compile(r"<img.class=.yunsuologo.", re.I),
