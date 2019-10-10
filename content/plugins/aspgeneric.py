@@ -18,7 +18,8 @@ def detect(content, **kwargs):
         re.compile("runtime.error", re.I),
         re.compile("asp.net(.+)?", re.I),
         re.compile("a.potentially.dangerous.request.path.value.was.detected.from.the.client", re.I),
-        re.compile("asp.net.sessionid", re.I)
+        re.compile("asp.net.sessionid", re.I),
+        re.compile(r"errordocument.to.handle.the.request", re.I)
     )
     x_powered_by = headers.get(HTTP_HEADER.X_POWERED_BY, "")
     asp_header = headers.get("X-ASPNET-Version", "")
