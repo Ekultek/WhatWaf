@@ -58,8 +58,7 @@ class ScriptQueue(object):
 class DetectionQueue(object):
 
     """
-    Queue to add the HTML requests into, it will return a `tuple` containing status, html, and headers along with
-    the amount of requests that have been made
+    Queue to add the HTML requests into, it will return a `tuple` containing status, html, and headers
     """
 
     def __init__(self, url, payloads, **kwargs):
@@ -314,7 +313,7 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
                 if len(working_tampers) == max_successful_payloads:
                     break
             # simple sloppy little fix for issue #376, we'll just continue if we hit the problem
-            # i honestly have no idea if this will cause future issue or not
+            # i honestly have no idea if this will cause future issues or not
             except RuntimeError:
                 pass
             except Exception as e:
@@ -668,7 +667,9 @@ def detection_main(url, payloads, cursor, **kwargs):
             )
 
     else:
-        detected_protections = [item for item in list(detected_protections)]
+        detected_protections = [
+            item for item in list(detected_protections) if item != lib.settings.UNKNOWN_FIREWALL_NAME
+        ]
         for protection in sorted(detected_protections):
             if not protection == lib.settings.UNKNOWN_FIREWALL_NAME:
                 lib.formatter.discover("{}".format(protection))

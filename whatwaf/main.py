@@ -326,8 +326,6 @@ def main():
         else:
             request_type = "GET"
 
-        request_count = 0
-
         if opt.runSingleWebsite:
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             if opt.checkCachedUrls:
@@ -364,7 +362,7 @@ def main():
                     success("connection succeeded, continuing")
 
             info("running single web application '{}'".format(url_to_use))
-            requests = detection_main(
+            detection_main(
                 url_to_use, payload_list, cursor, agent=agent, proxy=proxy,
                 verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                 verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -486,7 +484,7 @@ def main():
                                 success("connection succeeded, continuing")
 
                         info("currently running on '{}' (site #{})".format(url, i))
-                        requests = detection_main(
+                        detection_main(
                             url, payload_list, cursor, agent=agent, proxy=proxy,
                             verbose=opt.runInVerbose, skip_bypass_check=opt.skipBypassChecks,
                             verification_number=opt.verifyNumber, formatted=opt.formatOutput,
@@ -499,7 +497,6 @@ def main():
                             threaded=opt.threaded, force_file_creation=opt.forceFileCreation,
                             save_copy_of_file=opt.outputDirectory
                         )
-                        request_count = request_count + requests if requests is not None else request_count
                         time.sleep(0.5)
             else:
                 fatal("file failed to load, does it exist?")
