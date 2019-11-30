@@ -20,7 +20,8 @@ def detect(content, **kwargs):
         re.compile("a.potentially.dangerous.request.path.value.was.detected.from.the.client", re.I),
         re.compile("asp.net.sessionid", re.I),
         re.compile(r"errordocument.to.handle.the.request", re.I),
-        re.compile("an.application.error.occurred.on.the.server", re.I)
+        re.compile("an.application.error.occurred.on.the.server", re.I),
+        re.compile("error.log.record.number", re.I)
     )
     x_powered_by = headers.get(HTTP_HEADER.X_POWERED_BY, "")
     asp_header = headers.get("X-ASPNET-Version", "")
