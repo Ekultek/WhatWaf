@@ -40,5 +40,5 @@ def detect(content, **kwargs):
         unknown_verification_regex = re.compile(r"(\b)?<.+>*({})(\S+|\d+|\w+)?(<.+.>)?".format(detection.pattern), re.I)
         if unknown_verification_regex.search(content) is not None:
             discovered += 1
-    if discovered > 2:
+    if discovered > 1:
         return True
