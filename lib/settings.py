@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.6.11"
+VERSION = "1.7"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -39,15 +39,15 @@ INSIDE_SAYING = '"\033[94mWhatWaf?\033[0m\033[1m<|>v{}{}\033[1m"'.format(VERSION
 
 # cool looking banner
 BANNER = """\b\033[1m
-\t                          ,------.  
-\t                         '  .--.  ' 
-\t,--.   .--.   ,--.   .--.|  |  |  | 
-\t|  |   |  |   |  |   |  |'--'  |  | 
-\t|  |   |  |   |  |   |  |    __.  | 
-\t|  |.'.|  |   |  |.'.|  |   |   .'  
-\t|         |   |         |   |___|   
-\t|   ,'.   |hat|   ,'.   |af .---.   
-\t'--'   '--'   '--'   '--'   '---'  
+\t                          ,------.
+\t                         '  .--.  '
+\t,--.   .--.   ,--.   .--.|  |  |  |
+\t|  |   |  |   |  |   |  |'--'  |  |
+\t|  |   |  |   |  |   |  |    __.  |
+\t|  |.'.|  |   |  |.'.|  |   |   .'
+\t|         |   |         |   |___|
+\t|   ,'.   |hat|   ,'.   |af .---.
+\t'--'   '--'   '--'   '--'   '---'
 {}
 \033[0m"""
 
