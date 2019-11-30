@@ -1,7 +1,7 @@
 import re
 
 
-__product__ = "Nginx Gneric Protection"
+__product__ = "Nginx Generic Protection"
 
 
 def detect(content, **kwargs):
