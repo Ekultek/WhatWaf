@@ -9,7 +9,7 @@ def detect(content, **kwargs):
     status = kwargs.get("status", 0)
     detection_schema = (
         re.compile("apache", re.I),
-        re.compile("You.don.t.have.permission.to.access.this.resource", re.I)
+        re.compile("You.don.t.have.permission.to.access", re.I)
     )
 
     if status == 403:
