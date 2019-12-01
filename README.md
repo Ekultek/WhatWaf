@@ -22,37 +22,43 @@ WhatWaf is an advanced firewall detection tool who's goal is to give you the ide
  - Follow me on [![alt text][1.1]][1]
  - Follow me on [![alt text][6.1]][6]
  ---
- 
- # Possible Detectable Firewalls
+
+# Possible Detectable Firewalls
  
  ```
+whatwaf --wafs
 
-	                          ,------.  
-	                         '  .--.  ' 
-	,--.   .--.   ,--.   .--.|  |  |  | 
-	|  |   |  |   |  |   |  |'--'  |  | 
-	|  |   |  |   |  |   |  |    __.  | 
-	|  |.'.|  |   |  |.'.|  |   |   .'  
-	|         |   |         |   |___|   
-	|   ,'.   |hat|   ,'.   |af .---.   
-	'--'   '--'   '--'   '--'   '---'  
-\"/><sCRIPT>ALeRt(\"WhatWaf?<|>v1.6.2($dev)\");</scRiPT>
+	                          ,------.
+	                         '  .--.  '
+	,--.   .--.   ,--.   .--.|  |  |  |
+	|  |   |  |   |  |   |  |'--'  |  |
+	|  |   |  |   |  |   |  |    __.  |
+	|  |.'.|  |   |  |.'.|  |   |   .'
+	|         |   |         |   |___|
+	|   ,'.   |hat|   ,'.   |af .---.
+	'--'   '--'   '--'   '--'   '---'
+/><s/**/cript>alert("WhatWaf?<|>v1.8($stable)");</scrip/**/t>
 
-[15:26:21][INFO] gathering a list of possible detectable wafs
+[00:58:55][INFO] gathering a list of possible detectable wafs
 360 Web Application Firewall (360)
+aeSecure (WAF)
 Airlock (Phion/Ergon)
 AkamaiGHost Website Protection (Akamai Global Host)
 Alert Logic (SIEMless Threat Management)
+AliYunDun (WAF)
 Anquanbao Web Application Firewall (Anquanbao)
 AnYu Web Application Firewall (Anyu Technologies)
+Apache Generic
 Armor Protection (Armor Defense)
 Application Security Manager (F5 Networks)
+ASP.NET Generic Website Protection (MS)
+Apache Traffic Server (ATS web proxy)
 Amazon Web Services Web Application Firewall (Amazon)
 Yunjiasu Web Application Firewall (Baidu)
 Barikode Web Application Firewall
 Barracuda Web Application Firewall (Barracuda Networks)
 Bekchy (WAF)
-BIG-IP Application Security Manager (F5 Networks)
+BIG-IP (F5 Networks)
 BinarySEC Web Application Firewall (BinarySEC)
 Bitninja (WAF)
 BlockDos DDoS protection (BlockDos)
@@ -64,6 +70,7 @@ XSS/CSRF Filtering Protection (CodeIgniter)
 Comodo Web Application Firewall (Comodo)
 IBM Websphere DataPower Firewall (IBM)
 Deny All Web Application Firewall (DenyAll)
+DiDiYun WAF (DiDi)
 DoD Enterprise-Level Protection System (Department of Defense)
 DOSarrest (DOSarrest Internet Security)
 dotDefender (Applicure Technologies)
@@ -72,15 +79,19 @@ EdgeCast Web Application Firewall (Verizon)
 ExpressionEngine (Ellislab WAF)
 FortiWeb Web Application Firewall (Fortinet)
 Gladius network WAF (Gladius)
+Google Web Services
 Grey Wizard Protection
 Incapsula Web Application Firewall (Incapsula/Imperva)
 INFOSAFE by http://7i24.com
+Instart Logic (Palo Alto)
 Janusec Application Gateway (WAF)
 Jiasule (WAF)
+Litespeed webserver Generic Protection
 Malcare (MalCare Security WAF)
 Open Source Web Application Firewall (Modsecurity)
 Mod Security (OWASP CSR)
 NexusGuard Security (WAF)
+Nginx Generic Protection
 Palo Alto Firewall (Palo Alto Networks)
 Anti Bot Protection (PerimeterX)
 pkSecurityModule (IDS)
@@ -113,7 +124,7 @@ Xuanwudun WAF
 Yundun Web Application Firewall (Yundun)
 Yunsuo Web Application Firewall (Yunsuo)
 Zscaler Cloud Firewall (WAF)
-[15:26:21][INFO] WhatWaf can detect a total of 76 web application protection systems```
+[00:58:55][INFO] WhatWaf can detect a total of 86 web application protection systems
 ```
 
 # Possible Tampers
