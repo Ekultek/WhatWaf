@@ -304,9 +304,14 @@ def get_random_agent(path="{}/files/user_agents.txt"):
     grab a random user-agent from the file to pass as
     the HTTP User-Agent header
     """
-    with open(path.format(HOME)) as agents:
-        items = [agent.strip() for agent in agents.readlines()]
-        return random.choice(items)
+    try:
+        with open(path.format(HOME)) as agents:
+            items = [agent.strip() for agent in agents.readlines()]
+            return random.choice(items)
+    except:
+        with open("{}/content/files/user_agents.txt".format(CUR_DIR)) as agents:
+            items = [agent.strip() for agent in agents.readlines()]
+            return random.choice(items)
 
 
 def configure_request_headers(**kwargs):
