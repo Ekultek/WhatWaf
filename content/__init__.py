@@ -506,7 +506,6 @@ def detection_main(url, payloads, cursor, **kwargs):
     )
 
     if check_server:
-        found = None
         try:
             for resp in responses:
                 headers = resp[-1]
@@ -541,6 +540,8 @@ def detection_main(url, payloads, cursor, **kwargs):
         item = item if item is not None else normal_response
         _, status, html, headers = item
         for detection in loaded_plugins:
+            if verbose:
+                lib.formatter.debug("running {}".format(detection))
             try:
                 if status is not None or headers is not None or html is not None:
                     if detection.detect(str(html), status=status, headers=headers) is True:
@@ -551,7 +552,11 @@ def detection_main(url, payloads, cursor, **kwargs):
                             return lib.firewall_found.request_firewall_issue_creation(path)
                         else:
                             detected_protections.add(detection.__product__)
-            except Exception:
+            except Exception as e:
+                if verbose:
+                    lib.formatter.warn("caught exception type: '{}' running module: {}".format(
+                        e.__class__, detection
+                    ))
                 pass
     if len(detected_protections) > 0:
         if lib.settings.UNKNOWN_FIREWALL_NAME not in detected_protections:
