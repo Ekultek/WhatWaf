@@ -510,13 +510,15 @@ def detection_main(url, payloads, cursor, **kwargs):
         try:
             for resp in responses:
                 headers = resp[-1]
-            for k in headers.keys():
-                if k.lower() == "server":
-                    found = headers[k]
-                    break
+            found = headers.get(lib.settings.HTTP_HEADER.SERVER, None)
+            if found is None:
+                for k in headers.keys():
+                    if "server" in k.lower():
+                        found = headers[k]
+                        break
         except Exception:
             found = None
-        if found is None and not str(found).isspace() or found != "":
+        if found is None or str(found).isspace() or str(found) == "":
             lib.formatter.warn("unable to determine web server")
         else:
             lib.formatter.success("web server determined as: {}".format(found))
