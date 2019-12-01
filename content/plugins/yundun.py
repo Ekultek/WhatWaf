@@ -12,7 +12,8 @@ def detect(content, **kwargs):
     detection_schema = (
         re.compile(r"YUNDUN", re.I),
         re.compile(r"^yd.cookie=(\w+)?", re.I),
-        re.compile(r"http(s)?.//(www)?.(\w+)?(.)?yundun(.com)?", re.I)
+        re.compile(r"http(s)?.//(www)?.(\w+)?(.)?yundun(.com)?", re.I),
+        re.compile("<title>.403.forbidden:.access.is.denied(.)?.<.(.)?title>", re.I)
     )
     if headers is not None:
         for detection in detection_schema:
