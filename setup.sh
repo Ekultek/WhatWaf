@@ -30,7 +30,7 @@ function install {
   mkdir $home/.install
   mkdir $exec_dir;
   mkdir $copy_dir;
-  chmod +x ./whatwaf.py
+  chmod +x ./trigger.py
   echo "copying files over..";
   rsync -drq . $copy_dir
   echo "creating executable";
@@ -51,11 +51,14 @@ EOF
 }
 
 function uninstall {
-  rm -rf ~/.whatwaf
+  rm -rf ~/.trigger
   echo "home directory removed, manually remove the export PATH pertaining to $HOME/.whatwaf/bin"
 }
 
 function main {
+  echo "deprecated in favor of setup.py (USAGE: python setup.py install) this script will be removed by version 3.0";
+  echo "to continue with this type of installation press enter, otherwise CNTRL-C";
+  read;
   banner;
   if [[ "$1" == "install" ]]; then
     echo -e " Installing:";

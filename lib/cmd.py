@@ -47,8 +47,8 @@ class WhatWafParser(ArgumentParser):
 
     @staticmethod
     def cmd_parser():
-        parser = ArgumentParser(prog="whatwaf.py", add_help=True, usage=(
-            "./whatwaf.py -[u|l|b|g] VALUE|PATH|PATH|PATH [-p|--pl] PAYLOAD,..|PATH [--args]"
+        parser = ArgumentParser(prog="whatwaf", add_help=True, usage=(
+            "./whatwaf -[u|l|b|g] VALUE|PATH|PATH|PATH [-p|--pl] PAYLOAD,..|PATH [--args]"
         ))
 
         mandatory = parser.add_argument_group("mandatory arguments",

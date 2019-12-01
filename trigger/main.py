@@ -58,7 +58,7 @@ def main():
     if not len(sys.argv) > 1:
         error("you failed to provide an option, redirecting to help menu")
         time.sleep(2)
-        cmd = "python whatwaf.py --help"
+        cmd = "whatwaf --help"
         subprocess.call(shlex.split(cmd))
         exit(0)
 
@@ -97,7 +97,7 @@ def main():
             warn(
                 "there appears to be no payloads stored in the database, to create payloads use the following options:"
             )
-            proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
+            proc = subprocess.check_output(["python", "whatwaf", "--help"])
             parsed_help = parse_help_menu(str(proc), "encoding options:", "output options:")
             print(parsed_help)
         exit(1)
@@ -116,7 +116,7 @@ def main():
             warn(
                 "there appears to be no payloads stored in the database, to create payloads use the following options:"
             )
-            proc = subprocess.check_output(["python", "whatwaf.py", "--help"])
+            proc = subprocess.check_output(["python", "whatwaf", "--help"])
             parsed_help = parse_help_menu(proc, "encoding options:", "output options:")
             print(parsed_help)
         exit(0)

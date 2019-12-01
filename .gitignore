@@ -9,3 +9,6 @@ traffic*.txt
 firewalls/*
 test-*.json
 test_env.sh
+whatwaf.egg-info/*
+build/*
+dist/*
