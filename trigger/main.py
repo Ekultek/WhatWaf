@@ -184,9 +184,13 @@ def main():
     if not opt.hideBanner:
         if opt.iAmTeapot:
             import base64
-            from lib.settings import CUR_DIR
-            with open("{}/content/files/teapot".format(CUR_DIR)) as data:
-                print("\n" + base64.b64decode(data.read()) + "\n")
+            from lib.settings import CUR_DIR, HOME
+            try:
+                with open("{}/content/files/teapot.txt".format(CUR_DIR)) as data:
+                    print("\n" + base64.b64decode(data.read()) + "\n")
+            except:
+                with open("{}/files/teapot.txt".format(HOME)) as data:
+                    print("\n" + base64.b64decode(data.read()) + "\n")
         else:
             print(
                 BANNER.format(

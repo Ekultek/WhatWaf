@@ -16,7 +16,7 @@ def tamper(payload, **kwargs):
     decoys = (
         "<decoy>", "<lillypopper>",
         "<whatwaf>", "<xanxss>",
-        "<teapot>", "<svg>"
+        "<teapot.txt>", "<svg>"
     )
     retval += random.choice(decoys)
     for char in payload:

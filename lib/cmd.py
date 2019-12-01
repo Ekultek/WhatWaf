@@ -207,7 +207,7 @@ class WhatWafParser(ArgumentParser):
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
-        hidden.add_argument("--i-am-teapot", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
+        hidden.add_argument("--i-am-teapot.txt", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
 
         opts = parser.parse_args()
 
