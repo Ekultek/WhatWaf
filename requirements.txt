@@ -1,2 +1,2 @@
-beautifulsoup4==4.6.3
-requests==2.21.0
+beautifulsoup4 >= 4.6.3
+requests
