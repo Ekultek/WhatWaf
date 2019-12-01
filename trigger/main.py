@@ -15,7 +15,6 @@ from lib.settings import (
     get_page,
     WAF_REQUEST_DETECTION_PAYLOADS,
     BANNER,
-    HOME,
     InvalidURLProvided,
     parse_burp_request,
     parse_googler_file,
@@ -66,6 +65,7 @@ def main():
     # we'll give you an option to clean it free of charge
     if opt.cleanHomeFolder:
         import shutil
+        from lib.settings import HOME
 
         try:
             warn(
