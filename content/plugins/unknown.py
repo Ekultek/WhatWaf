@@ -30,7 +30,7 @@ def detect(content, **kwargs):
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
-            discorvered += 1
+            discovered += 1
         for head in headers.keys():
             if detection.search(headers[head]) is not None:
                 discovered += 1
