@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.8.1"
+VERSION = "1.9"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -72,17 +72,25 @@ URL_QUERY_REGEX = re.compile(r"(.*)[?|#](.*){1}\=(.*)")
 # current working directory
 CUR_DIR = os.getcwd()
 
+# path to our home directory
+HOME = "{}/.whatwaf".format(os.path.expanduser("~"))
+
 # plugins (waf scripts) path
-PLUGINS_DIRECTORY = "{}/content/plugins".format(CUR_DIR)
+try:
+    PLUGINS_DIRECTORY = "{}/content/plugins".format(CUR_DIR)
+    os.listdir(PLUGINS_DIRECTORY)
+except OSError:
+    PLUGINS_DIRECTORY = "{}/plugins".format(HOME)
 
 # tampers (tamper scripts) path
-TAMPERS_DIRECTORY = "{}/content/tampers".format(CUR_DIR)
+try:
+    TAMPERS_DIRECTORY = "{}/content/tampers".format(CUR_DIR)
+    os.listdir(TAMPERS_DIRECTORY)
+except OSError:
+    TAMPERS_DIRECTORY = "{}/tampers".format(HOME)
 
 # name provided to unknown firewalls
 UNKNOWN_FIREWALL_NAME = "Unknown Firewall"
-
-# path to our home directory
-HOME = "{}/.whatwaf".format(os.path.expanduser("~"))
 
 # fingerprint path for unknown firewalls
 UNKNOWN_PROTECTION_FINGERPRINT_PATH = "{}/fingerprints".format(HOME)
@@ -100,10 +108,17 @@ CSV_FILE_PATH = "{}/csv_output".format(HOME)
 UNPROCESSED_ISSUES_PATH = "{}/unprocessed_issues".format(HOME)
 
 # request token path
-TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+try:
+    TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+except IOError:
+    TOKEN_PATH = "{}/files/auth.key".format(HOME)
 
 # known POST strings (I'll probably think of more later)
-POST_STRING_NAMES_PATH = "{}/content/files/post_strings.lst".format(CUR_DIR)
+try:
+    POST_STRING_NAMES_PATH = "{}/content/files/post_strings.lst".format(CUR_DIR)
+    open(POST_STRING_NAMES_PATH).close()
+except IOError:
+    POST_STRING_NAMES_PATH = "{}/files/post_strings.lst".format(HOME)
 
 # path to the database file
 DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
@@ -112,7 +127,11 @@ DATABASE_FILENAME = "{}/whatwaf.sqlite".format(HOME)
 EXPORTED_PAYLOADS_PATH = "{}/payload_exports".format(HOME)
 
 # default payloads path
-DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
+try:
+    DEFAULT_PAYLOAD_PATH = "{}/content/files/default_payloads.lst".format(CUR_DIR)
+    open(DEFAULT_PAYLOAD_PATH).close()
+except IOError:
+    DEFAULT_PAYLOAD_PATH = "{}/files/default_payloads.lst".format(HOME)
 
 # default user-agent
 DEFAULT_USER_AGENT = "whatwaf/{} (Language={}; Platform={})".format(
@@ -280,12 +299,12 @@ def get_page(url, **kwargs):
             raise e.__class__(e.message)
 
 
-def get_random_agent(path="{}/content/files/user_agents.txt"):
+def get_random_agent(path="{}/files/user_agents.txt"):
     """
     grab a random user-agent from the file to pass as
     the HTTP User-Agent header
     """
-    with open(path.format(CUR_DIR)) as agents:
+    with open(path.format(HOME)) as agents:
         items = [agent.strip() for agent in agents.readlines()]
         return random.choice(items)
 

@@ -2,6 +2,7 @@ import os
 import sqlite3
 
 import lib.settings
+import lib.formatter
 
 
 def initialize():

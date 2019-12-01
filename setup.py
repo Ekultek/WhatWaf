@@ -1,3 +1,6 @@
+import os
+import getpass
+import subprocess
 from setuptools import setup, find_packages
 
 from lib.settings import VERSION
@@ -6,6 +9,19 @@ from lib.firewall_found import request_issue_creation
 
 
 try:
+    raw_input
+except:
+    raw_input = input
+
+
+needs_username_fix = os.getuid() == 0
+
+try:
+    if needs_username_fix:
+        username = raw_input("what is your username (needed for directory fixes): ")
+    else:
+        username = getpass.getuser()
+    subprocess.call(["bash", "install_helper.sh"])
     setup(
         name='whatwaf',
         version=VERSION,
@@ -18,6 +34,9 @@ try:
         scripts=["whatwaf"],
         install_requires=open("requirements.txt").read().split("\n")
     )
+    if needs_username_fix:
+        subprocess.call(["chown", "-R", "{u}:{u}".format(u=username),
+                         "/home/{}/.whatwaf".format(os.path.expanduser(username))])
 except Exception as e:
     import sys, traceback
 
