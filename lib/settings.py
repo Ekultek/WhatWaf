@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.9.2"
+VERSION = "1.9.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -110,6 +110,7 @@ UNPROCESSED_ISSUES_PATH = "{}/unprocessed_issues".format(HOME)
 # request token path
 try:
     TOKEN_PATH = "{}/content/files/auth.key".format(CUR_DIR)
+    open(TOKEN_PATH).close()
 except IOError:
     TOKEN_PATH = "{}/files/auth.key".format(HOME)
 
