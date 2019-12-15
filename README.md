@@ -1,6 +1,6 @@
 <!--[![alt text][1.1]][1] [![alt text][6.1]][6]-->
 
-[1]: https://twitter.com/stay__salty
+[1]: https://twitter.com/unethicalsalt
 [1.1]: http://i.imgur.com/tXSoThF.png
 
 [6]: http://www.github.com/ekultek

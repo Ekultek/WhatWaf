@@ -35,8 +35,12 @@ try:
         install_requires=open("requirements.txt").read().split("\n")
     )
     if needs_username_fix:
-        subprocess.call(["chown", "-R", "{u}:{u}".format(u=username),
-                         "/home/{}/.whatwaf".format(os.path.expanduser(username))])
+        if "root" == username:
+            # fixes weird docker issues
+            path = "/root/.whatwaf"
+        else:
+            path = "/home/{}/.whatwaf".format(os.path.expanduser(username))
+        subprocess.call(["chown", "-R", "{u}:{u}".format(u=username), path])
 except Exception as e:
     import sys, traceback
 
