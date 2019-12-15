@@ -55,6 +55,14 @@ pip install -r requirements.txt
 EOF
 ```
 
+You can also install whatwaf using Docker with the following:
+```
+git clone https://github.com/ekultek/whatwaf
+cd whatwaf
+sudo docker build -t whatwaf .
+sudo docker run -it whatwaf whatwaf --help
+```
+
 # Proof of concept
 
 First we'll run the website through WhatWaf and figure out which firewall protects it (if any):
