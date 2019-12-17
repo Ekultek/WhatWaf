@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.9.4"
+VERSION = "1.9.5"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
