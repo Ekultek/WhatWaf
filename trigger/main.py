@@ -29,7 +29,8 @@ from lib.settings import (
     RESULTS_TEMPLATE,
     display_cached,
     make_saying_pretty,
-    SAYING
+    SAYING,
+    validate_url
 )
 from lib.formatter import (
     error,
@@ -331,6 +332,8 @@ def main():
             request_type = "GET"
 
         if opt.runSingleWebsite:
+            if validate_url(opt.runSingleWebsite) is None:
+                raise InvalidURLProvided()
             url_to_use = auto_assign(opt.runSingleWebsite, ssl=opt.forceSSL)
             if opt.checkCachedUrls:
                 checked_results = check_url_against_cached(url_to_use, cursor)
@@ -390,24 +393,27 @@ def main():
                 site_runners = []
                 with open(opt.runMultipleWebsites) as urls:
                     for url in urls:
-                        possible_url = auto_assign(url.strip(), ssl=opt.forceSSL)
-                        if opt.checkCachedUrls:
-                            url_is_cached = check_url_against_cached(possible_url, cursor)
-                            if url_is_cached is not None:
-                                print(
-                                    RESULTS_TEMPLATE.format(
-                                        "-" * 20,
-                                        str(url_is_cached[1]),
-                                        str(url_is_cached[2]),
-                                        str(url_is_cached[3]),
-                                        str(url_is_cached[4]),
-                                        "-" * 20
+                        if validate_url(url.strip()) is not None:
+                            possible_url = auto_assign(url.strip(), ssl=opt.forceSSL)
+                            if opt.checkCachedUrls:
+                                url_is_cached = check_url_against_cached(possible_url, cursor)
+                                if url_is_cached is not None:
+                                    print(
+                                        RESULTS_TEMPLATE.format(
+                                            "-" * 20,
+                                            str(url_is_cached[1]),
+                                            str(url_is_cached[2]),
+                                            str(url_is_cached[3]),
+                                            str(url_is_cached[4]),
+                                            "-" * 20
+                                        )
                                     )
-                                )
+                                else:
+                                    site_runners.append(possible_url)
                             else:
                                 site_runners.append(possible_url)
                         else:
-                            site_runners.append(possible_url)
+                            warn("URL: '{}' is unable to be validated, skipping".format(url.strip()))
             elif opt.burpRequestFile is not None:
                 site_runners = parse_burp_request(opt.burpRequestFile)
             else:
