@@ -9,7 +9,7 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
 
     detection_schema = (
-        re.compile("instartrequestid", re.I),
+        re.compile(r"instartrequestid", re.I),
     )
 
     if headers.get("X-Instart-Request-ID", "") != "":

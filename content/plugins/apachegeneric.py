@@ -11,10 +11,10 @@ def detect(content, **kwargs):
     status = kwargs.get("status", 0)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile("apache", re.I),
-        re.compile("you.don.t.have.permission.to.access.", re.I),
-        re.compile("was.not.found.on.this.server", re.I),
-        re.compile("<address>apache/([\d+{1,2}](.[\d+]{1,2}(.[\d+]{1,3})?)?)?", re.I)
+        re.compile(r"apache", re.I),
+        re.compile(r"you.don.t.have.permission.to.access.", re.I),
+        re.compile(r"was.not.found.on.this.server", re.I),
+        re.compile(r"<address>apache/([\d+{1,2}](.[\d+]{1,2}(.[\d+]{1,3})?)?)?", re.I)
     )
     if status == 403:
         if detection_schema[0].search(headers.get(HTTP_HEADER.SERVER, "")) is not None:

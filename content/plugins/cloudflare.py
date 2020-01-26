@@ -16,7 +16,7 @@ def detect(content, **kwargs):
         re.compile(r"cf[-|_]ray(..)?([0-9a-f]{16})?[-|_]?(dfw|iad)?", re.I),
         re.compile(r"<title>attention.required.(...)?cloudflare</title>", re.I),
         re.compile(r"http(s)?.//report.(uri.)?cloudflare.com(/cdn.cgi(.beacon/expect.ct)?)?", re.I),
-        re.compile("ray.id", re.I)
+        re.compile(r"ray.id", re.I)
     )
     server = headers.get(HTTP_HEADER.SERVER, "")
     cookie = headers.get(HTTP_HEADER.COOKIE, "")
@@ -25,6 +25,8 @@ def detect(content, **kwargs):
     if cf_ray != "":
         return True
     expect_ct = headers.get(HTTP_HEADER.EXPECT_CT, "")
+    if "__cfuid" in set_cookie or "cloudflare" in expect_ct:
+        return True
     for detection in detection_schemas:
         if detection.search(content) is not None:
             return True
@@ -36,5 +38,4 @@ def detect(content, **kwargs):
             return True
         if detection.search(expect_ct) is not None:
             return True
-    if "__cfuid" in set_cookie or "cloudflare" in expect_ct:
-        return True
+

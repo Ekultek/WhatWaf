@@ -9,7 +9,7 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
 
     detection_schema = (
-        re.compile("aesecure.denied.png", re.I),
+        re.compile(r"aesecure.denied.png", re.I),
     )
     header_check = (
         headers.get("aeSecure-code", ""),

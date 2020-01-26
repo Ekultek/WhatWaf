@@ -15,7 +15,7 @@ def detect(content, **kwargs):
         re.compile(r"\bDell\b", re.I),
         re.compile(r"Web.Site.Blocked.+\bnsa.banner", re.I),
         re.compile(r"SonicWALL", re.I),
-        re.compile(r"<.+>policy.this.site.is.blocked<.+.>", re.I)
+        re.compile(r".>policy.this.site.is.blocked<.", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:

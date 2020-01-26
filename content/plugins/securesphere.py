@@ -8,13 +8,13 @@ def detect(content, **kwargs):
     content = str(content)
     detected = 0
     detection_schema = (
-        re.compile("<h2>error<.h2>"),
-        re.compile("<title>error<.title>", re.I),
-        re.compile("<b>error<.b>", re.I),
-        re.compile('<td.class="(errormessage|error)".height="[0-9]{1,3}".width="[0-9]{1,3}">', re.I),
-        re.compile("the.incident.id.(is|number.is).", re.I),
-        re.compile("page.cannot.be.displayed", re.I),
-        re.compile("contact.support.for.additional.information", re.I)
+        re.compile(r"<h2>error<.h2>"),
+        re.compile(r"<title>error<.title>", re.I),
+        re.compile(r"<b>error<.b>", re.I),
+        re.compile(r'<td.class="(errormessage|error)".height="[0-9]{1,3}".width="[0-9]{1,3}">', re.I),
+        re.compile(r"the.incident.id.(is|number.is).", re.I),
+        re.compile(r"page.cannot.be.displayed", re.I),
+        re.compile(r"contact.support.for.additional.information", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:

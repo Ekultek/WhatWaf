@@ -10,9 +10,9 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
     if headers is not None:
         detection_schema = (
-            re.compile("(\()?apachetrafficserver((\/)?\d+(.\d+(.\d+)?)?)", re.I),
-            re.compile("ats((\/)?(\d+(.\d+(.\d+)?)?))?", re.I),
-            re.compile("ats", re.I)
+            re.compile(r"(\()?apachetrafficserver((\/)?\d+(.\d+(.\d+)?)?)", re.I),
+            re.compile(r"ats((\/)?(\d+(.\d+(.\d+)?)?))?", re.I),
+            re.compile(r"ats", re.I)
         )
         via = headers.get(HTTP_HEADER.VIA, "")
         server = headers.get(HTTP_HEADER.SERVER, "")
