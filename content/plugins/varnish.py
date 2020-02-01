@@ -15,10 +15,13 @@ def detect(content, **kwargs):
         re.compile(r"varnish"), re.I,
         re.compile(r"\d+"),
         re.compile(r".>.?security.by.cachewall.?<.", re.I),
-        re.compile(r"cachewall", re.I)
+        re.compile(r"cachewall", re.I),
+        re.compile(r".>access.is.blocked.according.to.our.site.security.policy.<+", re.I)
     )
     try:
         possible_headers = ("X-Varnish", "X-Cachewall-Action", "X-Cachewall-Reason")
+        if headers.get(HTTP_HEADER.SERVER, "") == "Varnish":
+            return True
         if any([h in k for k in headers.keys() for h in possible_headers]):
             return True
 
