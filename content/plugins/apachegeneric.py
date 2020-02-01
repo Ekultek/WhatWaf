@@ -14,7 +14,8 @@ def detect(content, **kwargs):
         re.compile(r"apache", re.I),
         re.compile(r"you.don.t.have.permission.to.access.", re.I),
         re.compile(r"was.not.found.on.this.server", re.I),
-        re.compile(r"<address>apache/([\d+{1,2}](.[\d+]{1,2}(.[\d+]{1,3})?)?)?", re.I)
+        re.compile(r"<address>apache/([\d+{1,2}](.[\d+]{1,2}(.[\d+]{1,3})?)?)?", re.I),
+        re.compile(r"<title>403 Forbidden</title>", re.I)
     )
     if status == 403:
         if detection_schema[0].search(headers.get(HTTP_HEADER.SERVER, "")) is not None:
