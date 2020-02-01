@@ -16,7 +16,7 @@ def detect(content, **kwargs):
         re.compile(r"request.could.not.be.understood", re.I),
         re.compile(r"potentially.dangerous.request", re.I),
         re.compile(r"runtime.error", re.I),
-        re.compile(r"a.potentially.dangerous.request.path.value.was.detected.from.the.client", re.I),
+        re.compile(r".>a.potentially.dangerous.request.path.value.was.detected.from.the.client+", re.I),
         re.compile(r"asp.net.sessionid", re.I),
         re.compile(r"errordocument.to.handle.the.request", re.I),
         re.compile(r"an.application.error.occurred.on.the.server", re.I),
