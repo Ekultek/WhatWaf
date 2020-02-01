@@ -12,7 +12,7 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"apache", re.I),
-        re.compile(r"you.don.t.have.permission.to.access.", re.I),
+        re.compile(r".>you.don.t.have.permission.to.access+", re.I),
         re.compile(r"was.not.found.on.this.server", re.I),
         re.compile(r"<address>apache/([\d+{1,2}](.[\d+]{1,2}(.[\d+]{1,3})?)?)?", re.I),
         re.compile(r"<title>403 Forbidden</title>", re.I)
