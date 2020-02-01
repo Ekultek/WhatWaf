@@ -15,7 +15,7 @@ def detect(content, **kwargs):
         re.compile(r"\baws(alb)?.", re.I),
         re.compile(r"x.amz.id.\d+", re.I),
         re.compile(r"x.amz.request.id", re.I),
-        re.compile(r"amazon.\d+", re.I)
+        re.compile(r"amazon(aws.com)?(\d+)?", re.I),
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
