@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.9.7"
+VERSION = "1.9.8"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -271,7 +271,7 @@ def get_page(url, **kwargs):
         req = requests.get
 
     if provided_headers is None:
-        headers = {"Connection": "close", "User-Agent": agent}
+        headers = {"Connection": "close", "User-Agent": agent, "Accept": "*"}
     else:
         headers = {}
         if type(provided_headers) == dict:
