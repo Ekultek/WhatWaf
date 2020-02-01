@@ -14,7 +14,7 @@ def detect(content, **kwargs):
         re.compile(r"cloudflare.nginx", re.I),
         re.compile(r"..cfduid=([a-z0-9]{43})?", re.I),
         re.compile(r"cf[-|_]ray(..)?([0-9a-f]{16})?[-|_]?(dfw|iad)?", re.I),
-        re.compile(r"<title>attention.required.(...)?cloudflare</title>", re.I),
+        re.compile(r".>attention.required!.\|.cloudflare<.+", re.I),
         re.compile(r"http(s)?.//report.(uri.)?cloudflare.com(/cdn.cgi(.beacon/expect.ct)?)?", re.I),
         re.compile(r"ray.id", re.I)
     )
