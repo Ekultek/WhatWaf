@@ -12,8 +12,9 @@ def detect(content, **kwargs):
     detection_schema = (
         re.compile(r".wzws.waf.cgi.", re.I),
         re.compile(r"wangzhan\.360\.cn", re.I),
-        re.compile(r"qianxin.waf", re.I), re.compile(r"360wzws"),
-        re.compile("transfer.is.blocked", re.I)
+        re.compile(r"qianxin.waf", re.I),
+        re.compile(r"360wzws"),
+        re.compile(r"transfer.is.blocked", re.I)
     )
     for detection in detection_schema:
         if status == 493:

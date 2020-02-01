@@ -10,8 +10,9 @@ def detect(content, **kwargs):
     detection_schema = (
         re.compile(r"dotdefender.blocked.your.request", re.I),
     )
+
+    if headers.get("X-dotDefender-denied", "") == "1":
+        return True
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
-    if headers.get("X-dotDefender-denied", "") == "1":
-        return True

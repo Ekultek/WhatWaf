@@ -10,8 +10,8 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile("webseal.error.message.template", re.I),
-        re.compile("webseal.server.received.an.invalid.http.request", re.I)
+        re.compile(r"webseal.error.message.template", re.I),
+        re.compile(r"webseal.server.received.an.invalid.http.request", re.I)
     )
     if headers.get(HTTP_HEADER.SERVER, "") == "WebSEAL":
         return True

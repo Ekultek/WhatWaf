@@ -14,6 +14,8 @@ def detect(content, **kwargs):
         re.compile(r"Access control configuration prevents", re.I),
         re.compile(r"X.Squid.Error", re.I),
     )
+    if headers.get("eventsquid-id", None) is not None:
+        return True
     for detection in detection_schema:
         if detection.search(content) is not None:
             return True
@@ -21,5 +23,3 @@ def detect(content, **kwargs):
             return True
         if detection.search(str(headers)) is not None:
             return True
-    if headers.get("eventsquid-id", None) is not None:
-        return True

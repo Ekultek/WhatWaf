@@ -13,8 +13,8 @@ def detect(content, **kwargs):
         re.compile(r"bigipserver(.i)?|bigipserverinternal", re.I),
         re.compile(r"\AF5\Z", re.I),
         re.compile(r"^TS[a-zA-Z0-9]{3,8}=", re.I),
-        re.compile("BigIP|BIG-IP|BIGIP"),
-        re.compile("bigipserver", re.I),
+        re.compile(r"BigIP|BIG-IP|BIGIP"),
+        re.compile(r"bigipserver", re.I),
     )
     for detection in detection_schema:
         if detection.search(headers.get(HTTP_HEADER.SERVER, "")) is not None:

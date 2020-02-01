@@ -8,9 +8,9 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile(r"sorry(.)?.your.access.has.been.intercept(ed)?.by.anyu", re.I),
+        re.compile(r"sorry.{1,2}your.access.has.been.intercept(ed)?.by.anyu", re.I),
         re.compile(r"anyu", re.I),
-        re.compile(r"anyu(-)?.the.green.channel", re.I)
+        re.compile(r"anyu-?.the.green.channel", re.I)
     )
     try:
         event_id = headers["WZWS-RAY"] if headers is not None else None

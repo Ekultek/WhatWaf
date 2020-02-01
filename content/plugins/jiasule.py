@@ -10,10 +10,10 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile("^jsl(_)?tracking", re.I),
-        re.compile("(__)?jsluid(=)?", re.I),
-        re.compile("notice.jiasule", re.I),
-        re.compile("(static|www|dynamic).jiasule.(com|net)", re.I)
+        re.compile(r"^jsl(_)?tracking", re.I),
+        re.compile(r"(__)?jsluid(=)?", re.I),
+        re.compile(r"notice.jiasule", re.I),
+        re.compile(r"(static|www|dynamic).jiasule.(com|net)", re.I)
     )
     for detection in detection_schema:
         if headers is not None:

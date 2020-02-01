@@ -14,11 +14,11 @@ def detect(content, **kwargs):
         re.compile(r"questions\?.+cloudproxy@sucuri\.net", re.I),
         re.compile(r"http(s)?.\/\/(cdn|supportx.)?sucuri(.net|com)?", re.I)
     )
-    for detection in detection_schema:
-        if detection.search(content) is not None:
-            return True
     if headers is not None:
         if headers.get("X-Sucuri-Block", "") != "":
             return True
         if headers.get(HTTP_HEADER.SERVER, "") == "Sucuri/Cloudproxy":
+            return True
+    for detection in detection_schema:
+        if detection.search(content) is not None:
             return True

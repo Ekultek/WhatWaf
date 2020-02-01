@@ -10,8 +10,8 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
     content = str(content)
     detection_schema = (
-        re.compile("zscaler(.\d+(.\d+)?)?", re.I),
-        re.compile("zscaler", re.I)
+        re.compile(r"zscaler(.\d+(.\d+)?)?", re.I),
+        re.compile(r"zscaler", re.I)
     )
     for detection in detection_schema:
         if headers is not None:

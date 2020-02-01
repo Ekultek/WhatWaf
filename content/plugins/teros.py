@@ -7,7 +7,7 @@ __product__ = "Teros Web Application Firewall (Citrix)"
 def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile(r"st8(id|.wa|.wf)?(.)?(\d+|\w+)?", re.I),
+        re.compile(r"st8(id|.wa|.wf)?.?(\d+|\w+)?", re.I),
     )
     if headers is not None:
         for detection in detection_schema:

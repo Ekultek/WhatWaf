@@ -10,8 +10,10 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile(r"greywizard(.\d.\d(.\d)?)?", re.I), re.compile(r"grey.wizard.block", re.I),
-        re.compile(r"(http(s)?.//)?(\w+.)?greywizard.com", re.I), re.compile(r"grey.wizard")
+        re.compile(r"greywizard(.\d.\d(.\d)?)?", re.I),
+        re.compile(r"grey.wizard.block", re.I),
+        re.compile(r"(http(s)?.//)?(\w+.)?greywizard.com", re.I),
+        re.compile(r"grey.wizard")
     )
     gw_server = headers.get(HTTP_HEADER.GW_SERVER, "")
     server = headers.get(HTTP_HEADER.SERVER, "")

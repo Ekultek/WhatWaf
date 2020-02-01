@@ -12,17 +12,16 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
 
     detection_schema = (
-        re.compile("this.generic.403.error.means.that.the.authenticated", re.I),
-        re.compile("request.could.not.be.understood", re.I),
-        re.compile("potentially.dangerous.request", re.I),
-        re.compile("runtime.error", re.I),
-        re.compile("asp.net(.+)?", re.I),
-        re.compile("a.potentially.dangerous.request.path.value.was.detected.from.the.client", re.I),
-        re.compile("asp.net.sessionid", re.I),
+        re.compile(r"this.generic.403.error.means.that.the.authenticated", re.I),
+        re.compile(r"request.could.not.be.understood", re.I),
+        re.compile(r"potentially.dangerous.request", re.I),
+        re.compile(r"runtime.error", re.I),
+        re.compile(r"a.potentially.dangerous.request.path.value.was.detected.from.the.client", re.I),
+        re.compile(r"asp.net.sessionid", re.I),
         re.compile(r"errordocument.to.handle.the.request", re.I),
-        re.compile("an.application.error.occurred.on.the.server", re.I),
-        re.compile("error.log.record.number", re.I),
-        re.compile("error.page.might.contain.sensitive.information", re.I)
+        re.compile(r"an.application.error.occurred.on.the.server", re.I),
+        re.compile(r"error.log.record.number", re.I),
+        re.compile(r"error.page.might.contain.sensitive.information", re.I)
     )
     x_powered_by = headers.get(HTTP_HEADER.X_POWERED_BY, "")
     asp_header = headers.get("X-ASPNET-Version", "")

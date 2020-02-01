@@ -10,8 +10,8 @@ def detect(content, **kwargs):
     content = str(content)
     headers = kwargs.get("headers", {})
     detection_schema = (
-        re.compile("(request.denied.by.)?watchguard.firewall", re.I),
-        re.compile("watchguard(.technologies(.inc)?)?", re.I),
+        re.compile(r"(request.denied.by.)?watchguard.firewall", re.I),
+        re.compile(r"watchguard(.technologies(.inc)?)?", re.I),
     )
     server = headers.get(HTTP_HEADER.SERVER, "")
     if "watchguard" in server.lower():
