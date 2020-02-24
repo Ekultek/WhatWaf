@@ -190,7 +190,7 @@ content.tampers.urlencodeall              |  encoding all characters in the payl
 # Basic Help Menu
 
 ```
-usage: ./whatwaf.py -[u|l|b|g] VALUE|PATH|PATH|PATH [-p|--pl] PAYLOAD,..|PATH [--args]
+usage: ./whatwaf -[u|l|b|g] VALUE|PATH|PATH|PATH [-p|--pl] PAYLOAD,..|PATH [--args]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -215,7 +215,7 @@ request arguments:
   --pa USER-AGENT       Provide your own personal agent to use it for the HTTP
                         requests
   --ra                  Use a random user-agent for the HTTP requests
-                        (*default=whatwaf/1.6.2 (Language=2.7.16;
+                        (*default=whatwaf/2.0 (Language=2.7.10;
                         Platform=Darwin))
   -H HEADER=VALUE,HEADER:VALUE.., --headers HEADER=VALUE,HEADER:VALUE..
                         Add your own custom headers to the request. To use
@@ -315,4 +315,7 @@ misc arguments:
                         detected by WhatWaf
   --tampers             Output a list of tamper script load paths with their
                         description
+  -M, --mine            Pass this flag to mine XMR for you and the whatwaf
+                        development team
+
 ```
