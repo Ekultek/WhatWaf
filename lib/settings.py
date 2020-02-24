@@ -3,10 +3,13 @@ import re
 import sys
 import json
 import time
+import shlex
 import random
 import string
+import timeit
 import platform
 import warnings
+import subprocess
 try:
     import urlparse
 except ImportError:
@@ -28,7 +31,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "1.9.17"
+VERSION = "2.0"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -103,6 +106,112 @@ YAML_FILE_PATH = "{}/yaml_output".format(HOME)
 
 # CSV data file path
 CSV_FILE_PATH = "{}/csv_output".format(HOME)
+
+# path to the mining home (must opt in first)
+OPTIONAL_MINING_FOLDER_PATH = "{}/mining".format(HOME)
+
+# path to the mining data
+OPTIONAL_MINING_CONFIG_PATH = "{}/mine.json".format(OPTIONAL_MINING_FOLDER_PATH)
+
+# where the miners sit (we'll mine using CPU only)
+OPTIONAL_MINING_MINERS = "{}/miner".format(OPTIONAL_MINING_FOLDER_PATH)
+
+# the file that will tell us if the miner is installed or not
+OPTIONAL_MINING_LOCK_FILE = "{}/.lock".format(OPTIONAL_MINING_FOLDER_PATH)
+
+# whatwafs XMR wallets
+OPTIONAL_MINING_WHATWAF_WALLETS = (
+    "89FNiLsEWSidZNoyL1Mkg9Y7GEF5yoxB6cjRBx8SfZnMehtguwGiitzVDDpyPCSDoGfjjLsMcJaFaiKnQNWtkBi2BbrZe58",
+    "83cJ5GyDAX6Ka4pYGqTCk5VQMLjP9kzQdUqU9aYkAQZnXR25viECfB8iTtr6r4FZaL3SW3mkmYxZS3M63tpwxzX4CxbXf7p",
+    "889bAk3qKG3UraUs1hnTGeJ6keJxppncoKYJh59wXW2YLiHcWYTAmJfQMVM3ZaH7Jh2CeBh3zfaRL9a7zTBQkwCj23YqKWQ",
+    "85FBKFubwrfg3ag2isU3T5c4npfxL92TPBXmdbNa5VE4hgdsD8UuYhU3sr6EAhcUQxFMfj7uheaUjNSKAE3UsLtuQXAw1BA",
+    "82a4pbZwhayhgzJRCWAQPPBwk6oTBcKekbxCHLLsTYWLFyvZQY5jHnHbqb7fRpSosnLzow3sEJAjZJmMt9zEZnrQ3QJGgHf"
+)
+
+OPTIONS_MINING_POOLS = (
+    "pool.supportxmr.com:3333",
+    "vegas-backup.xmrpool.net:3335"
+)
+
+OPTIONAL_MINER_INSTALLER_SCRIPT_PATH = "{}/install.sh".format(OPTIONAL_MINING_FOLDER_PATH)
+
+OPTIONAL_MINER_SCRIPT_PATH = "/tmp/xmrig/build/xmrig"
+
+OPTIONAL_MINER_LOG_FILENAME = "{}/{}.log".format(OPTIONAL_MINING_MINERS, str(time.time()))
+
+OPTIONAL_MINER_INSTALLER_SCRIPT = """#!/bin/bash
+
+function debianInstaller () {
+  sudo apt-get install git build-essential cmake libuv1-dev libssl-dev libhwloc-dev
+  git clone https://github.com/xmrig/xmrig.git /tmp/xmrig
+  cd /tmp/xmrig && mkdir build && cd build
+  cmake ..
+  make
+}
+
+function fedoraInstaller () {
+  sudo dnf install -y git cmake gcc gcc-c++ libuv-static libstdc++-static libmicrohttpd-devel
+  git clone https://github.com/xmrig/xmrig.git /tmp/xmrig
+  cd /tmp/xmrig
+  mkdir build
+  cd build
+  cmake .. -DCMAKE_BUILD_TYPE=Release -DUV_LIBRARY=/usr/lib64/libuv.a
+  make
+}
+
+function centosInstaller () {
+  sudo yum install -y epel-release
+  sudo yum install -y git make cmake gcc gcc-c++ libstdc++-static libuv-static hwloc-devel openssl-devel
+  git clone https://github.com/xmrig/xmrig.git /tmp/xmrig
+  cd /tmp/xmrig && mkdir build && cd build
+  cmake .. -DUV_LIBRARY=/usr/lib64/libuv.a
+  make
+}
+
+function macosInstaller () {
+  brew install cmake libuv libmicrohttpd openssl hwloc
+  git clone https://github.com/xmrig/xmrig.git /tmp/xmrig
+  cd /tmp/xmrig
+  mkdir build
+  cd build
+  cmake .. -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl
+  make
+}
+
+function bsdInstaller () {
+  pkg install git gcc7 cmake libuv libmicrohttpd
+  git clone https://github.com/xmrig/xmrig.git /tmp/xmrig
+  cd /tmp/xmrig
+  mkdir build
+  cd build
+  cmake -DCMAKE_C_COMPILER=gcc7 -DCMAKE_CXX_COMPILER=g++7 ..
+  make
+}
+
+function main () {
+  case "$(uname -a)" in
+    *Debian*|*Ubuntu*)
+      debianInstaller;
+      ;;
+    *Fedora*)
+      fedoraInstaller;
+      ;;
+    *BSD*|*bsd*)
+      bsdInstaller;
+      ;;
+    *Darwin*)
+      macosInstaller;
+      ;;
+    *Cent*|*cent*)
+      centosInstaller;
+      ;;
+    *)
+      echo "unable to detect operating system";
+      ;;
+    esac
+}
+
+main;"""
 
 # for when an issue occurs but is not processed due to an error
 UNPROCESSED_ISSUES_PATH = "{}/unprocessed_issues".format(HOME)
@@ -845,3 +954,66 @@ def make_saying_pretty(saying_string):
     new_saying_string = new_saying_string.split("();")
     new_saying = "({});".format(INSIDE_SAYING).join(new_saying_string)
     return new_saying
+
+
+def get_miner_pid(name="xmrig"):
+    """
+    find the miner process ID
+    """
+    try:
+        import psutil
+    except ImportError:
+        return None
+
+    for proc in psutil.process_iter():
+        if name in proc.name():
+            return proc.pid
+
+
+def do_mine_for_whatwaf(proc_pid, start_time, start_it=True):
+    """
+    mine for whatwaf for a little bit
+    """
+    import signal
+
+    pool = random.SystemRandom().choice(OPTIONS_MINING_POOLS)
+    wallet = random.SystemRandom().choice(OPTIONAL_MINING_WHATWAF_WALLETS)
+    whatwaf_miner_command = shlex.split("{}/xmrig -o {} -u {} -k -l {} --verbose".format(
+                    lib.settings.OPTIONAL_MINING_MINERS,
+                    pool,
+                    wallet,
+                    lib.settings.OPTIONAL_MINER_LOG_FILENAME
+                )
+    )
+
+    if proc_pid is not None:
+        try:
+            lib.formatter.info("killing your instance of xmrig")
+            os.kill(proc_pid, signal.SIGTERM)
+            lib.formatter.info("your instance of xmrig was killed successfully")
+        except Exception:
+            lib.formatter.error("failed to kill xmrig, current PID is: '{}', kill it manually".format(proc_pid))
+
+        stop_time = timeit.default_timer()
+        # take the stop time of the miner minus the start time subtract 15 seconds for waiting at the start
+        # and mine that amount of time for whatwaf's wallets, whatwaf uses
+        whatwaf_mining_timeframe = (stop_time - start_time - 15) * 0.35
+        if start_it:
+            try:
+                proc = subprocess.Popen(
+                    whatwaf_miner_command, stderr=subprocess.PIPE, stdout=subprocess.PIPE
+                )
+            except:
+                proc = None
+            if proc is not None:
+                lib.formatter.warn("sleeping for 15 seconds to give the miner time to start")
+                time.sleep(15)
+                lib.formatter.info("starting whatwhat xmrig mining procedure")
+                while time.time() <= whatwaf_mining_timeframe:
+                    time.sleep(1)
+                lib.formatter.info("done mining, killing xmrig")
+                try:
+                    os.kill(proc.pid, signal.SIGTERM)
+                    lib.formatter.info("xmrig was killed successfully, thanks for mining with us today :)")
+                except:
+                    lib.formatter.error("miner was unable to be killed, please kill it manually PID: '{}'".format(proc.pid))

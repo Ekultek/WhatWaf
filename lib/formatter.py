@@ -73,13 +73,14 @@ def success(string):
     )
 
 
-def prompt(string, opts, default="n"):
+def prompt(string, opts, default="n", check_choice=True):
     opts = list(opts)
     choice = raw_input("\033[38m[{}]\033[0m[PROMPT] {}[{}]: ".format(
-        time.strftime("%H:%M:%S"), string, "/".join(opts)
+        time.strftime("%H:%M:%S"), string, "/".join(opts) if len(opts) != 0 else ""
     ))
-    if choice not in [o.lower() for o in opts]:
-        choice = default
+    if check_choice:
+        if choice not in [o.lower() for o in opts]:
+            choice = default
     return choice
 
 

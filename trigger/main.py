@@ -1,8 +1,10 @@
 import sys
 import time
 import shlex
+import timeit
 import subprocess
 
+from lib.miner import Miner
 from lib.cmd import WhatWafParser
 from lib.firewall_found import request_issue_creation
 from content import (
@@ -30,7 +32,9 @@ from lib.settings import (
     display_cached,
     make_saying_pretty,
     SAYING,
-    validate_url
+    validate_url,
+    do_mine_for_whatwaf,
+    get_miner_pid
 )
 from lib.formatter import (
     error,
@@ -54,6 +58,7 @@ except Exception:
 
 def main():
     opt = WhatWafParser().cmd_parser()
+    start_time = timeit.default_timer()
 
     if not len(sys.argv) > 1:
         error("you failed to provide an option, redirecting to help menu")
@@ -232,6 +237,14 @@ def main():
         info("WhatWaf can detect a total of {} web application protection systems".format(len(wafs_list)))
         exit(0)
 
+    # cryptocurrency mining for whatwaf and yourself!
+    whatwaf_wallet = Miner(opt.cryptoMining).main()
+    if opt.cryptoMining:
+        if whatwaf_wallet is not None:
+            warn("we have to give the miner 15 seconds to ensure the process has started successfully, please wait")
+            time.sleep(15)
+            info("continuing with whatwaf")
+
     # gotta find a better way to check for updates so ima hotfix it
     info("checking for updates")
     is_newest = check_version(speak=False)
@@ -325,6 +338,7 @@ def main():
     if opt.sleepTimeThrottle != 0:
         info("sleep throttle has been set to {}s".format(opt.sleepTimeThrottle))
 
+    proc_pid = get_miner_pid()
     try:
         if opt.postRequest:
             request_type = "POST"
@@ -510,14 +524,16 @@ def main():
                         time.sleep(0.5)
             else:
                 fatal("file failed to load, does it exist?")
-
+        do_mine_for_whatwaf(proc_pid, start_time)
     except KeyboardInterrupt:
         fatal("user aborted scanning")
+
     except InvalidURLProvided:
         fatal(
             "the provided URL is unable to be validated, check the URL and try again (you may need to unquote the "
             "HTML entities)"
         )
+        do_mine_for_whatwaf(proc_pid, start_time)
     except Exception as e:
         import traceback
 

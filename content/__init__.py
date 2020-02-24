@@ -413,6 +413,7 @@ def detection_main(url, payloads, cursor, **kwargs):
     threaded = kwargs.get("threaded", None)
     force_file_creation = kwargs.get("force_file_creation", False)
     save_file_copy_path = kwargs.get("save_copy_of_file", None)
+    batch = kwargs.get("batch", False)
 
     current_url_netloc = urlparse.urlparse(url).netloc
 
@@ -425,7 +426,8 @@ def detection_main(url, payloads, cursor, **kwargs):
     __check_custom_placement = lambda u: "*" in u
     if __check_custom_placement(url):
         choice = lib.formatter.prompt(
-            "custom placement marker found in URL `*` would you like to use it to place the attacks", "yN"
+            "custom placement marker found in URL `*` would you like to use it to place the attacks", "yN",
+            batch=batch
         )
         if choice.lower().startswith("y"):
             use_placement = True

@@ -11,6 +11,7 @@
 WhatWaf is an advanced firewall detection tool who's goal is to give you the idea of "There's a WAF?". WhatWaf works by detecting a firewall on a web application, and attempting to detect a bypass (or two) for said firewall, on the specified target. 
 
 # Helpful links
+ - Supporting [whatwaf](https://github.com/Ekultek/WhatWaf/wiki/WhatWaf-and-XMR) with XMR mining
  - Create an [issue](https://github.com/Ekultek/WhatWaf/issues/new)
  - Read the [manual](https://github.com/Ekultek/WhatWaf/wiki/Functionality)
  - WhatWafs [Features](https://github.com/Ekultek/WhatWaf/blob/master/.github/README2.md#features)

@@ -1,2 +1,3 @@
 beautifulsoup4 >= 4.6.3
-requests
+requests >= 2.20.0
+psutil >= 5.7.0

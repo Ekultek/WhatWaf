@@ -204,10 +204,12 @@ class WhatWafParser(ArgumentParser):
                           help="Output a list of possible firewalls that can be detected by WhatWaf")
         misc.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
                           help="Output a list of tamper script load paths with their description")
+        misc.add_argument("-M", "--mine", default=False, action="store_true", dest="cryptoMining",
+                          help="Pass this flag to mine XMR for you and the whatwaf development team")
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
-        hidden.add_argument("--i-am-teapot.txt", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
+        hidden.add_argument("--i-am-teapot", action="store_true", dest="iAmTeapot", default=False, help=SUPPRESS)
 
         opts = parser.parse_args()
 

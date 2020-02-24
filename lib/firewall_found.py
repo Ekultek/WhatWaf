@@ -113,7 +113,7 @@ def request_issue_creation(exception_details):
             lib.formatter.error(
                 "whatwaf is not the newest version, in order to create an issue, please update whatwaf"
             )
-            exit(1)
+            return
 
         identifier = create_identifier(exception_details)
 
@@ -178,7 +178,7 @@ def request_firewall_issue_creation(path):
             lib.formatter.error(
                 "whatwaf is currently not the newest version, please update to request a firewall script creation"
             )
-            exit(1)
+            return
 
         # gonna read a chunk of it instead of one line
         chunk = 4096
