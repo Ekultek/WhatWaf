@@ -18,7 +18,8 @@ def detect(content, **kwargs):
         re.compile(r"application.blocked.", re.I),
         re.compile(r".fortiGate.application.control", re.I),
         re.compile(r"(http(s)?)?://\w+.fortinet(.\w+:)?", re.I),
-        re.compile(r"fortigate.hostname", re.I)
+        re.compile(r"fortigate.hostname", re.I),
+        re.compile(r"the.page.cannot.be.displayed..please.contact.[^@]+@[^@]+\.[^@]+.for.additional.information", re.I)
     )
     for detection in detection_schema:
         if detection.search(content) is not None:
