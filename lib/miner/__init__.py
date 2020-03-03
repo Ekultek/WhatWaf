@@ -20,9 +20,9 @@ import lib.firewall_found
 
 
 try:
-    raw_input
-except:
     input = raw_input
+except NameError:
+    pass
 
 
 class Miner(object):
