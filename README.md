@@ -288,7 +288,7 @@ database arguments:
                         scanning multiple (*default=False)
   -uC, --view-url-cache
                         Display all the URL cache inside of the database, this
-                        includes the netlock, tamper scipts, webserver, and
+                        includes the netlock, tamper scripts, webserver, and
                         identified protections
   -pC, --payload-cache  View all payloads that have been cached inside of the
                         database
