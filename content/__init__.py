@@ -427,7 +427,7 @@ def detection_main(url, payloads, cursor, **kwargs):
     if __check_custom_placement(url):
         choice = lib.formatter.prompt(
             "custom placement marker found in URL `*` would you like to use it to place the attacks", "yN",
-            batch=batch
+            # batch=batch fixes a lot of issues with batch
         )
         if choice.lower().startswith("y"):
             use_placement = True
