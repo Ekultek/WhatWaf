@@ -154,7 +154,7 @@ class WhatWafParser(ArgumentParser):
         database_arguments.add_argument(
             "-uC", "--view-url-cache", default=False, action="store_true", dest="viewUrlCache",
             help="Display all the URL cache inside of the database, this includes the netlock, "
-                 "tamper scipts, webserver, and identified protections"
+                 "tamper scripts, webserver, and identified protections"
         )
         database_arguments.add_argument(
             "-pC", "--payload-cache", action="store_true", default=False, dest="viewCachedPayloads",
