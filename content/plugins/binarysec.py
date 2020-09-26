@@ -12,8 +12,7 @@ def detect(content, **kwargs):
     detection_schema = (
         re.compile(r"x.binarysec.via", re.I),
         re.compile(r"x.binarysec.nocache", re.I),
-        re.compile(r"binarysec", re.I),
-        re.compile(r"\bbinarysec\b", re.I)
+        re.compile(r"binarysec", re.I)
     )
     for detection in detection_schema:
         if detection.search(headers.get(HTTP_HEADER.SERVER, "")) is not None:

@@ -11,9 +11,7 @@ def detect(content, **kwargs):
     headers = kwargs.get("headers", {})
     detection_schema = (
         re.compile(r"\bxid. \d+", re.I),
-        re.compile(r"varnish\Z", re.I),
-        re.compile(r"varnish"), re.I,
-        re.compile(r"\d+"),
+        re.compile(r"varnish", re.I),
         re.compile(r".>.?security.by.cachewall.?<.", re.I),
         re.compile(r"cachewall", re.I),
         re.compile(r".>access.is.blocked.according.to.our.site.security.policy.<+", re.I)
