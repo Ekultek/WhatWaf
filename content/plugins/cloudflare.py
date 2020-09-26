@@ -25,7 +25,7 @@ def detect(content, **kwargs):
     if cf_ray != "":
         return True
     expect_ct = headers.get(HTTP_HEADER.EXPECT_CT, "")
-    if "__cfuid" in set_cookie or "cloudflare" in expect_ct:
+    if "__cfduid" in set_cookie or "cloudflare" in expect_ct:
         return True
     for detection in detection_schemas:
         if detection.search(content) is not None:
