@@ -3,7 +3,7 @@ import re
 from lib.settings import HTTP_HEADER
 
 
-__product__ = "ASP.NET Generic Website Protection (MS)"
+__product__ = "ASP.NET Generic Website Protection (Microsoft)"
 
 
 def detect(content, **kwargs):

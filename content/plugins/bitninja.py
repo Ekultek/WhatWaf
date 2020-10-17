@@ -1,7 +1,7 @@
 import re
 
 
-__product__ = "Bitninja (WAF)"
+__product__ = "BitNinja (WAF)"
 
 
 def detect(content, **kwargs):
