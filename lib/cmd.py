@@ -1,3 +1,4 @@
+import argparse
 from argparse import (
     ArgumentParser,
     Action,
@@ -205,7 +206,7 @@ class WhatWafParser(ArgumentParser):
         misc.add_argument("--tampers", action="store_true", dest="listEncodingTechniques",
                           help="Output a list of tamper script load paths with their description")
         misc.add_argument("-M", "--mine", default=False, action="store_true", dest="cryptoMining",
-                          help="Pass this flag to mine XMR for you and the whatwaf development team")
+                          help=SUPPRESS)
 
         hidden = parser.add_argument_group()
         hidden.add_argument("--clean", action="store_true", dest="cleanHomeFolder", help=SUPPRESS)
