@@ -28,7 +28,7 @@ except:
     pass
 
 # version number <major>.<minor>.<patch>.<commit>
-VERSION = "2.1.5.2"
+VERSION = "2.1.6.3"
 
 # version string
 VERSION_TYPE = "($dev)" if VERSION.count(".") > 1 else "($stable)"
@@ -991,3 +991,26 @@ def auto_update():
     except:
         lib.formatter.error("unable to update WhatWaf, a new version is out attempt updating by typing `git pull`")
         pass
+
+
+def running_platform():
+    """
+    lets just stop phone use
+    """
+    _sys_platform = sys.platform
+    env = os.environ
+    for key in env.keys():
+        if "ANDROID_ARGUMENT" in key:
+            return "android"
+        elif "P4A_BOOTSTRAP" in key:
+            return "android"
+    if _sys_platform in ('win32', 'cygwin'):
+        return "windows"
+    if _sys_platform == "darwin":
+        return "macos"
+    if _sys_platform.startswith("linux"):
+        return "linux"
+    elif _sys_platform.startswith("freebsd"):
+        return "freebsd"
+    return "unknown"
+

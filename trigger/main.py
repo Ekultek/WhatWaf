@@ -35,7 +35,8 @@ from lib.settings import (
     validate_url,
     do_mine_for_whatwaf,
     get_miner_pid,
-    auto_update
+    auto_update,
+    running_platform
 )
 from lib.formatter import (
     error,
@@ -58,6 +59,16 @@ except Exception:
 
 
 def main():
+    _sys_platform = running_platform()
+
+    if _sys_platform == "android":
+        error("don't use a fucking phone you dumb fuck")
+        exit(1)
+    elif _sys_platform == "unknown":
+        warn("your running platform is not able to be detected, this may cause issues")
+    else:
+        info("currently running on: {}".format(_sys_platform))
+
     opt = WhatWafParser().cmd_parser()
     start_time = timeit.default_timer()
 

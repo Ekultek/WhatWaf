@@ -319,7 +319,8 @@ def get_working_tampers(url, norm_response, payloads, **kwargs):
             except Exception as e:
                 if "'NoneType' object is not iterable" in str(e):
                     pass
-                elif "Failed to parse" in str(e):
+                elif "Failed to parse: " in str(e):
+                    # patches issue #1281
                     # fixes issue #1567
                     pass
                 else:
