@@ -246,8 +246,11 @@ def main():
     #         time.sleep(15)
     #         info("continuing with whatwaf")
 
-    # gotta find a better way to check for updates so ima hotfix it
-    auto_update()
+    if not opt.skipAutoUpdate:
+        # gotta find a better way to check for updates so ima hotfix it
+        auto_update()
+    else:
+        warn("auto updating will be skipped this run")
 
     format_opts = [opt.sendToYAML, opt.sendToCSV, opt.sendToJSON]
     if opt.formatOutput:
