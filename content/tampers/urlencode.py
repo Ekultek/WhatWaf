@@ -12,7 +12,7 @@ def tamper(payload, **kwargs):
         return payload
     for char in payload:
         if char in to_encode:
-            retval += "%{}".format(ord(char))
+            retval += "%{:02X}".format(ord(char))
         else:
             retval += char
     return retval
