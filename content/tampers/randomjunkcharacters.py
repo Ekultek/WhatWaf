@@ -6,7 +6,7 @@ __type__ = "adding random junk characters into the payload to bypass regex based
 
 
 def tamper(payload, **kwargs):
-    junk_chars = "!#$%&()*~+-_.,:;?@[/|\]^`"
+    junk_chars = "!#$%&()*~+-_.,:;?@[/|\\]^`"
     retval = ""
     for i, char in enumerate(payload, start=1):
         amount = random.randint(10, 15)
